@@ -1,0 +1,186 @@
+/* =========================================================================
+ * Ant Design Pro 风格 - 全局容器/工具类样式
+ * AntD 组件主题由 ConfigProvider + theme.ts 中的 token 控制
+ * 这里仅补充自定义组件需要的工具类和布局类
+ * ========================================================================= */
+
+.ant-layout {
+  min-height: 100vh;
+  background: var(--web-page-bg);
+}
+
+/* ---------- Pro 风格页面容器 ---------- */
+.pro-page-container {
+  padding: 16px;
+  min-height: calc(100vh - 56px);
+  background: var(--web-page-bg);
+}
+
+.pro-content-card {
+  background: var(--web-card);
+  border-radius: var(--web-radius-lg);
+  padding: 20px;
+  box-shadow: var(--web-shadow);
+}
+
+/* ---------- Pro 风格 Header ---------- */
+.pro-header {
+  height: var(--web-header-height);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--web-header-bg);
+  border-bottom: 1px solid var(--web-border-soft);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.04);
+}
+
+.pro-header-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--web-title);
+  margin: 0;
+}
+
+.pro-header-subtitle {
+  font-size: 12px;
+  color: var(--web-text-tertiary);
+}
+
+/* ---------- Pro 风格侧边栏 Logo ------------ */
+.pro-sider-logo {
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 20px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  background: #002140;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.pro-sider-logo .pro-sider-logo-sub {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 2px;
+}
+
+/* ---------- 卡片通用 ---------- */
+.ant-card {
+  background: var(--web-card);
+  border-radius: var(--web-radius-lg);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.ant-card-hoverable:hover {
+  box-shadow: var(--web-shadow-strong);
+}
+
+/* ---------- Pagination（增强对比度） ---------- */
+.ant-pagination {
+  --pagination-item-bg: var(--web-card);
+  --pagination-item-color: var(--web-text-primary);
+  --pagination-item-hover-bg: var(--web-bg-secondary);
+  --pagination-item-active-bg: var(--web-primary);
+  --pagination-item-active-color: #fff;
+}
+
+.ant-pagination .ant-pagination-item {
+  background: var(--pagination-item-bg);
+  border-color: var(--web-border-color);
+  color: var(--pagination-item-color);
+  min-width: 32px;
+  height: 32px;
+  line-height: 30px;
+  margin: 0 4px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ant-pagination .ant-pagination-item:hover:not(.ant-pagination-item-active) {
+  background: var(--pagination-item-hover-bg);
+  border-color: var(--web-primary);
+  color: var(--web-primary);
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background: var(--pagination-item-active-bg);
+  border-color: var(--pagination-item-active-bg);
+  color: var(--pagination-item-active-color);
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.3);
+}
+
+.ant-pagination .ant-pagination-item-active a {
+  color: var(--pagination-item-active-color);
+}
+
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next {
+  min-width: 32px;
+  height: 32px;
+  line-height: 30px;
+  border-radius: 6px;
+  background: var(--pagination-item-bg);
+  border-color: var(--web-border-color);
+}
+
+.ant-pagination .ant-pagination-prev:hover,
+.ant-pagination .ant-pagination-next:hover {
+  border-color: var(--web-primary);
+  color: var(--web-primary);
+}
+
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next {
+  color: var(--web-text-secondary);
+}
+
+.ant-pagination .ant-pagination-jump-prev:hover,
+.ant-pagination .ant-pagination-jump-next:hover {
+  color: var(--web-primary);
+}
+
+/* ---------- 面包屑 ---------- */
+.ant-breadcrumb a {
+  color: var(--web-text-secondary);
+}
+
+/* ---------- 滚动条细化（Pro 风格细滚动条） ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+}
+
+html[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 768px) {
+  .pro-page-container {
+    padding: 12px;
+  }
+}
+
+/* 避免未登录页面的"返回前台按钮 */
+.pro-top-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

@@ -1,0 +1,203 @@
+/* ============ 登录页容器 ============ */
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ============ 去除浏览器 autofill 背景色 ============ */
+.login-page input:-webkit-autofill,
+.login-page input:-webkit-autofill:hover,
+.login-page input:-webkit-autofill:focus,
+.login-page input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* ============ 左侧角色区 ============ */
+.login-left {
+  flex: 0 0 50%;
+  background: linear-gradient(135deg, #e8eaed 0%, #d1d5db 40%, #c4c8cf 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* 灰色渐变背景上的装饰点 */
+.login-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(156, 163, 175, 0.3) 1px, transparent 1px),
+    radial-gradient(circle at 70% 60%, rgba(156, 163, 175, 0.25) 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, rgba(156, 163, 175, 0.2) 1px, transparent 1px);
+  background-size: 60px 60px, 80px 80px, 50px 50px;
+  opacity: 0.6;
+}
+
+.characters-container {
+  position: relative;
+  width: 520px;
+  height: 420px;
+  z-index: 1;
+}
+
+/* ===== 2x2 网格站位：无遮挡 ===== */
+.char-1 {
+  position: absolute;
+  top: 10px;
+  left: 30px;
+  z-index: 1;
+}
+
+.char-2 {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  z-index: 3;
+}
+
+.char-3 {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.char-4 {
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+  z-index: 4;
+}
+
+/* ============ 右侧表单区 ============ */
+.login-right {
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  padding: 40px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-card .login-title {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-card .login-subtitle {
+  text-align: center;
+  margin-bottom: 32px;
+  display: block;
+}
+
+/* ============ 角色动画 ============ */
+@keyframes characterBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes coverPeek {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes characterClickPop {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.85); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* 长条角色偷看时向右弯曲摆动 */
+@keyframes leanPeek {
+  0%, 100% { transform: skewX(-6deg); }
+  50% { transform: skewX(-15deg); }
+}
+
+/* ============ 角色交互 ============ */
+.character {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.character:hover {
+  filter: brightness(1.1);
+}
+
+/* 长条角色偷看时向右弯曲 */
+.character-peeking {
+  transform-origin: bottom center;
+  animation: leanPeek 1.2s ease-in-out infinite;
+}
+
+/* 聚焦时所有角色微微向右倾 */
+.character-focused {
+  transform: skewX(-6deg);
+  transform-origin: bottom center;
+}
+
+/* ============ 彩带 canvas 层 ============ */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ============ 响应式 ============ */
+@media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-left {
+    flex: 0 0 auto;
+    height: 220px;
+  }
+
+  .login-right {
+    flex: 1 0 auto;
+    padding: 24px 20px;
+  }
+
+  .characters-container {
+    width: 340px;
+    height: 320px;
+  }
+
+  .char-1 {
+    top: 5px;
+    left: 15px;
+    z-index: 1;
+  }
+
+  .char-2 {
+    top: 5px;
+    right: 15px;
+    z-index: 3;
+  }
+
+  .char-3 {
+    bottom: 5px;
+    left: 5px;
+    z-index: 2;
+  }
+
+  .char-4 {
+    bottom: 5px;
+    right: 15px;
+    z-index: 4;
+  }
+}

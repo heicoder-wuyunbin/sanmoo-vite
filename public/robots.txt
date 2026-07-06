@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 禁止爬虫访问管理后台
+Disallow: /admin
+
+# 禁止爬虫访问登录页面
+Disallow: /login

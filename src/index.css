@@ -1,0 +1,187 @@
+/* ===== Ant Design Pro 风格 - 语义化 CSS 变量 =====
+ * 注意：优先在组件内通过 ConfigProvider + theme.useToken() 读取 token；
+ * 这里仅保留"容器背景/文本/边框/主色"等全局语义变量，
+ * 方便内联 style 中使用 `var(--web-page-bg)` 等。
+ * 明/暗主题通过 html[data-theme="light" | "dark"] 切换。
+ */
+
+:root {
+  --web-page-bg: #f5f7fa;
+  --web-surface: #ffffff;
+  --web-card: #ffffff;
+  --web-bg-secondary: #f0f0f0;
+  --web-header-bg: #ffffff;
+
+  --web-primary: #1677ff;
+  --web-primary-hover: #4096ff;
+  --web-primary-active: #0958d9;
+  --web-primary-soft: rgba(22, 119, 255, 0.08);
+
+  --web-success: #52c41a;
+  --web-warning: #faad14;
+  --web-error: #ff4d4f;
+  --web-gold: #d48806;
+
+  --web-title: rgba(0, 0, 0, 0.88);
+  --web-text: rgba(0, 0, 0, 0.88);
+  --web-text-primary: rgba(0, 0, 0, 0.88);
+  --web-text-secondary: rgba(0, 0, 0, 0.65);
+  --web-text-tertiary: rgba(0, 0, 0, 0.45);
+  --web-text-disabled: rgba(0, 0, 0, 0.25);
+  --web-text-inverse: #ffffff;
+
+  --web-border: #d9d9d9;
+  --web-border-color: #d9d9d9;
+  --web-border-soft: #f0f0f0;
+
+  --web-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  --web-shadow-strong: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12);
+  --web-shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.06);
+
+  --web-radius: 6px;
+  --web-radius-lg: 8px;
+  --web-radius-pill: 999px;
+
+  --web-header-height: 56px;
+
+  /* 渐变 - 浅色模式下柔和、与 Pro 风格一致的蓝/米渐变 */
+  --web-gradient-hero: linear-gradient(
+    135deg,
+    rgba(230, 244, 255, 0.95) 0%,
+    rgba(247, 248, 250, 0.95) 55%,
+    rgba(255, 250, 241, 0.95) 100%
+  );
+  --web-gradient-card: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(239, 246, 255, 0.95) 100%
+  );
+}
+
+html[data-theme='dark'] {
+  --web-page-bg: #0f172a;
+  --web-surface: #1f1f1f;
+  --web-card: #1f1f1f;
+  --web-bg-secondary: #2a2a2a;
+  --web-header-bg: #1f1f1f;
+
+  --web-primary: #4096ff;
+  --web-primary-hover: #69b1ff;
+  --web-primary-active: #0958d9;
+  --web-primary-soft: rgba(64, 150, 255, 0.15);
+
+  --web-success: #49aa19;
+  --web-warning: #d89614;
+  --web-error: #cf1322;
+  --web-gold: #e8c05c;
+
+  --web-title: rgba(255, 255, 255, 0.88);
+  --web-text: rgba(255, 255, 255, 0.85);
+  --web-text-primary: rgba(255, 255, 255, 0.88);
+  --web-text-secondary: rgba(255, 255, 255, 0.65);
+  --web-text-tertiary: rgba(255, 255, 255, 0.45);
+  --web-text-disabled: rgba(255, 255, 255, 0.25);
+  --web-text-inverse: rgba(0, 0, 0, 0.88);
+
+  --web-border: #424242;
+  --web-border-color: #424242;
+  --web-border-soft: #303030;
+
+  --web-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3),
+    0 1px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  --web-shadow-strong: 0 6px 16px 0 rgba(0, 0, 0, 0.4);
+  --web-shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* 深色模式下的渐变 - 深蓝/深紫，保持柔和不刺眼 */
+  --web-gradient-hero: linear-gradient(
+    135deg,
+    rgba(23, 37, 84, 0.6) 0%,
+    rgba(31, 31, 31, 0.85) 55%,
+    rgba(46, 31, 23, 0.6) 100%
+  );
+  --web-gradient-card: linear-gradient(
+    135deg,
+    rgba(31, 31, 31, 1) 0%,
+    rgba(23, 37, 84, 0.6) 100%
+  );
+}
+
+/* 滚动条 - 深色模式下更柔和 */
+html[data-theme='dark'] ::-webkit-scrollbar {
+  background: #141414;
+}
+html[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+}
+
+/* =======================================================
+ * 基础字体/布局重置
+ * ======================================================= */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family:
+    AlibabaSans,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans',
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: var(--web-page-bg);
+  color: var(--web-text);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* =======================================================
+ * 字体（Alibaba Sans）
+ * ======================================================= */
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*1GSgSYDD_aIAAAAAQsAAAAgAegCCAQ/AlibabaSans-Light.woff2')
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*2zEUQqnPNesAAAAAQtAAAAgAegCCAQ/AlibabaSans-Regular.woff2')
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Medium.woff2')
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Heavy.woff2')
+    format('woff2');
+}

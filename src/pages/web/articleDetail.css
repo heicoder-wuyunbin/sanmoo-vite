@@ -1,0 +1,579 @@
+/* =========================================================
+ * Markdown 渲染器统一样式
+ * 后端生成的 HTML 结构:
+ *   <pre class="md-code-block" data-lang="xxx">
+ *     <div class="md-code-header">...</div>
+ *     <div class="md-code-body">
+ *       <div class="md-code-row">
+ *         <span class="md-line-num">1</span>
+ *         <code class="md-code-line">...</code>
+ *       </div>
+ *     </div>
+ *   </pre>
+ *
+ *   <h1 class="md-h md-h1">...</h1>
+ *   <p class="md-p">...</p>
+ *   <blockquote class="md-blockquote">...</blockquote>
+ *   <ul class="md-ul"> / <ol class="md-ol">
+ *     <li class="md-li">...</li>
+ *   </ul/ol>
+ *   <code class="md-inline-code">...</code>
+ *   <a class="md-link" href="...">...</a>
+ *   <img class="md-img" src="..." alt="..." />
+ *   <hr class="md-hr" />
+ *   <strong class="md-strong"> / <em class="md-em">
+ * ========================================================= */
+
+.md-body {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--md-text, #1f2937);
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ------------- 段落与基础文本 ------------- */
+.md-body .md-p {
+  margin: 16px 0;
+  color: var(--md-text, #1f2937);
+  text-align: justify;
+}
+
+.md-body .md-p:first-child {
+  margin-top: 0;
+}
+
+.md-body .md-strong {
+  font-weight: 600;
+  color: var(--md-strong, #111827);
+}
+
+.md-body .md-em {
+  font-style: italic;
+  color: var(--md-text, #1f2937);
+}
+
+/* ------------- 标题 ------------- */
+.md-body .md-h {
+  font-weight: 700;
+  color: var(--md-title, #0f172a);
+  line-height: 1.35;
+  scroll-margin-top: 80px;
+}
+
+.md-body .md-h1 {
+  font-size: 28px;
+  margin: 28px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--md-border, #e5e7eb);
+}
+
+.md-body .md-h2 {
+  font-size: 24px;
+  margin: 24px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--md-border, #e5e7eb);
+}
+
+.md-body .md-h3 {
+  font-size: 20px;
+  margin: 20px 0 10px;
+}
+
+.md-body .md-h4 {
+  font-size: 18px;
+  margin: 18px 0 8px;
+}
+
+.md-body .md-h5 {
+  font-size: 16px;
+  margin: 16px 0 8px;
+}
+
+.md-body .md-h6 {
+  font-size: 15px;
+  margin: 14px 0 8px;
+  color: var(--md-text-secondary, #6b7280);
+}
+
+/* ------------- 引用块 ------------- */
+.md-body .md-blockquote {
+  margin: 18px 0;
+  padding: 12px 18px;
+  border-left: 4px solid var(--md-accent, #3b82f6);
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.08) 0%,
+    rgba(59, 130, 246, 0) 100%
+  );
+  border-radius: 0 12px 12px 0;
+  color: var(--md-text-secondary, #6b7280);
+  font-style: italic;
+}
+
+.md-body .md-blockquote > .md-p {
+  margin: 6px 0;
+  color: var(--md-text-secondary, #6b7280);
+}
+
+/* ------------- 列表 ------------- */
+.md-body .md-ul,
+.md-body .md-ol {
+  margin: 14px 0;
+  padding-left: 28px;
+}
+
+.md-body .md-ul {
+  list-style-type: disc;
+}
+
+.md-body .md-ol {
+  list-style-type: decimal;
+}
+
+.md-body .md-li {
+  margin: 6px 0;
+  padding-left: 4px;
+  line-height: 1.8;
+  color: var(--md-text, #1f2937);
+}
+
+.md-body .md-li::marker {
+  color: var(--md-accent, #3b82f6);
+  font-weight: 600;
+}
+
+/* 嵌套列表缩进 */
+.md-body .md-li > .md-ul,
+.md-body .md-li > .md-ol {
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+/* ------------- 行内代码 ------------- */
+.md-body .md-inline-code {
+  display: inline;
+  padding: 2px 8px;
+  margin: 0 2px;
+  background: var(--md-inline-code-bg, #f1f5f9);
+  color: var(--md-inline-code, #e11d48);
+  border: 1px solid var(--md-border, #e5e7eb);
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  word-break: break-all;
+}
+
+/* ------------- 代码块 ------------- */
+.md-body .md-code-block {
+  position: relative;
+  margin: 20px 0;
+  padding: 0;
+  background: var(--md-code-bg, #0f172a);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* 代码块头部：显示语言 + 复制按钮 */
+.md-body .md-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  font-size: 13px;
+  color: var(--md-code-header, #94a3b8);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* 复制按钮 */
+.md-body .md-code-copy-btn {
+  background: transparent;
+  border: none;
+  color: var(--md-code-header, #94a3b8);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.md-body .md-code-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.md-body .md-code-copy-btn:active {
+  transform: scale(0.95);
+}
+
+.md-body .md-code-copy-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.md-body .md-code-lang {
+  font-family: inherit;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--md-code-header, #94a3b8);
+}
+
+/* 代码块主体 */
+.md-body .md-code-body {
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 单行代码 + 行号 */
+.md-body .md-code-row {
+  display: flex;
+  align-items: stretch;
+  min-height: 1.7em;
+}
+
+.md-body .md-line-num {
+  flex-shrink: 0;
+  width: 48px;
+  padding: 0 12px 0 16px;
+  text-align: right;
+  color: var(--md-line-num, #475569);
+  user-select: none;
+  background: rgba(15, 23, 42, 0.5);
+  border-right: 1px solid rgba(148, 163, 184, 0.1);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: inherit;
+  white-space: nowrap;
+}
+
+.md-body .md-code-line {
+  flex: 1;
+  padding: 0 18px 0 14px;
+  color: var(--md-code-text, #e2e8f0);
+  font-family: inherit;
+  font-size: 14px;
+  white-space: pre;
+  line-height: inherit;
+  word-break: normal;
+  overflow-x: visible;
+}
+
+/* 代码块滚动条 */
+.md-body .md-code-body::-webkit-scrollbar {
+  height: 10px;
+}
+
+.md-body .md-code-body::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.md-body .md-code-body::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 5px;
+}
+
+.md-body .md-code-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+/* ------------- 链接 ------------- */
+.md-body .md-link {
+  color: var(--md-accent, #2563eb);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+  word-break: break-all;
+}
+
+.md-body .md-link:hover {
+  color: var(--md-accent-hover, #1d4ed8);
+  border-bottom-color: var(--md-accent-hover, #1d4ed8);
+  border-bottom-style: solid;
+}
+
+/* ------------- 图片 ------------- */
+.md-body .md-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 20px auto;
+  border-radius: 12px;
+  border: 1px solid var(--md-border, #e5e7eb);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* ------------- 分割线 ------------- */
+.md-body .md-hr {
+  border: none;
+  height: 1px;
+  margin: 28px 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--md-border, #e5e7eb) 20%,
+    var(--md-border, #e5e7eb) 80%,
+    transparent 100%
+  );
+}
+
+/* ------------- 表格（如果 goldmark 扩展支持） ------------- */
+.md-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 14px;
+  background: var(--md-table-bg, #ffffff);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.md-body th {
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--md-table-head, #f8fafc);
+  color: var(--md-title, #0f172a);
+  font-weight: 600;
+  border-bottom: 2px solid var(--md-border, #e5e7eb);
+}
+
+.md-body td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--md-border, #e5e7eb);
+  color: var(--md-text, #1f2937);
+}
+
+.md-body tr:last-child td {
+  border-bottom: none;
+}
+
+.md-body tr:hover td {
+  background: var(--md-table-row-hover, #f8fafc);
+}
+
+/* ------------- 目录导航组件 ------------- */
+.toc-container {
+  position: sticky;
+  top: 80px;
+  background: var(--toc-bg, #ffffff);
+  border: 1px solid var(--toc-border, #e5e7eb);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--toc-shadow, 0 2px 8px rgba(15, 23, 42, 0.06));
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.toc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--toc-title, #1f2937);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--toc-border, #e5e7eb);
+  margin-bottom: 12px;
+}
+
+.toc-icon {
+  font-size: 16px;
+}
+
+.toc-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: var(--toc-text, #4b5563);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.toc-item:hover {
+  background: var(--toc-hover, #f3f4f6);
+  color: var(--toc-hover-text, #1f2937);
+}
+
+.toc-item-active {
+  background: var(--toc-active, #eff6ff);
+  color: var(--toc-active-text, #2563eb);
+  font-weight: 500;
+}
+
+.toc-bullet {
+  flex-shrink: 0;
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+.toc-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toc-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.toc-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.toc-container::-webkit-scrollbar-thumb {
+  background: var(--toc-scrollbar, #d1d5db);
+  border-radius: 2px;
+}
+
+.toc-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .toc-sidebar {
+    display: none;
+  }
+}
+
+/* ------------- 阅读进度条 ------------- */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--progress-color, #3b82f6), var(--progress-color-end, #60a5fa));
+  transition: width 0.15s ease-out;
+  z-index: 9999;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ------------- 深色主题变量（可选） ------------- */
+@media (prefers-color-scheme: dark) {
+  .md-body {
+    --md-text: #e2e8f0;
+    --md-text-secondary: #94a3b8;
+    --md-title: #f1f5f9;
+    --md-strong: #f8fafc;
+    --md-border: #334155;
+    --md-accent: #60a5fa;
+    --md-accent-hover: #93c5fd;
+    --md-code-bg: #0b1220;
+    --md-code-text: #e2e8f0;
+    --md-code-header: #94a3b8;
+    --md-line-num: #475569;
+    --md-inline-code-bg: #1e293b;
+    --md-inline-code: #fda4af;
+    --md-table-bg: #1e293b;
+    --md-table-head: #0f172a;
+    --md-table-row-hover: #334155;
+  }
+
+  .toc-container {
+    --toc-bg: #1e293b;
+    --toc-border: #334155;
+    --toc-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --toc-title: #f1f5f9;
+    --toc-text: #94a3b8;
+    --toc-hover: #334155;
+    --toc-hover-text: #e2e8f0;
+    --toc-active: #1e40af;
+    --toc-active-text: #93c5fd;
+    --toc-scrollbar: #475569;
+  }
+
+  .reading-progress {
+    --progress-color: #60a5fa;
+    --progress-color-end: #93c5fd;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .reading-progress {
+    --progress-color: #3b82f6;
+    --progress-color-end: #60a5fa;
+  }
+}
+
+/* ------------- 图片懒加载样式 ------------- */
+.lazy-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.lazy-image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lazy-bg, #f3f4f6);
+}
+
+.lazy-image-skeleton {
+  width: 80%;
+  height: 60%;
+  background: linear-gradient(
+    90deg,
+    var(--lazy-skeleton-start, #e5e7eb) 25%,
+    var(--lazy-skeleton-mid, #f3f4f6) 50%,
+    var(--lazy-skeleton-start, #e5e7eb) 75%
+  );
+  background-size: 200% 100%;
+  animation: lazy-skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes lazy-skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.lazy-image {
+  width: 100%;
+  height: auto;
+  transition: opacity 0.3s ease;
+}
+
+.lazy-image-hidden {
+  opacity: 0;
+}
+
+.lazy-image-loaded {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .lazy-image-container {
+    --lazy-bg: #1e293b;
+    --lazy-skeleton-start: #334155;
+    --lazy-skeleton-mid: #1e293b;
+  }
+}
