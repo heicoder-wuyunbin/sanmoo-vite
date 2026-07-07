@@ -11,6 +11,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Pagination,
   Popconfirm,
@@ -19,7 +20,7 @@ import {
   Table,
   Typography,
 } from 'antd';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useCrudTable } from '@/hooks/useCrudTable';
 import {
   batchDeleteLinks,
@@ -43,6 +44,7 @@ type LinkForm = {
 
 const LinksPage: React.FC = () => {
   const [form] = Form.useForm<LinkForm>();
+  const [togglingIds, setTogglingIds] = useState<Set<number>>(new Set());
 
   const crud = useCrudTable<LinkItem, LinkForm, LinkForm>({
     queryKey: queryKeys.linkList({}),
@@ -75,19 +77,29 @@ const LinksPage: React.FC = () => {
     crud.openEditModal(record);
   };
 
-  const handleToggleActive = async (record: LinkItem, checked: boolean) => {
-    crud.update({
-      id: record.id,
-      data: {
+  const handleToggleActive = useCallback(async (record: LinkItem, checked: boolean) => {
+    setTogglingIds((prev) => new Set(prev).add(record.id));
+    try {
+      await updateLink(record.id, {
         name: record.name,
         url: record.url,
         description: record.description,
         icon: record.icon,
         sortOrder: record.sortOrder,
         isActive: checked,
-      },
-    });
-  };
+      });
+      message.success(checked ? '已启用' : '已禁用');
+      await crud.invalidate?.();
+    } catch {
+      message.error('操作失败，请重试');
+    } finally {
+      setTogglingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(record.id);
+        return next;
+      });
+    }
+  }, [crud]);
 
   const handleCloseModal = () => {
     form.resetFields();
@@ -160,7 +172,8 @@ const LinksPage: React.FC = () => {
                 render: (_, record) => (
                   <Switch
                     checked={record.isActive}
-                    onChange={(checked) => handleToggleActive(record, checked)}
+                    loading={togglingIds.has(record.id)}
+                    onChange={(checked) => void handleToggleActive(record, checked)}
                   />
                 ),
               },
