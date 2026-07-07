@@ -231,7 +231,7 @@ const Admin: React.FC = () => {
 
   // 动态菜单渲染（优先使用后端返回的菜单）
   const { menuItems, firstGroupKey } = useMemo(() => {
-    let result: MenuProps['items'] = [];
+    const result: MenuProps['items'] = [];
     let firstKey = '';
 
     if (menus && menus.length > 0) {
@@ -259,24 +259,22 @@ const Admin: React.FC = () => {
         });
       });
     } else {
-      result = staticMenuGroups
-        .map((group) => {
-          const visibleItems = group.items
-            .filter((item) => !item.perm || hasPerm(item.perm))
-            .map((item) => ({
-              key: item.key,
-              icon: item.icon,
-              label: <Link to={item.key}>{item.label}</Link>,
-            }));
-          if (visibleItems.length === 0) return null;
-          if (!firstKey) firstKey = group.key;
-          return {
-            key: group.key,
-            label: group.label,
-            children: visibleItems,
-          };
-        })
-        .filter(Boolean) as MenuProps['items'];
+      staticMenuGroups.forEach((group) => {
+        const visibleItems = group.items
+          .filter((item) => !item.perm || hasPerm(item.perm))
+          .map((item) => ({
+            key: item.key,
+            icon: item.icon,
+            label: <Link to={item.key}>{item.label}</Link>,
+          }));
+        if (visibleItems.length === 0) return;
+        if (!firstKey) firstKey = group.key;
+        result.push({
+          key: group.key,
+          label: group.label,
+          children: visibleItems,
+        });
+      });
     }
 
     return { menuItems: result, firstGroupKey: firstKey };
