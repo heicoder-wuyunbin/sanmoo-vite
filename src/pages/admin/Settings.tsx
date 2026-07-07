@@ -1,5 +1,5 @@
 import { Link, Outlet } from 'react-router-dom';
-import { App, Breadcrumb, Button, Card, Space, Typography, theme as antTheme } from 'antd';
+import { App, Breadcrumb, Button, Space, Typography, theme as antTheme } from 'antd';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 
@@ -72,41 +72,24 @@ const SettingsPage: React.FC = () => {
           ]}
           style={{ marginBottom: 16 }}
         />
-        <Space direction="vertical" size={8}>
-          <Typography.Title level={2} style={{ margin: 0, fontWeight: 600 }}>
-            系统配置
-          </Typography.Title>
-          <Typography.Text type="secondary">
-            统一管理博客配置、存储策略、邮件服务与系统维护。
-          </Typography.Text>
-        </Space>
-      </div>
-
-      <Card
-        size="small"
-        style={{
-          marginBottom: 24,
-          border: `1px solid ${token.colorBorderSecondary}`,
-          background: `${token.colorBgContainer}`,
-          borderRadius: token.borderRadiusLG,
-          animation: 'fadeInUp 0.4s ease-out 0.1s both',
-        }}
-        bodyStyle={{ padding: '16px 24px' }}
-      >
-        <Space align="center" size={16}>
-          <Typography.Text type="secondary" style={{ fontSize: 14 }}>
-            配置迁移
-          </Typography.Text>
-          <div style={{ flex: 1, height: 24, borderBottom: `1px dashed ${token.colorBorderSecondary}` }} />
-          <Space size={8}>
-            <Button
-              type="primary"
-              icon={<DownloadOutlined />}
-              onClick={handleExport}
-              size="middle"
-            >
-              导出配置
-            </Button>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: 16,
+          }}
+        >
+          <Space direction="vertical" size={8}>
+            <Typography.Title level={2} style={{ margin: 0, fontWeight: 600 }}>
+              系统配置
+            </Typography.Title>
+            <Typography.Text type="secondary">
+              统一管理博客配置、存储策略、邮件服务与系统维护。
+            </Typography.Text>
+          </Space>
+          <Space size={8} style={{ flexShrink: 0, marginTop: 4 }}>
             <input
               type="file"
               accept=".json"
@@ -116,20 +99,27 @@ const SettingsPage: React.FC = () => {
               id="settings-import"
             />
             <Button
+              size="small"
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+            >
+              导出配置
+            </Button>
+            <Button
+              size="small"
               icon={<UploadOutlined />}
               onClick={() => document.getElementById('settings-import')?.click()}
-              size="middle"
               disabled={importing}
             >
               导入配置
             </Button>
           </Space>
-        </Space>
-      </Card>
+        </div>
+      </div>
 
       <div
         style={{
-          animation: 'fadeInUp 0.4s ease-out 0.2s both',
+          animation: 'fadeInUp 0.4s ease-out 0.1s both',
         }}
       >
         <Outlet />
