@@ -44,6 +44,7 @@ const MaintenanceSettings = lazy(() => import('@/pages/admin/settings/Maintenanc
 const Roles = lazy(() => import('@/pages/admin/Roles'));
 const Permissions = lazy(() => import('@/pages/admin/Permissions'));
 const NotFound = lazy(() => import('@/pages/404'));
+const RouteTransition = lazy(() => import('@/components/RouteTransition'));
 
 import { getAccessToken, isTokenExpired } from '@/utils/auth';
 
@@ -105,30 +106,32 @@ const AppRoutes: React.FC = () => {
             <Route path="/history" element={<History />} />
 
             <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>}>
-              <Route index element={<Dashboard />} />
-              <Route path="articles" element={<Articles />} />
-              <Route path="categories" element={<CategoriesAdmin />} />
-              <Route path="tags" element={<TagsAdmin />} />
-              <Route path="topics" element={<TopicsAdmin />} />
-              <Route path="links" element={<LinksAdmin />} />
-              <Route path="files" element={<Files />} />
-              <Route path="users" element={<Users />} />
-              <Route path="visitors" element={<VisitorsPage />} />
-              <Route path="errors" element={<ErrorLogsPage />} />
-              <Route path="mp-users" element={<MPUsers />} />
-              <Route path="settings" element={<Settings />}>
-                <Route index element={<Navigate to="core" replace />} />
-                <Route path="core" element={<CoreSettings />} />
-                <Route path="privacy" element={<PrivacySettings />} />
-                <Route path="social" element={<SocialSettings />} />
-                <Route path="search" element={<SearchSettings />} />
-                <Route path="storage" element={<StorageSettings />} />
-                <Route path="email" element={<EmailSettings />} />
-                <Route path="cache" element={<CacheSettings />} />
-                <Route path="maintenance" element={<MaintenanceSettings />} />
+              <Route element={<RouteTransition />}>
+                <Route index element={<Dashboard />} />
+                <Route path="articles" element={<Articles />} />
+                <Route path="categories" element={<CategoriesAdmin />} />
+                <Route path="tags" element={<TagsAdmin />} />
+                <Route path="topics" element={<TopicsAdmin />} />
+                <Route path="links" element={<LinksAdmin />} />
+                <Route path="files" element={<Files />} />
+                <Route path="users" element={<Users />} />
+                <Route path="visitors" element={<VisitorsPage />} />
+                <Route path="errors" element={<ErrorLogsPage />} />
+                <Route path="mp-users" element={<MPUsers />} />
+                <Route path="settings" element={<Settings />}>
+                  <Route index element={<Navigate to="core" replace />} />
+                  <Route path="core" element={<CoreSettings />} />
+                  <Route path="privacy" element={<PrivacySettings />} />
+                  <Route path="social" element={<SocialSettings />} />
+                  <Route path="search" element={<SearchSettings />} />
+                  <Route path="storage" element={<StorageSettings />} />
+                  <Route path="email" element={<EmailSettings />} />
+                  <Route path="cache" element={<CacheSettings />} />
+                  <Route path="maintenance" element={<MaintenanceSettings />} />
+                </Route>
+                <Route path="roles" element={<Roles />} />
+                <Route path="permissions" element={<Permissions />} />
               </Route>
-              <Route path="roles" element={<Roles />} />
-              <Route path="permissions" element={<Permissions />} />
             </Route>
 
             <Route path="/user/login" element={<Login />} />

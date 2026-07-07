@@ -50,6 +50,7 @@ import {
   SaveOutlined,
   MailOutlined,
   ThunderboltOutlined,
+  CloudServerOutlined,
 } from '@ant-design/icons';
 import { clearAuth, getCurrentUser, getCurrentUserId } from '@/utils/auth';
 import { updateUserPassword } from '@/services/blog/api';
@@ -89,6 +90,7 @@ const ICON_MAP: Record<string, React.FC<any>> = {
   SaveOutlined,
   MailOutlined,
   ThunderboltOutlined,
+  CloudServerOutlined,
 };
 
 const MODULE_ICON_MAP: Record<string, React.FC<any>> = {
@@ -273,22 +275,14 @@ const Admin: React.FC = () => {
       label: '系统配置',
       icon: <SettingOutlined />,
       items: [
-        {
-          key: '/admin/settings',
-          icon: <SettingOutlined />,
-          label: '设置',
-          perm: 'setting:read',
-          children: [
-            { key: '/admin/settings/core', icon: <CrownOutlined />, label: '核心配置', perm: 'setting:core:read' },
-            { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '隐私政策', perm: 'setting:privacy:read' },
-            { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '社交链接', perm: 'setting:social:read' },
-            { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置', perm: 'setting:search:read' },
-            { key: '/admin/settings/storage', icon: <SaveOutlined />, label: '存储配置', perm: 'setting:storage:read' },
-            { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
-            { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
-            { key: '/admin/settings/maintenance', icon: <DatabaseOutlined />, label: '数据维护', perm: 'setting:maintenance:read' },
-          ],
-        },
+        { key: '/admin/settings/core', icon: <CrownOutlined />, label: '核心配置', perm: 'setting:core:read' },
+        { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '隐私政策', perm: 'setting:privacy:read' },
+        { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '社交链接', perm: 'setting:social:read' },
+        { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置', perm: 'setting:search:read' },
+        { key: '/admin/settings/storage', icon: <CloudServerOutlined />, label: '存储配置', perm: 'setting:storage:read' },
+        { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
+        { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
+        { key: '/admin/settings/maintenance', icon: <DatabaseOutlined />, label: '数据维护', perm: 'setting:maintenance:read' },
       ],
     },
   ];
@@ -327,24 +321,7 @@ const Admin: React.FC = () => {
         }
         const IconComp = ICON_MAP[m.icon] || MODULE_ICON_MAP[m.module] || FileTextOutlined;
 
-        if (m.module === 'setting' && m.frontPath !== '/admin/settings') {
-          const group = groupMap.get(groupKey)!;
-          let settingsItem = group.children.find((c: any) => c.key === '/admin/settings');
-          if (!settingsItem) {
-            settingsItem = {
-              key: '/admin/settings',
-              icon: <SettingOutlined />,
-              label: '设置',
-              children: [],
-            };
-            group.children.push(settingsItem);
-          }
-          settingsItem.children.push({
-            key: m.frontPath,
-            icon: <IconComp />,
-            label: <Link to={m.frontPath}>{m.name}</Link>,
-          });
-        } else if (m.frontPath !== '/admin/settings') {
+        if (m.frontPath !== '/admin/settings') {
           groupMap.get(groupKey)!.children.push({
             key: m.frontPath,
             icon: <IconComp />,

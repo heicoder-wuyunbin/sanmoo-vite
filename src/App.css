@@ -184,3 +184,37 @@ html[data-theme='dark'] ::-webkit-scrollbar-thumb {
   gap: 8px;
   align-items: center;
 }
+
+/* ---------- 路由过渡动画 ---------- */
+.route-transition-container {
+  position: relative;
+  min-height: calc(100vh - 88px);
+  overflow: hidden;
+}
+
+.route-transition-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.route-transition-content.fade-out {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.route-transition-content.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.route-transition-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
