@@ -44,6 +44,12 @@ import {
   KeyOutlined,
   EyeOutlined,
   FileSearchOutlined,
+  CrownOutlined,
+  ShareAltOutlined,
+  SearchOutlined,
+  SaveOutlined,
+  MailOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { clearAuth, getCurrentUser, getCurrentUserId } from '@/utils/auth';
 import { updateUserPassword } from '@/services/blog/api';
@@ -77,6 +83,12 @@ const ICON_MAP: Record<string, React.FC<any>> = {
   KeyOutlined,
   EyeOutlined,
   FileSearchOutlined,
+  CrownOutlined,
+  ShareAltOutlined,
+  SearchOutlined,
+  SaveOutlined,
+  MailOutlined,
+  ThunderboltOutlined,
 };
 
 const MODULE_ICON_MAP: Record<string, React.FC<any>> = {
@@ -247,7 +259,22 @@ const Admin: React.FC = () => {
       label: '系统配置',
       icon: <SettingOutlined />,
       items: [
-        { key: '/admin/settings', icon: <SettingOutlined />, label: '设置', perm: 'setting:read' },
+        {
+          key: '/admin/settings',
+          icon: <SettingOutlined />,
+          label: '设置',
+          perm: 'setting:read',
+          children: [
+            { key: '/admin/settings/core', icon: <CrownOutlined />, label: '核心配置', perm: 'setting:core:read' },
+            { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '隐私政策', perm: 'setting:privacy:read' },
+            { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '社交链接', perm: 'setting:social:read' },
+            { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置', perm: 'setting:search:read' },
+            { key: '/admin/settings/storage', icon: <SaveOutlined />, label: '存储配置', perm: 'setting:storage:read' },
+            { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
+            { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
+            { key: '/admin/settings/maintenance', icon: <DatabaseOutlined />, label: '数据维护', perm: 'setting:maintenance:read' },
+          ],
+        },
       ],
     },
   ];
@@ -285,11 +312,31 @@ const Admin: React.FC = () => {
           groupMap.set(groupKey, { label, icon: groupIcon, children: [] });
         }
         const IconComp = ICON_MAP[m.icon] || MODULE_ICON_MAP[m.module] || FileTextOutlined;
-        groupMap.get(groupKey)!.children.push({
-          key: m.frontPath,
-          icon: <IconComp />,
-          label: <Link to={m.frontPath}>{m.name}</Link>,
-        });
+
+        if (m.module === 'setting' && m.frontPath !== '/admin/settings') {
+          const group = groupMap.get(groupKey)!;
+          let settingsItem = group.children.find((c: any) => c.key === '/admin/settings');
+          if (!settingsItem) {
+            settingsItem = {
+              key: '/admin/settings',
+              icon: <SettingOutlined />,
+              label: '设置',
+              children: [],
+            };
+            group.children.push(settingsItem);
+          }
+          settingsItem.children.push({
+            key: m.frontPath,
+            icon: <IconComp />,
+            label: <Link to={m.frontPath}>{m.name}</Link>,
+          });
+        } else if (m.frontPath !== '/admin/settings') {
+          groupMap.get(groupKey)!.children.push({
+            key: m.frontPath,
+            icon: <IconComp />,
+            label: <Link to={m.frontPath}>{m.name}</Link>,
+          });
+        }
       });
 
       groupMap.forEach((group, key) => {
@@ -305,11 +352,30 @@ const Admin: React.FC = () => {
       staticMenuGroups.forEach((group) => {
         const visibleItems = group.items
           .filter((item) => !item.perm || hasPerm(item.perm))
-          .map((item) => ({
-            key: item.key,
-            icon: item.icon,
-            label: <Link to={item.key}>{item.label}</Link>,
-          }));
+          .map((item) => {
+            if ('children' in item && item.children) {
+              const visibleChildren = item.children
+                .filter((child: any) => !child.perm || hasPerm(child.perm))
+                .map((child: any) => ({
+                  key: child.key,
+                  icon: child.icon,
+                  label: <Link to={child.key}>{child.label}</Link>,
+                }));
+              if (visibleChildren.length === 0) return null;
+              return {
+                key: item.key,
+                icon: item.icon,
+                label: item.label,
+                children: visibleChildren,
+              };
+            }
+            return {
+              key: item.key,
+              icon: item.icon,
+              label: <Link to={item.key}>{item.label}</Link>,
+            };
+          })
+          .filter(Boolean);
         if (visibleItems.length === 0) return;
         if (!firstKey) firstKey = group.key;
         result.push({
@@ -350,10 +416,18 @@ const Admin: React.FC = () => {
   // 根据当前路由选中正确的菜单项
   const selectedKey = (() => {
     const path = location.pathname;
-    // 仪表盘精确匹配，其余菜单项前缀匹配
     if (path === '/admin') return ['/admin'];
-    const allItems = staticMenuGroups.flatMap((g) => g.items);
-    const match = allItems.find((item) => item.key !== '/admin' && path.startsWith(item.key));
+    if (path.startsWith('/admin/settings/')) {
+      return [path];
+    }
+    const allItems = staticMenuGroups.flatMap((g) =>
+      g.items.flatMap((item: any) =>
+        'children' in item && item.children
+          ? [item, ...item.children]
+          : [item]
+      )
+    );
+    const match = allItems.find((item: any) => item.key !== '/admin' && path.startsWith(item.key));
     return match ? [match.key] : ['/admin'];
   })();
 

@@ -1,5 +1,16 @@
 import { request } from '@/services/request';
-import type { BlogSettings, CacheClearResult, CacheWarmupResult, CacheStatsResult } from './types';
+import type {
+  BlogSettings,
+  CacheClearResult,
+  CacheWarmupResult,
+  CacheStatsResult,
+  CoreConfig,
+  PrivacyConfig,
+  SocialConfig,
+  SearchConfig,
+  StorageConfig,
+  EmailConfig,
+} from './types';
 
 export async function fetchSettings(admin = false) {
   const url = admin ? '/admin/settings' : '/web/settings';
@@ -8,6 +19,54 @@ export async function fetchSettings(admin = false) {
 
 export async function updateSettings(data: Partial<BlogSettings>) {
   return request<void>('/admin/settings', { method: 'PUT', data });
+}
+
+export async function fetchCoreConfig() {
+  return request<CoreConfig>('/admin/settings/core');
+}
+
+export async function updateCoreConfig(data: Partial<CoreConfig>) {
+  return request<void>('/admin/settings/core', { method: 'PUT', data });
+}
+
+export async function fetchPrivacyConfig() {
+  return request<PrivacyConfig>('/admin/settings/privacy');
+}
+
+export async function updatePrivacyConfig(data: Partial<PrivacyConfig>) {
+  return request<void>('/admin/settings/privacy', { method: 'PUT', data });
+}
+
+export async function fetchSocialConfig() {
+  return request<SocialConfig>('/admin/settings/social');
+}
+
+export async function updateSocialConfig(data: Partial<SocialConfig>) {
+  return request<void>('/admin/settings/social', { method: 'PUT', data });
+}
+
+export async function fetchSearchConfig() {
+  return request<SearchConfig>('/admin/settings/search');
+}
+
+export async function updateSearchConfig(data: Partial<SearchConfig>) {
+  return request<void>('/admin/settings/search', { method: 'PUT', data });
+}
+
+export async function fetchStorageConfig() {
+  return request<StorageConfig>('/admin/settings/storage');
+}
+
+export async function updateStorageConfig(data: Partial<StorageConfig>) {
+  return request<void>('/admin/settings/storage', { method: 'PUT', data });
+}
+
+export async function fetchEmailConfig() {
+  return request<EmailConfig>('/admin/settings/email');
+}
+
+export async function updateEmailConfig(data: Partial<EmailConfig>) {
+  return request<void>('/admin/settings/email', { method: 'PUT', data });
 }
 
 export async function sendEmailVerificationCode(emailConfig: {

@@ -1,27 +1,11 @@
-import { Link } from 'react-router-dom';
-import { App, Breadcrumb, Button, Form, Space, Tabs, Typography, theme as antTheme } from 'antd';
+import { Link, Outlet } from 'react-router-dom';
+import { App, Breadcrumb, Button, Space, Typography, theme as antTheme } from 'antd';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
-import { fetchSettings, updateSettings } from '@/services/blog/api';
-import CoreConfigTab from './settings/CoreConfigTab';
-import PrivacyPolicyTab from './settings/PrivacyPolicyTab';
-import SocialLinksTab from './settings/SocialLinksTab';
-import SearchConfigTab from './settings/SearchConfigTab';
-import StorageConfigTab from './settings/StorageConfigTab';
-import EmailConfigTab from './settings/EmailConfigTab';
-import CacheTab from './settings/CacheTab';
-import MaintenanceTab from './settings/MaintenanceTab';
-import type { SettingsFormValues } from './settings/types';
-
-const configLabelMap: Record<string, string> = {
-  core: '核心', privacy: '隐私政策', ui: '社交链接', search: '搜索', storage: '存储', email: '邮件',
-};
+import React, { useState } from 'react';
 
 const SettingsPage: React.FC = () => {
   const { message } = App.useApp();
   const { token } = antTheme.useToken();
-  const [form] = Form.useForm<SettingsFormValues>();
-  const [savingConfig, setSavingConfig] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
 
   const handleExport = () => {
@@ -73,67 +57,10 @@ const SettingsPage: React.FC = () => {
     reader.readAsText(file);
   };
 
-  useEffect(() => {
-    const load = async () => {
-      const res = await fetchSettings(true);
-      const d = res.data;
-      form.setFieldsValue({
-        ...d,
-        storageConfig: {
-          uploadStrategy: 'LOCAL', uploadLocalDir: 'uploads', uploadLocalUrlPrefix: '/uploads/',
-          uploadQiniuBucket: '', uploadQiniuDomain: '',
-          uploadAliyunEndpoint: '', uploadAliyunBucket: '', uploadAliyunDomain: '',
-          ...(d?.storageConfig || {}),
-        },
-        uiConfig: {
-          ...(d?.uiConfig || {}),
-          recommendStrategy: d?.uiConfig?.recommendStrategy || 'rule',
-          searchEngine: d?.uiConfig?.searchEngine || 'NONE',
-          hotSearchMode: d?.uiConfig?.hotSearchMode ?? false,
-          hotSearchWords: d?.uiConfig?.hotSearchWords || '[]',
-          meilisearchHost: d?.uiConfig?.meilisearchHost || '',
-          meilisearchApiKey: d?.uiConfig?.meilisearchApiKey || '',
-          meilisearchIndex: d?.uiConfig?.meilisearchIndex || 'articles',
-        },
-        emailConfig: {
-          host: '', port: '', username: '', password: '', from: '', loginMfaEnabled: false,
-          ...(d?.emailConfig || {}),
-        },
-      });
-    };
-    void load();
-  }, [form]);
-
-  const saveConfig = async (configKey: string, fieldPath: string[]) => {
-    setSavingConfig(configKey);
-    try {
-      const values = await form.validateFields(fieldPath);
-      await updateSettings(values);
-      message.success(`${configLabelMap[configKey] || configKey}配置保存成功`);
-    } catch {
-      message.error('保存失败，请检查表单');
-    } finally {
-      setSavingConfig(null);
-    }
-  };
-
-  const tabProps = { form, saveConfig, savingConfig };
-
-  const tabItems = [
-    { key: 'core', label: '核心配置', children: <CoreConfigTab {...tabProps} /> },
-    { key: 'privacy', label: '隐私政策', children: <PrivacyPolicyTab {...tabProps} /> },
-    { key: 'ui', label: '社交链接', children: <SocialLinksTab {...tabProps} /> },
-    { key: 'search', label: '搜索配置', children: <SearchConfigTab {...tabProps} /> },
-    { key: 'storage', label: '存储配置', children: <StorageConfigTab {...tabProps} /> },
-    { key: 'email', label: '邮件配置', children: <EmailConfigTab {...tabProps} /> },
-    { key: 'cache', label: '缓存管理', children: <CacheTab /> },
-    { key: 'maintenance', label: '数据维护', children: <MaintenanceTab /> },
-  ];
-
   return (
     <Space direction="vertical" size={16} style={{ width: '100%' }}>
       <div style={{ marginBottom: 16 }}>
-        <Breadcrumb items={[{ title: <Link to="/admin">首页</Link> }, { title: '博客设置' }]} />
+        <Breadcrumb items={[{ title: <Link to="/admin">首页</Link> }, { title: '系统配置' }, { title: '设置' }]} />
       </div>
       <Typography.Title level={3} style={{ margin: 0 }}>博客设置</Typography.Title>
       <Typography.Text type="secondary">统一维护博客品牌、社交链接、存储策略与邮件能力。</Typography.Text>
@@ -163,9 +90,7 @@ const SettingsPage: React.FC = () => {
           </Button>
         </Space>
       </div>
-      <Form form={form} layout="vertical">
-        <Tabs defaultActiveKey="core" items={tabItems} />
-      </Form>
+      <Outlet />
     </Space>
   );
 };

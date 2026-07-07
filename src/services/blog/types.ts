@@ -99,51 +99,65 @@ export type UserItem = {
 
 // ─── 配置 ────────────────────────────────────────────────────
 
+export type CoreConfig = {
+  blogName: string;
+  author: string;
+  introduction: string;
+  avatar: string;
+  poster: string;
+  rssEnabled?: boolean;
+};
+
+export type PrivacyConfig = {
+  privacyPolicy: string;
+};
+
+export type SocialConfig = {
+  githubHome: string;
+  csdnHome: string;
+  giteeHome: string;
+  zhihuHome: string;
+  githubShow: boolean;
+  csdnShow: boolean;
+  giteeShow: boolean;
+  zhihuShow: boolean;
+};
+
+export type SearchConfig = {
+  recommendStrategy: 'rule' | 'weighted' | 'cf';
+  searchEngine: 'NONE' | 'MEILISEARCH';
+  hotSearchMode: boolean;
+  hotSearchWords: string;
+  meilisearchHost: string;
+  meilisearchApiKey: string;
+  meilisearchIndex: string;
+};
+
+export type StorageConfig = {
+  uploadStrategy: string;
+  uploadLocalDir: string;
+  uploadLocalUrlPrefix: string;
+  uploadQiniuBucket: string;
+  uploadQiniuDomain: string;
+  uploadAliyunEndpoint: string;
+  uploadAliyunBucket: string;
+  uploadAliyunDomain: string;
+};
+
+export type EmailConfig = {
+  host: string;
+  port: string;
+  username: string;
+  password: string;
+  from: string;
+  loginMfaEnabled?: boolean;
+};
+
 export type BlogSettings = {
-  coreConfig: {
-        blogName: string;
-        author: string;
-        introduction: string;
-        avatar: string;
-        poster: string;
-        privacyPolicy?: string;
-        rssEnabled?: boolean;
-      };
-  uiConfig: {
-    githubHome: string;
-    csdnHome: string;
-    giteeHome: string;
-    zhihuHome: string;
-    githubShow: boolean;
-    csdnShow: boolean;
-    giteeShow: boolean;
-    zhihuShow: boolean;
-    recommendStrategy: 'rule' | 'weighted' | 'cf';
-    searchEngine: 'NONE' | 'MEILISEARCH';
-    hotSearchMode: boolean;
-    hotSearchWords: string;
-    meilisearchHost: string;
-    meilisearchApiKey: string;
-    meilisearchIndex: string;
-  };
-  storageConfig?: {
-    uploadStrategy: string;
-    uploadLocalDir: string;
-    uploadLocalUrlPrefix: string;
-    uploadQiniuBucket: string;
-    uploadQiniuDomain: string;
-    uploadAliyunEndpoint: string;
-    uploadAliyunBucket: string;
-    uploadAliyunDomain: string;
-  };
-  emailConfig?: {
-    host: string;
-    port: string;
-    username: string;
-    password: string;
-    from: string;
-    loginMfaEnabled?: boolean;
-  };
+  coreConfig: CoreConfig & { privacyPolicy?: string };
+  uiConfig: SocialConfig & SearchConfig;
+  storageConfig?: StorageConfig;
+  emailConfig?: EmailConfig;
 };
 
 // ─── 仪表盘 ──────────────────────────────────────────────────
