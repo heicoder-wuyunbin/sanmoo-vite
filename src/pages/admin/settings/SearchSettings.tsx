@@ -1,12 +1,12 @@
-import { App, Breadcrumb, Button, Card, Form, Input, Select, Space, Switch, Typography } from 'antd';
+import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { App, Button, Card, Col, Form, Input, Popconfirm, Row, Select, Space, Switch, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { fetchSearchConfig, updateSearchConfig, syncMeiliSearch } from '@/services/blog/settings-api';
 import type { SearchConfig } from '@/services/blog/types';
-import { ADMIN_CARD_STYLE } from '@/styles/layout';
 
 const SearchSettings: React.FC = () => {
   const { message } = App.useApp();
+  const { token } = antTheme.useToken();
   const [form] = Form.useForm<SearchConfig>();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -53,73 +53,280 @@ const SearchSettings: React.FC = () => {
   };
 
   return (
-    <Space direction="vertical" size={16} style={{ width: '100%' }}>
-      <div style={{ marginBottom: 16 }}>
-        <Breadcrumb items={[{ title: <Link to="/admin">首页</Link> }, { title: '系统配置' }, { title: '搜索配置' }]} />
-      </div>
-      <Typography.Title level={3} style={{ margin: 0 }}>搜索配置</Typography.Title>
-      <Typography.Text type="secondary">配置搜索服务、推荐策略与热门搜索。</Typography.Text>
-      <Card style={{ ...ADMIN_CARD_STYLE }} loading={loading}>
+    <div className="search-settings-container">
+      <Card
+        loading={loading}
+        style={{
+          border: `1px solid ${token.colorBorderSecondary}`,
+          borderRadius: token.borderRadiusLG,
+          boxShadow: token.boxShadow,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '24px 32px',
+            background: `linear-gradient(135deg, ${token.colorPrimary}15 0%, ${token.colorPrimary}08 100%)`,
+            margin: '-24px -24px 24px',
+            animation: 'fadeIn 0.4s ease-out',
+          }}
+        >
+          <Space direction="vertical" size={8}>
+            <Typography.Title level={3} style={{ margin: 0, fontWeight: 600 }}>
+              搜索配置
+            </Typography.Title>
+            <Typography.Text type="secondary">
+              配置搜索服务、推荐策略与热门搜索，提升用户内容发现体验。
+            </Typography.Text>
+          </Space>
+        </div>
+
         <Form form={form} layout="vertical">
-          <Form.Item name="recommendStrategy" label="推荐策略">
-            <Select
-              options={[
-                { label: '规则推荐', value: 'rule' },
-                { label: '加权推荐', value: 'weighted' },
-                { label: '协同过滤', value: 'cf' },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item name="searchEngine" label="搜索引擎">
-            <Select
-              options={[
-                { label: '无', value: 'NONE' },
-                { label: 'MeiliSearch', value: 'MEILISEARCH' },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            name="hotSearchMode"
-            label="使用 MeiliSearch"
-            tooltip="开启后使用 MeiliSearch 搜索引擎和真热门；关闭时使用内置搜索和配置的关键词"
-            valuePropName="checked"
+          <Row gutter={[24, 24]}>
+            <Col xs={24} md={8}>
+              <Card
+                size="small"
+                title="推荐策略"
+                style={{
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                  borderRadius: token.borderRadiusLG,
+                  animation: 'fadeInUp 0.4s ease-out 0.1s both',
+                }}
+                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+              >
+                <Form.Item name="recommendStrategy" label="推荐算法">
+                  <Select
+                    options={[
+                      { label: '规则推荐', value: 'rule' },
+                      { label: '加权推荐', value: 'weighted' },
+                      { label: '协同过滤', value: 'cf' },
+                    ]}
+                    size="large"
+                    style={{
+                      borderRadius: token.borderRadiusLG,
+                      transition: 'all 0.3s ease',
+                    }}
+                  />
+                </Form.Item>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  选择文章推荐的算法策略，影响首页推荐内容的排序。
+                </Typography.Text>
+              </Card>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Card
+                size="small"
+                title="搜索引擎"
+                style={{
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                  borderRadius: token.borderRadiusLG,
+                  animation: 'fadeInUp 0.4s ease-out 0.15s both',
+                }}
+                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+              >
+                <Form.Item name="searchEngine" label="选择引擎">
+                  <Select
+                    options={[
+                      { label: '无', value: 'NONE' },
+                      { label: 'MeiliSearch', value: 'MEILISEARCH' },
+                    ]}
+                    size="large"
+                    style={{
+                      borderRadius: token.borderRadiusLG,
+                      transition: 'all 0.3s ease',
+                    }}
+                  />
+                </Form.Item>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  选择全文搜索引擎，建议使用 MeiliSearch 以获得更好的搜索体验。
+                </Typography.Text>
+              </Card>
+            </Col>
+
+            <Col xs={24} md={8}>
+              <Card
+                size="small"
+                title="热门搜索"
+                style={{
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                  borderRadius: token.borderRadiusLG,
+                  animation: 'fadeInUp 0.4s ease-out 0.2s both',
+                }}
+                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+              >
+                <Form.Item
+                  name="hotSearchMode"
+                  label="使用 MeiliSearch"
+                  tooltip="开启后使用 MeiliSearch 搜索引擎和真热门；关闭时使用内置搜索和配置的关键词"
+                  valuePropName="checked"
+                >
+                  <Switch
+                    checkedChildren="开启"
+                    unCheckedChildren="关闭"
+                    style={{
+                      background: token.colorPrimary,
+                    }}
+                  />
+                </Form.Item>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  开启后自动根据搜索热度生成热门关键词。
+                </Typography.Text>
+              </Card>
+            </Col>
+          </Row>
+
+          <Card
+            size="small"
+            title="MeiliSearch 配置"
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              animation: 'fadeInUp 0.4s ease-out 0.25s both',
+            }}
+            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
-            <Switch checkedChildren="开启" unCheckedChildren="关闭" />
-          </Form.Item>
-          <Form.Item
-            name="hotSearchWords"
-            label="热门搜索词"
-            extra='仅在关闭 MeiliSearch 模式下生效，输入数组格式的热门搜索词，如：["java", "springboot"]'
+            <Space direction="vertical" size={20} style={{ width: '100%' }}>
+              <Form.Item name="meilisearchHost" label="MeiliSearch 地址">
+                <Input
+                  placeholder="http://localhost:7700"
+                  size="large"
+                  prefix={<SearchOutlined />}
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                    transition: 'all 0.3s ease',
+                  }}
+                />
+              </Form.Item>
+              <Row gutter={[24, 0]}>
+                <Col xs={24} md={12}>
+                  <Form.Item name="meilisearchApiKey" label="API Key">
+                    <Input.Password
+                      placeholder="MeiliSearch API Key"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item name="meilisearchIndex" label="索引名称">
+                    <Input
+                      placeholder="articles"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Form.Item name="hotSearchWords" label="热门搜索词（备用）">
+                <Input.TextArea
+                  rows={3}
+                  placeholder='["java", "springboot", "mysql", "redis"]'
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                    transition: 'all 0.3s ease',
+                  }}
+                />
+                <Typography.Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
+                  仅在关闭 MeiliSearch 模式下生效，输入数组格式的热门搜索词。
+                </Typography.Text>
+              </Form.Item>
+            </Space>
+          </Card>
+
+          <Card
+            size="small"
+            title="数据同步"
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              animation: 'fadeInUp 0.4s ease-out 0.3s both',
+            }}
+            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
-            <Input.TextArea rows={3} placeholder='["java", "springboot", "mysql", "redis"]' />
-          </Form.Item>
-          <Form.Item name="meilisearchHost" label="MeiliSearch 地址">
-            <Input placeholder="例如: http://localhost:7700" />
-          </Form.Item>
-          <Form.Item name="meilisearchApiKey" label="MeiliSearch API Key">
-            <Input.Password placeholder="MeiliSearch 的 API Key" />
-          </Form.Item>
-          <Form.Item name="meilisearchIndex" label="MeiliSearch 索引名称">
-            <Input placeholder="articles" />
-          </Form.Item>
-          <Form.Item label="数据同步">
-            <Space wrap>
-              <Button type="primary" loading={syncLoading} onClick={handleSync}>
-                同步 MySQL 到 MeiliSearch
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Space wrap>
+                <Popconfirm
+                  title="确认同步"
+                  description="将 MySQL 中的所有已发布文章同步到 MeiliSearch 索引，确定继续吗？"
+                  onConfirm={handleSync}
+                  okText="确认同步"
+                  cancelText="取消"
+                >
+                  <Button
+                    type="primary"
+                    icon={<SyncOutlined />}
+                    loading={syncLoading}
+                    size="large"
+                    style={{
+                      borderRadius: token.borderRadiusLG,
+                    }}
+                  >
+                    同步 MySQL 到 MeiliSearch
+                  </Button>
+                </Popconfirm>
+              </Space>
+              <Typography.Text type="secondary">
+                将 MySQL 中的所有已发布文章同步到 MeiliSearch 索引，建议在首次配置或文章批量更新后执行。
+              </Typography.Text>
+            </Space>
+          </Card>
+
+          <div
+            style={{
+              marginTop: 24,
+              paddingTop: 24,
+              borderTop: `1px solid ${token.colorBorderSecondary}`,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              animation: 'fadeInUp 0.4s ease-out 0.4s both',
+            }}
+          >
+            <Space>
+              <Button size="large">取消</Button>
+              <Button
+                type="primary"
+                size="large"
+                loading={saving}
+                onClick={handleSave}
+                style={{
+                  borderRadius: token.borderRadiusLG,
+                  padding: '0 32px',
+                }}
+              >
+                保存配置
               </Button>
             </Space>
-            <Typography.Text type="secondary" style={{ marginTop: 8, display: 'block' }}>
-              将 MySQL 中的所有已发布文章同步到 MeiliSearch 索引，建议在首次配置或文章批量更新后执行
-            </Typography.Text>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" loading={saving} onClick={handleSave}>
-              保存搜索配置
-            </Button>
-          </Form.Item>
+          </div>
         </Form>
       </Card>
-    </Space>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .search-settings-container {
+          width: 100%;
+        }
+      `}</style>
+    </div>
   );
 };
 

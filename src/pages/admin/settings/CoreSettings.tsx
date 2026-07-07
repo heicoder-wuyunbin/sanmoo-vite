@@ -2,27 +2,28 @@ import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import {
   App,
   Avatar,
-  Breadcrumb,
   Button,
   Card,
+  Col,
   Form,
   Input,
+  Row,
   Space,
   Switch,
   Typography,
   Upload,
+  theme as antTheme,
   type UploadFile,
   type UploadProps,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { uploadAdminFile } from '@/services/blog/api';
 import { fetchCoreConfig, updateCoreConfig } from '@/services/blog/settings-api';
 import type { CoreConfig } from '@/services/blog/types';
-import { ADMIN_CARD_STYLE } from '@/styles/layout';
 
 const CoreSettings: React.FC = () => {
   const { message } = App.useApp();
+  const { token } = antTheme.useToken();
   const [form] = Form.useForm<CoreConfig>();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -90,75 +91,236 @@ const CoreSettings: React.FC = () => {
   };
 
   return (
-    <Space direction="vertical" size={16} style={{ width: '100%' }}>
-      <div style={{ marginBottom: 16 }}>
-        <Breadcrumb items={[{ title: <Link to="/admin">首页</Link> }, { title: '系统配置' }, { title: '核心配置' }]} />
-      </div>
-      <Typography.Title level={3} style={{ margin: 0 }}>核心配置</Typography.Title>
-      <Typography.Text type="secondary">配置博客基本信息、作者信息与头像。</Typography.Text>
-      <Card style={{ ...ADMIN_CARD_STYLE }} loading={loading}>
+    <div className="core-settings-container">
+      <Card
+        loading={loading}
+        style={{
+          border: `1px solid ${token.colorBorderSecondary}`,
+          borderRadius: token.borderRadiusLG,
+          boxShadow: token.boxShadow,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '24px 32px',
+            background: `linear-gradient(135deg, ${token.colorPrimary}15 0%, ${token.colorPrimary}08 100%)`,
+            margin: '-24px -24px 24px',
+            animation: 'fadeIn 0.4s ease-out',
+          }}
+        >
+          <Space direction="vertical" size={8}>
+            <Typography.Title level={3} style={{ margin: 0, fontWeight: 600 }}>
+              核心配置
+            </Typography.Title>
+            <Typography.Text type="secondary">
+              配置博客基本信息、作者信息与头像展示。
+            </Typography.Text>
+          </Space>
+        </div>
+
         <Form form={form} layout="vertical">
-          <Form.Item name="blogName" label="博客名称" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="author" label="作者" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="introduction" label="简介">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-          <Form.Item name="rssEnabled" label="RSS订阅" valuePropName="checked">
-            <Switch />
-          </Form.Item>
-          <Form.Item label="头像" name="avatar">
-            <Upload
-              name="file"
-              accept="image/*"
-              listType="picture-card"
-              maxCount={1}
-              fileList={avatarFileList}
-              customRequest={onAvatarUpload}
-              beforeUpload={(file) => {
-                if (!file.type.startsWith('image/')) {
-                  message.error('只能上传图片文件');
-                  return Upload.LIST_IGNORE;
-                }
-                return true;
-              }}
-              onRemove={() => {
-                form.setFieldValue('avatar', '');
-                return true;
-              }}
-            >
-              {avatarFileList.length >= 1 ? null : (
-                <div>
-                  {avatarUploading ? <LoadingOutlined /> : <PlusOutlined />}
-                  <div style={{ marginTop: 8 }}>上传头像</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
-          <Typography.Text type="secondary" style={{ marginBottom: 16, display: 'block' }}>
-            点击上传即可更换头像
-          </Typography.Text>
-          <Form.Item label="头像预览">
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={8}>
+              <Card
+                size="small"
+                title="头像设置"
+                style={{
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                  borderRadius: token.borderRadiusLG,
+                  animation: 'fadeInUp 0.4s ease-out 0.1s both',
+                }}
+                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+              >
+                <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <Avatar
+                      size={100}
+                      src={avatarPreviewUrl || undefined}
+                      icon={<UserOutlined />}
+                      style={{
+                        marginBottom: 12,
+                        boxShadow: token.boxShadowSecondary,
+                        border: `2px solid ${token.colorBorderSecondary}`,
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {authorValue?.trim()?.slice(0, 1)?.toUpperCase() || 'A'}
+                    </Avatar>
+                    <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                      {avatarPreviewUrl ? '已上传头像' : '未设置头像，显示作者首字'}
+                    </Typography.Text>
+                  </div>
+
+                  <Upload
+                    name="file"
+                    accept="image/*"
+                    listType="picture-card"
+                    maxCount={1}
+                    fileList={avatarFileList}
+                    customRequest={onAvatarUpload}
+                    beforeUpload={(file) => {
+                      if (!file.type.startsWith('image/')) {
+                        message.error('只能上传图片文件');
+                        return Upload.LIST_IGNORE;
+                      }
+                      return true;
+                    }}
+                    onRemove={() => {
+                      form.setFieldValue('avatar', '');
+                      return true;
+                    }}
+                    style={{ animation: 'fadeInUp 0.4s ease-out 0.2s both' }}
+                  >
+                    {avatarFileList.length >= 1 ? null : (
+                      <div style={{ padding: '20px 0' }}>
+                        {avatarUploading ? (
+                          <LoadingOutlined style={{ fontSize: 24 }} />
+                        ) : (
+                          <>
+                            <PlusOutlined style={{ fontSize: 24, marginBottom: 8 }} />
+                            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                              点击上传头像
+                            </Typography.Text>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </Upload>
+
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    支持 JPG、PNG 格式，建议尺寸 200x200px
+                  </Typography.Text>
+                </Space>
+              </Card>
+            </Col>
+
+            <Col xs={24} lg={16}>
+              <Card
+                size="small"
+                title="基本信息"
+                style={{
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                  borderRadius: token.borderRadiusLG,
+                  animation: 'fadeInUp 0.4s ease-out 0.15s both',
+                }}
+                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+              >
+                <Space direction="vertical" size={20} style={{ width: '100%' }}>
+                  <Form.Item
+                    name="blogName"
+                    label="博客名称"
+                    rules={[{ required: true, message: '请输入博客名称' }]}
+                  >
+                    <Input
+                      placeholder="请输入博客名称"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="author"
+                    label="作者"
+                    rules={[{ required: true, message: '请输入作者名称' }]}
+                  >
+                    <Input
+                      placeholder="请输入作者名称"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item name="introduction" label="简介">
+                    <Input.TextArea
+                      rows={4}
+                      placeholder="请输入博客简介，将展示在首页"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="rssEnabled"
+                    label="RSS 订阅"
+                    valuePropName="checked"
+                    rules={[{ required: true }]}
+                  >
+                    <Space>
+                      <Switch
+                        checkedChildren="开启"
+                        unCheckedChildren="关闭"
+                        style={{
+                          background: token.colorPrimary,
+                        }}
+                      />
+                      <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                        开启后将生成 RSS 订阅源，方便读者订阅博客更新
+                      </Typography.Text>
+                    </Space>
+                  </Form.Item>
+                </Space>
+              </Card>
+            </Col>
+          </Row>
+
+          <div
+            style={{
+              marginTop: 24,
+              paddingTop: 24,
+              borderTop: `1px solid ${token.colorBorderSecondary}`,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              animation: 'fadeInUp 0.4s ease-out 0.3s both',
+            }}
+          >
             <Space>
-              <Avatar size={64} src={avatarPreviewUrl || undefined} icon={<UserOutlined />}>
-                {authorValue?.trim()?.slice(0, 1)?.toUpperCase() || 'A'}
-              </Avatar>
-              <Typography.Text type="secondary">
-                {avatarPreviewUrl ? '当前使用上传头像' : '未设置头像时显示作者首字'}
-              </Typography.Text>
+              <Button size="large">取消</Button>
+              <Button
+                type="primary"
+                size="large"
+                loading={saving}
+                onClick={handleSave}
+                style={{
+                  borderRadius: token.borderRadiusLG,
+                  padding: '0 32px',
+                }}
+              >
+                保存配置
+              </Button>
             </Space>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" loading={saving} onClick={handleSave}>
-              保存核心配置
-            </Button>
-          </Form.Item>
+          </div>
         </Form>
       </Card>
-    </Space>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .core-settings-container {
+          width: 100%;
+        }
+      `}</style>
+    </div>
   );
 };
 

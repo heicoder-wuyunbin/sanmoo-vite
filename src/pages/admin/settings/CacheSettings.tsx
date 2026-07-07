@@ -1,16 +1,15 @@
 import { ClearOutlined, DatabaseOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import {
-  App, Breadcrumb, Button, Card, Col, Empty, Popconfirm, Row, Space, Statistic,
-  Table, Tag, Typography,
+  App, Button, Card, Col, Empty, Popconfirm, Row, Space, Statistic,
+  Table, Tag, Typography, theme as antTheme,
 } from 'antd';
 import React, { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { clearCache, fetchCacheStats, warmupCache } from '@/services/blog/settings-api';
-import { ADMIN_CARD_STYLE } from '@/styles/layout';
 
 const CacheSettings: React.FC = () => {
   const { message } = App.useApp();
+  const { token } = antTheme.useToken();
   const queryClient = useQueryClient();
   const [clearing, setClearing] = useState(false);
   const [warming, setWarming] = useState(false);
@@ -68,91 +67,208 @@ const CacheSettings: React.FC = () => {
   }, [queryClient, message]);
 
   return (
-    <Space direction="vertical" size={16} style={{ width: '100%' }}>
-      <div style={{ marginBottom: 16 }}>
-        <Breadcrumb items={[{ title: <Link to="/admin">首页</Link> }, { title: '系统配置' }, { title: '缓存管理' }]} />
-      </div>
-      <Typography.Title level={3} style={{ margin: 0 }}>缓存管理</Typography.Title>
-      <Typography.Text type="secondary">查看缓存状态、清理缓存与预热缓存。</Typography.Text>
-      <Card style={{ ...ADMIN_CARD_STYLE }}>
-        <Typography.Text type="secondary" style={{ marginBottom: 16, display: 'block' }}>
-          管理 Redis 业务缓存，支持一键清空、缓存预热及实时状态监控。
-        </Typography.Text>
-        <Space size="middle" wrap style={{ marginBottom: 24 }}>
-          <Popconfirm
-            title="确认清空缓存"
-            description="将清空所有业务缓存（blog:*），确定继续吗？"
-            onConfirm={handleClearCache}
-            okText="确认清空"
-            cancelText="取消"
-            okButtonProps={{ danger: true }}
-          >
-            <Button type="primary" danger icon={<ClearOutlined />} loading={clearing}>
-              一键清空缓存
-            </Button>
-          </Popconfirm>
-          <Popconfirm
-            title="确认缓存预热"
-            description="将从数据库重新加载数据并写入缓存，确定继续吗？"
-            onConfirm={handleWarmupCache}
-            okText="确认预热"
-            cancelText="取消"
-          >
-            <Button type="primary" icon={<ThunderboltOutlined />} loading={warming}>
-              一键缓存预热
-            </Button>
-          </Popconfirm>
-          <Button icon={<ReloadOutlined />} onClick={() => refetchCache()} loading={cacheLoading}>
-            刷新状态
-          </Button>
-        </Space>
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} sm={8}>
-            <Statistic
-              title="缓存 Key 总数"
-              value={cacheStats?.totalKeys ?? 0}
-              prefix={<DatabaseOutlined />}
-            />
-          </Col>
-          <Col xs={24} sm={8}>
-            <Statistic
-              title="缓存分类数"
-              value={cacheStats?.prefixCounts ? Object.keys(cacheStats.prefixCounts).length : 0}
-            />
-          </Col>
-          <Col xs={24} sm={8}>
-            <Statistic
-              title="Redis 内存占用"
-              value={cacheStats?.memoryUsed ?? '-'}
-            />
-          </Col>
-        </Row>
-        {cacheStats?.prefixCounts && Object.keys(cacheStats.prefixCounts).length > 0 ? (
-          <Table
-            dataSource={Object.entries(cacheStats.prefixCounts).map(([prefix, count]) => ({ key: prefix, prefix, count }))}
-            columns={[
-              {
-                title: '缓存分类',
-                dataIndex: 'prefix',
-                key: 'prefix',
-                render: (text: string) => <Tag color="blue">{text}</Tag>,
-              },
-              {
-                title: 'Key 数量',
-                dataIndex: 'count',
-                key: 'count',
-                align: 'right' as const,
-                render: (count: number) => <Typography.Text strong>{count}</Typography.Text>,
-              },
-            ]}
-            pagination={false}
+    <div className="cache-settings-container">
+      <Card
+        style={{
+          border: `1px solid ${token.colorBorderSecondary}`,
+          borderRadius: token.borderRadiusLG,
+          boxShadow: token.boxShadow,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '24px 32px',
+            background: `linear-gradient(135deg, ${token.colorPrimary}15 0%, ${token.colorPrimary}08 100%)`,
+            margin: '-24px -24px 24px',
+            animation: 'fadeIn 0.4s ease-out',
+          }}
+        >
+          <Space direction="vertical" size={8}>
+            <Typography.Title level={3} style={{ margin: 0, fontWeight: 600 }}>
+              缓存管理
+            </Typography.Title>
+            <Typography.Text type="secondary">
+              查看缓存状态、清理缓存与预热缓存，优化系统性能。
+            </Typography.Text>
+          </Space>
+        </div>
+
+        <Space direction="vertical" size={24} style={{ width: '100%' }}>
+          <Card
             size="small"
-          />
-        ) : (
-          <Empty description={cacheLoading ? '加载中...' : '暂无缓存数据，请先执行缓存预热'} />
-        )}
+            title="缓存操作"
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              animation: 'fadeInUp 0.4s ease-out 0.1s both',
+            }}
+            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+          >
+            <Space size="middle" wrap>
+              <Popconfirm
+                title="确认清空缓存"
+                description="将清空所有业务缓存（blog:*），确定继续吗？"
+                onConfirm={handleClearCache}
+                okText="确认清空"
+                cancelText="取消"
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  type="primary"
+                  danger
+                  icon={<ClearOutlined />}
+                  loading={clearing}
+                  size="large"
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                >
+                  一键清空缓存
+                </Button>
+              </Popconfirm>
+              <Popconfirm
+                title="确认缓存预热"
+                description="将从数据库重新加载数据并写入缓存，确定继续吗？"
+                onConfirm={handleWarmupCache}
+                okText="确认预热"
+                cancelText="取消"
+              >
+                <Button
+                  type="primary"
+                  icon={<ThunderboltOutlined />}
+                  loading={warming}
+                  size="large"
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                >
+                  一键缓存预热
+                </Button>
+              </Popconfirm>
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={() => refetchCache()}
+                loading={cacheLoading}
+                size="large"
+                style={{
+                  borderRadius: token.borderRadiusLG,
+                }}
+              >
+                刷新状态
+              </Button>
+            </Space>
+            <Typography.Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 12 }}>
+              缓存预热会从数据库加载常用数据并写入 Redis，提升首次访问速度。
+            </Typography.Text>
+          </Card>
+
+          <Card
+            size="small"
+            title="缓存统计"
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              animation: 'fadeInUp 0.4s ease-out 0.15s both',
+            }}
+            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={8}>
+                <Statistic
+                  title="缓存 Key 总数"
+                  value={cacheStats?.totalKeys ?? 0}
+                  prefix={<DatabaseOutlined style={{ color: token.colorPrimary }} />}
+                  style={{
+                    background: `${token.colorBgLayout}`,
+                    padding: '16px',
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                />
+              </Col>
+              <Col xs={24} sm={8}>
+                <Statistic
+                  title="缓存分类数"
+                  value={cacheStats?.prefixCounts ? Object.keys(cacheStats.prefixCounts).length : 0}
+                  style={{
+                    background: `${token.colorBgLayout}`,
+                    padding: '16px',
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                />
+              </Col>
+              <Col xs={24} sm={8}>
+                <Statistic
+                  title="Redis 内存占用"
+                  value={cacheStats?.memoryUsed ?? '-'}
+                  style={{
+                    background: `${token.colorBgLayout}`,
+                    padding: '16px',
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                />
+              </Col>
+            </Row>
+          </Card>
+
+          <Card
+            size="small"
+            title="缓存分类详情"
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              animation: 'fadeInUp 0.4s ease-out 0.2s both',
+            }}
+            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+          >
+            {cacheStats?.prefixCounts && Object.keys(cacheStats.prefixCounts).length > 0 ? (
+              <Table
+                dataSource={Object.entries(cacheStats.prefixCounts).map(([prefix, count]) => ({ key: prefix, prefix, count }))}
+                columns={[
+                  {
+                    title: '缓存分类',
+                    dataIndex: 'prefix',
+                    key: 'prefix',
+                    render: (text: string) => <Tag color="blue">{text}</Tag>,
+                  },
+                  {
+                    title: 'Key 数量',
+                    dataIndex: 'count',
+                    key: 'count',
+                    align: 'right' as const,
+                    render: (count: number) => <Typography.Text strong>{count}</Typography.Text>,
+                  },
+                ]}
+                pagination={false}
+                size="small"
+              />
+            ) : (
+              <Empty description={cacheLoading ? '加载中...' : '暂无缓存数据，请先执行缓存预热'} />
+            )}
+          </Card>
+        </Space>
       </Card>
-    </Space>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .cache-settings-container {
+          width: 100%;
+        }
+      `}</style>
+    </div>
   );
 };
 
