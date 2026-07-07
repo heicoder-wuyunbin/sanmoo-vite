@@ -35,6 +35,15 @@ import {
   WechatOutlined,
   SafetyOutlined,
   TeamOutlined,
+  BarChartOutlined,
+  LineChartOutlined,
+  DatabaseOutlined,
+  PictureOutlined,
+  LinkOutlined,
+  LockOutlined,
+  KeyOutlined,
+  EyeOutlined,
+  FileSearchOutlined,
 } from '@ant-design/icons';
 import { clearAuth, getCurrentUser, getCurrentUserId } from '@/utils/auth';
 import { updateUserPassword } from '@/services/blog/api';
@@ -59,6 +68,31 @@ const ICON_MAP: Record<string, React.FC<any>> = {
   WechatOutlined,
   SafetyOutlined,
   TeamOutlined,
+  BarChartOutlined,
+  LineChartOutlined,
+  DatabaseOutlined,
+  PictureOutlined,
+  LinkOutlined,
+  LockOutlined,
+  KeyOutlined,
+  EyeOutlined,
+  FileSearchOutlined,
+};
+
+const MODULE_ICON_MAP: Record<string, React.FC<any>> = {
+  dashboard: BarChartOutlined,
+  article: FileTextOutlined,
+  category: FolderOutlined,
+  tag: TagsOutlined,
+  topic: BookOutlined,
+  link: LinkOutlined,
+  file: PictureOutlined,
+  user: UserOutlined,
+  mpuser: WechatOutlined,
+  role: TeamOutlined,
+  permission: LockOutlined,
+  maintenance: MonitorOutlined,
+  setting: SettingOutlined,
 };
 
 // 模块中文名映射
@@ -163,6 +197,7 @@ const Admin: React.FC = () => {
     {
       key: 'group-system',
       label: '系统',
+      icon: <BarChartOutlined />,
       items: [
         { key: '/admin', icon: <HomeOutlined />, label: '仪表盘', perm: 'dashboard:read' },
       ],
@@ -170,17 +205,19 @@ const Admin: React.FC = () => {
     {
       key: 'group-content',
       label: '内容管理',
+      icon: <FileTextOutlined />,
       items: [
         { key: '/admin/articles', icon: <FileTextOutlined />, label: '文章管理', perm: 'article:list' },
         { key: '/admin/categories', icon: <FolderOutlined />, label: '分类管理', perm: 'category:list' },
         { key: '/admin/tags', icon: <TagsOutlined />, label: '标签管理', perm: 'tag:list' },
         { key: '/admin/topics', icon: <BookOutlined />, label: '专题管理', perm: 'topic:list' },
-        { key: '/admin/links', icon: <GlobalOutlined />, label: '友情链接', perm: 'link:list' },
+        { key: '/admin/links', icon: <LinkOutlined />, label: '友情链接', perm: 'link:list' },
       ],
     },
     {
       key: 'group-media',
       label: '媒体资源',
+      icon: <PictureOutlined />,
       items: [
         { key: '/admin/files', icon: <FileImageOutlined />, label: '文件管理', perm: 'file:list' },
       ],
@@ -188,24 +225,27 @@ const Admin: React.FC = () => {
     {
       key: 'group-user-perm',
       label: '用户权限',
+      icon: <UserOutlined />,
       items: [
         { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
         { key: '/admin/mp-users', icon: <WechatOutlined />, label: '微信用户', perm: 'mpuser:list' },
         { key: '/admin/roles', icon: <TeamOutlined />, label: '角色管理', perm: 'role:list' },
-        { key: '/admin/permissions', icon: <SafetyOutlined />, label: '权限列表', perm: 'permission:list' },
+        { key: '/admin/permissions', icon: <LockOutlined />, label: '权限列表', perm: 'permission:list' },
       ],
     },
     {
       key: 'group-monitor',
       label: '监控运维',
+      icon: <MonitorOutlined />,
       items: [
-        { key: '/admin/visitors', icon: <MonitorOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
+        { key: '/admin/visitors', icon: <LineChartOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
         { key: '/admin/errors', icon: <BugOutlined />, label: '错误日志', perm: 'dashboard:errors' },
       ],
     },
     {
       key: 'group-setting',
       label: '系统配置',
+      icon: <SettingOutlined />,
       items: [
         { key: '/admin/settings', icon: <SettingOutlined />, label: '设置', perm: 'setting:read' },
       ],
@@ -235,18 +275,19 @@ const Admin: React.FC = () => {
     let firstKey = '';
 
     if (menus && menus.length > 0) {
-      const groupMap = new Map<string, { label: string; children: any[] }>();
+      const groupMap = new Map<string, { label: string; icon: React.ReactNode; children: any[] }>();
       menus.forEach((m) => {
         const groupKey = MODULE_GROUP_KEYS[m.module] || `group-${m.module}`;
         const label = MODULE_LABELS[m.module] || m.module;
+        const groupIcon = MODULE_ICON_MAP[m.module] ? <MODULE_ICON_MAP[m.module] /> : <FileTextOutlined />;
         if (!groupMap.has(groupKey)) {
-          groupMap.set(groupKey, { label, children: [] });
+          groupMap.set(groupKey, { label, icon: groupIcon, children: [] });
         }
-        const IconComp = ICON_MAP[m.icon] || FileTextOutlined;
+        const IconComp = ICON_MAP[m.icon] || MODULE_ICON_MAP[m.module] || FileTextOutlined;
         groupMap.get(groupKey)!.children.push({
           key: m.frontPath,
           icon: <IconComp />,
-          label: <Link to={m.frontPath}>{m.name}</Link>,
+          label: m.name,
         });
       });
 
@@ -255,6 +296,7 @@ const Admin: React.FC = () => {
         result.push({
           key,
           label: group.label,
+          icon: group.icon,
           children: group.children,
         });
       });
@@ -265,13 +307,14 @@ const Admin: React.FC = () => {
           .map((item) => ({
             key: item.key,
             icon: item.icon,
-            label: <Link to={item.key}>{item.label}</Link>,
+            label: item.label,
           }));
         if (visibleItems.length === 0) return;
         if (!firstKey) firstKey = group.key;
         result.push({
           key: group.key,
           label: group.label,
+          icon: group.icon,
           children: visibleItems,
         });
       });
@@ -294,6 +337,12 @@ const Admin: React.FC = () => {
       setOpenKeys([latestOpenKey]);
     } else {
       setOpenKeys(keys);
+    }
+  };
+
+  const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
+    if (key.startsWith('/')) {
+      navigate(key);
     }
   };
 
@@ -344,6 +393,7 @@ const Admin: React.FC = () => {
           selectedKeys={selectedKey}
           openKeys={openKeys}
           onOpenChange={handleOpenChange}
+          onClick={handleMenuClick}
           items={menuItems}
           style={{ borderInlineEnd: 'none', padding: '12px 8px' }}
         />
