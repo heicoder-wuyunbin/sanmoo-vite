@@ -204,8 +204,22 @@ const Admin: React.FC = () => {
     },
   ];
 
-  // 静态菜单配置（fallback，当后端未返回菜单时使用）
-  const staticMenuGroups = [
+  interface StaticMenuItem {
+    key: string;
+    icon: React.ReactNode;
+    label: React.ReactNode;
+    perm?: string;
+    children?: StaticMenuItem[];
+  }
+
+  interface StaticMenuGroup {
+    key: string;
+    label: React.ReactNode;
+    icon: React.ReactNode;
+    items: StaticMenuItem[];
+  }
+
+  const staticMenuGroups: StaticMenuGroup[] = [
     {
       key: 'group-system',
       label: '系统',

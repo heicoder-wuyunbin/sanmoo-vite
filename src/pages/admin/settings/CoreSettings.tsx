@@ -24,7 +24,6 @@ import { ADMIN_CARD_STYLE } from '@/styles/layout';
 
 const CoreSettings: React.FC = () => {
   const { message } = App.useApp();
-  const { token } = antTheme.useToken();
   const [form] = Form.useForm<CoreConfig>();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
