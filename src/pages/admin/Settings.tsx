@@ -10,6 +10,7 @@ import SearchConfigTab from './settings/SearchConfigTab';
 import StorageConfigTab from './settings/StorageConfigTab';
 import EmailConfigTab from './settings/EmailConfigTab';
 import CacheTab from './settings/CacheTab';
+import MaintenanceTab from './settings/MaintenanceTab';
 import type { SettingsFormValues } from './settings/types';
 
 const configLabelMap: Record<string, string> = {
@@ -126,6 +127,7 @@ const SettingsPage: React.FC = () => {
     { key: 'storage', label: '存储配置', children: <StorageConfigTab {...tabProps} /> },
     { key: 'email', label: '邮件配置', children: <EmailConfigTab {...tabProps} /> },
     { key: 'cache', label: '缓存管理', children: <CacheTab /> },
+    { key: 'maintenance', label: '数据维护', children: <MaintenanceTab /> },
   ];
 
   return (
