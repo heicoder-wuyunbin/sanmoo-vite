@@ -16,6 +16,8 @@ const StorageConfigTab: React.FC<SettingsTabProps> = ({ saveConfig, savingConfig
     <Form.Item name={['storageConfig', 'uploadLocalUrlPrefix']} label="本地 URL 前缀"><Input /></Form.Item>
     <Form.Item name={['storageConfig', 'uploadQiniuBucket']} label="七牛 Bucket"><Input /></Form.Item>
     <Form.Item name={['storageConfig', 'uploadQiniuDomain']} label="七牛域名"><Input /></Form.Item>
+    <Form.Item name={['storageConfig', 'uploadQiniuAccessKey']} label="七牛 AccessKey"><Input.Password /></Form.Item>
+    <Form.Item name={['storageConfig', 'uploadQiniuSecretKey']} label="七牛 SecretKey"><Input.Password /></Form.Item>
     <Form.Item name={['storageConfig', 'uploadAliyunEndpoint']} label="阿里云 Endpoint"><Input /></Form.Item>
     <Form.Item name={['storageConfig', 'uploadAliyunBucket']} label="阿里云 Bucket"><Input /></Form.Item>
     <Form.Item name={['storageConfig', 'uploadAliyunDomain']} label="阿里云域名"><Input /></Form.Item>

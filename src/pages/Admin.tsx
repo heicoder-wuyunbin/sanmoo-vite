@@ -125,12 +125,14 @@ const Admin: React.FC = () => {
 
   const menuGroups = [
     {
+      key: 'group-system',
       label: '系统',
       items: [
         { key: '/admin', icon: <HomeOutlined />, label: '仪表盘', perm: 'dashboard:read' },
       ],
     },
     {
+      key: 'group-content',
       label: '内容管理',
       items: [
         { key: '/admin/articles', icon: <FileTextOutlined />, label: '文章管理', perm: 'article:list' },
@@ -141,12 +143,14 @@ const Admin: React.FC = () => {
       ],
     },
     {
+      key: 'group-media',
       label: '媒体资源',
       items: [
         { key: '/admin/files', icon: <FileImageOutlined />, label: '文件管理', perm: 'file:list' },
       ],
     },
     {
+      key: 'group-user-perm',
       label: '用户权限',
       items: [
         { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
@@ -156,6 +160,7 @@ const Admin: React.FC = () => {
       ],
     },
     {
+      key: 'group-monitor',
       label: '监控运维',
       items: [
         { key: '/admin/visitors', icon: <MonitorOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
@@ -163,12 +168,29 @@ const Admin: React.FC = () => {
       ],
     },
     {
+      key: 'group-setting',
       label: '系统配置',
       items: [
         { key: '/admin/settings', icon: <SettingOutlined />, label: '设置', perm: 'setting:read' },
       ],
     },
   ];
+
+  // 默认展开第一个有可见子项的组
+  const initialOpenKey =
+    menuGroups.find((g) => g.items.some((it) => !it.perm || hasPerm(it.perm)))?.key ||
+    menuGroups[0].key;
+  const [openKeys, setOpenKeys] = useState<string[]>([initialOpenKey]);
+
+  // 始终只展开一个组：点击新组时关闭其它；点击已展开组时收起
+  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
+    const latestOpenKey = keys.find((key) => !openKeys.includes(key));
+    if (latestOpenKey) {
+      setOpenKeys([latestOpenKey]);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
 
   const menuItems = useMemo(() => {
     return menuGroups
@@ -182,7 +204,8 @@ const Admin: React.FC = () => {
           }));
         if (visibleItems.length === 0) return null;
         return {
-          type: 'group' as const,
+          key: group.key,
+          type: 'submenu' as const,
           label: group.label,
           children: visibleItems,
         };
@@ -235,6 +258,8 @@ const Admin: React.FC = () => {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKey}
+          openKeys={openKeys}
+          onOpenChange={handleOpenChange}
           items={menuItems}
           style={{ borderInlineEnd: 'none', padding: '12px 8px' }}
         />
