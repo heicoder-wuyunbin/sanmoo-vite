@@ -185,6 +185,23 @@ const StorageSettings: React.FC = () => {
                           }}
                         />
                       </Form.Item>
+                      <Form.Item name="uploadQiniuRegion" label="七牛地区">
+                        <Select
+                          options={[
+                            { label: '华东 (z0)', value: 'z0' },
+                            { label: '华北 (z1)', value: 'z1' },
+                            { label: '华南 (z2)', value: 'z2' },
+                            { label: '北美 (na0)', value: 'na0' },
+                            { label: '东南亚 (as0)', value: 'as0' },
+                          ]}
+                          placeholder="请选择七牛云存储地区"
+                          size="large"
+                          style={{
+                            borderRadius: token.borderRadiusLG,
+                            transition: 'all 0.3s ease',
+                          }}
+                        />
+                      </Form.Item>
                       <Form.Item name="uploadQiniuDomain" label="七牛域名">
                         <Input
                           placeholder="https://xxx.bkt.clouddn.com"

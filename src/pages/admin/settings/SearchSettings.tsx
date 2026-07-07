@@ -1,5 +1,8 @@
-import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { App, Button, Card, Col, Form, Input, Popconfirm, Row, Select, Space, Switch, Typography, theme as antTheme } from 'antd';
+import { SearchOutlined, SyncOutlined, DatabaseOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  App, Button, Card, Col, Form, Input, Popconfirm, Row, Select, Space, Statistic, Switch,
+  Typography, theme as antTheme,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchSearchConfig, updateSearchConfig, syncMeiliSearch } from '@/services/blog/settings-api';
 import type { SearchConfig } from '@/services/blog/types';
@@ -11,6 +14,12 @@ const SearchSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
+  const [infoLoading, setInfoLoading] = useState(false);
+  const [syncInfo, setSyncInfo] = useState({
+    lastSyncTime: '-',
+    articleCount: 0,
+    indexStatus: 'unknown',
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -25,7 +34,21 @@ const SearchSettings: React.FC = () => {
       }
     };
     void load();
+    void refetchInfo();
   }, [form, message]);
+
+  const refetchInfo = async () => {
+    setInfoLoading(true);
+    try {
+      setSyncInfo({
+        lastSyncTime: '-',
+        articleCount: 0,
+        indexStatus: 'unknown',
+      });
+    } finally {
+      setInfoLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -45,6 +68,7 @@ const SearchSettings: React.FC = () => {
     try {
       const res = await syncMeiliSearch();
       message.success(`同步完成，共同步 ${res.data.count} 篇文章`);
+      await refetchInfo();
     } catch (error) {
       message.error(error instanceof Error ? error.message : '同步失败');
     } finally {
@@ -76,7 +100,7 @@ const SearchSettings: React.FC = () => {
               搜索配置
             </Typography.Title>
             <Typography.Text type="secondary">
-              配置搜索服务、推荐策略与热门搜索，提升用户内容发现体验。
+              配置搜索服务、推荐策略与热门搜索，管理搜索引擎数据同步。
             </Typography.Text>
           </Space>
         </div>
@@ -251,7 +275,43 @@ const SearchSettings: React.FC = () => {
             headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
-              <Space wrap>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={8}>
+                  <Statistic
+                    title="索引文章数"
+                    value={syncInfo?.articleCount ?? 0}
+                    prefix={<DatabaseOutlined style={{ color: token.colorPrimary }} />}
+                    style={{
+                      background: `${token.colorBgLayout}`,
+                      padding: '16px',
+                      borderRadius: token.borderRadiusLG,
+                    }}
+                  />
+                </Col>
+                <Col xs={24} sm={8}>
+                  <Statistic
+                    title="索引状态"
+                    value={syncInfo?.indexStatus === 'ready' ? '正常' : '未知'}
+                    style={{
+                      background: `${token.colorBgLayout}`,
+                      padding: '16px',
+                      borderRadius: token.borderRadiusLG,
+                    }}
+                  />
+                </Col>
+                <Col xs={24} sm={8}>
+                  <Statistic
+                    title="最后同步"
+                    value={syncInfo?.lastSyncTime ?? '-'}
+                    style={{
+                      background: `${token.colorBgLayout}`,
+                      padding: '16px',
+                      borderRadius: token.borderRadiusLG,
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Space size="middle" wrap>
                 <Popconfirm
                   title="确认同步"
                   description="将 MySQL 中的所有已发布文章同步到 MeiliSearch 索引，确定继续吗？"
@@ -271,6 +331,17 @@ const SearchSettings: React.FC = () => {
                     同步 MySQL 到 MeiliSearch
                   </Button>
                 </Popconfirm>
+                <Button
+                  icon={<ReloadOutlined />}
+                  onClick={() => refetchInfo()}
+                  loading={infoLoading}
+                  size="large"
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                >
+                  刷新状态
+                </Button>
               </Space>
               <Typography.Text type="secondary">
                 将 MySQL 中的所有已发布文章同步到 MeiliSearch 索引，建议在首次配置或文章批量更新后执行。

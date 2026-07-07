@@ -40,7 +40,6 @@ const SearchSettings = lazy(() => import('@/pages/admin/settings/SearchSettings'
 const StorageSettings = lazy(() => import('@/pages/admin/settings/StorageSettings'));
 const EmailSettings = lazy(() => import('@/pages/admin/settings/EmailSettings'));
 const CacheSettings = lazy(() => import('@/pages/admin/settings/CacheSettings'));
-const MaintenanceSettings = lazy(() => import('@/pages/admin/settings/MaintenanceSettings'));
 const Roles = lazy(() => import('@/pages/admin/Roles'));
 const Permissions = lazy(() => import('@/pages/admin/Permissions'));
 const NotFound = lazy(() => import('@/pages/404'));
@@ -127,7 +126,6 @@ const AppRoutes: React.FC = () => {
                   <Route path="storage" element={<StorageSettings />} />
                   <Route path="email" element={<EmailSettings />} />
                   <Route path="cache" element={<CacheSettings />} />
-                  <Route path="maintenance" element={<MaintenanceSettings />} />
                 </Route>
                 <Route path="roles" element={<Roles />} />
                 <Route path="permissions" element={<Permissions />} />

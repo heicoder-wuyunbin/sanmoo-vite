@@ -234,40 +234,46 @@ const EmailSettings: React.FC = () => {
             headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
-              <Space wrap>
-                <Button
-                  type="default"
-                  icon={<SendOutlined />}
-                  onClick={handleSendCode}
-                  size="large"
-                  style={{
-                    borderRadius: token.borderRadiusLG,
-                  }}
-                >
-                  发送验证码
-                </Button>
-                <Form.Item name="emailVerifyCode" label="邮箱验证码" style={{ margin: 0, width: 200 }}>
-                  <Input
-                    placeholder="123456"
+              <Row gutter={[16, 0]} align="middle">
+                <Col>
+                  <Button
+                    type="default"
+                    icon={<SendOutlined />}
+                    onClick={handleSendCode}
                     size="large"
                     style={{
                       borderRadius: token.borderRadiusLG,
-                      transition: 'all 0.3s ease',
                     }}
-                  />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  loading={emailVerifying}
-                  onClick={handleVerify}
-                  size="large"
-                  style={{
-                    borderRadius: token.borderRadiusLG,
-                  }}
-                >
-                  验证邮箱
-                </Button>
-              </Space>
+                  >
+                    发送验证码
+                  </Button>
+                </Col>
+                <Col xs={24} md={8}>
+                  <Form.Item name="emailVerifyCode" label="邮箱验证码" style={{ margin: 0 }}>
+                    <Input
+                      placeholder="123456"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button
+                    type="primary"
+                    loading={emailVerifying}
+                    onClick={handleVerify}
+                    size="large"
+                    style={{
+                      borderRadius: token.borderRadiusLG,
+                    }}
+                  >
+                    验证邮箱
+                  </Button>
+                </Col>
+              </Row>
               {emailVerified && (
                 <div
                   style={{

@@ -208,6 +208,45 @@ const CacheSettings: React.FC = () => {
                   }}
                 />
               </Col>
+              <Col xs={24} sm={8}>
+                <Statistic
+                  title="缓存命中率"
+                  value={cacheStats?.hitRate ?? '-'}
+                  suffix="%"
+                  style={{
+                    background: `${token.colorBgLayout}`,
+                    padding: '16px',
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                  valueStyle={{
+                    color: parseFloat(cacheStats?.hitRate || '0') >= 80 ? token.colorSuccess : parseFloat(cacheStats?.hitRate || '0') >= 50 ? token.colorWarning : token.colorError,
+                  }}
+                />
+              </Col>
+              <Col xs={24} sm={8}>
+                <Statistic
+                  title="命中次数"
+                  value={cacheStats?.hitCount ?? 0}
+                  style={{
+                    background: `${token.colorBgLayout}`,
+                    padding: '16px',
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                  valueStyle={{ color: token.colorSuccess }}
+                />
+              </Col>
+              <Col xs={24} sm={8}>
+                <Statistic
+                  title="未命中次数"
+                  value={cacheStats?.missCount ?? 0}
+                  style={{
+                    background: `${token.colorBgLayout}`,
+                    padding: '16px',
+                    borderRadius: token.borderRadiusLG,
+                  }}
+                  valueStyle={{ color: token.colorError }}
+                />
+              </Col>
             </Row>
           </Card>
 
@@ -223,7 +262,11 @@ const CacheSettings: React.FC = () => {
           >
             {cacheStats?.prefixCounts && Object.keys(cacheStats.prefixCounts).length > 0 ? (
               <Table
-                dataSource={Object.entries(cacheStats.prefixCounts).map(([prefix, count]) => ({ key: prefix, prefix, count }))}
+                dataSource={Object.entries(cacheStats.prefixCounts).map(([prefix, count]) => {
+                  const total = cacheStats?.totalKeys || 1;
+                  const percentage = ((count / total) * 100).toFixed(1);
+                  return { key: prefix, prefix, count, percentage };
+                })}
                 columns={[
                   {
                     title: '缓存分类',
@@ -237,6 +280,35 @@ const CacheSettings: React.FC = () => {
                     key: 'count',
                     align: 'right' as const,
                     render: (count: number) => <Typography.Text strong>{count}</Typography.Text>,
+                  },
+                  {
+                    title: '占比',
+                    dataIndex: 'percentage',
+                    key: 'percentage',
+                    align: 'right' as const,
+                    render: (percentage: string) => (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+                        <div
+                          style={{
+                            width: 60,
+                            height: 6,
+                            background: `${token.colorBorderSecondary}`,
+                            borderRadius: 3,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: `${Math.min(parseFloat(percentage), 100)}%`,
+                              height: '100%',
+                              background: token.colorPrimary,
+                              borderRadius: 3,
+                            }}
+                          />
+                        </div>
+                        <span style={{ fontSize: 12 }}>{percentage}%</span>
+                      </div>
+                    ),
                   },
                 ]}
                 pagination={false}

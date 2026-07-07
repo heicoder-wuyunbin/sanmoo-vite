@@ -138,6 +138,7 @@ export type StorageConfig = {
   uploadLocalDir: string;
   uploadLocalUrlPrefix: string;
   uploadQiniuBucket: string;
+  uploadQiniuRegion: string;
   uploadQiniuDomain: string;
   uploadQiniuAccessKey: string;
   uploadQiniuSecretKey: string;
@@ -305,6 +306,9 @@ export type CacheStatsResult = {
     totalKeys: number;
     prefixCounts: Record<string, number>;
     memoryUsed: string;
+    hitRate: string;
+    hitCount: number;
+    missCount: number;
   };
 };
 

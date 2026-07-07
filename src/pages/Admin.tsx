@@ -282,7 +282,6 @@ const Admin: React.FC = () => {
         { key: '/admin/settings/storage', icon: <CloudServerOutlined />, label: '存储配置', perm: 'setting:storage:read' },
         { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
         { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
-        { key: '/admin/settings/maintenance', icon: <DatabaseOutlined />, label: '数据维护', perm: 'setting:maintenance:read' },
       ],
     },
   ];

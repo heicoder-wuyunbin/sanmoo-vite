@@ -1,5 +1,5 @@
 import { Link, Outlet } from 'react-router-dom';
-import { App, Breadcrumb, Button, Space, Typography } from 'antd';
+import { App, Breadcrumb, Button, Space } from 'antd';
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 
@@ -64,31 +64,22 @@ const SettingsPage: React.FC = () => {
           animation: 'fadeInUp 0.4s ease-out',
         }}
       >
-        <Breadcrumb
-          items={[
-            { title: <Link to="/admin">首页</Link> },
-            { title: '系统配置' },
-          ]}
-          style={{ marginBottom: 16 }}
-        />
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'flex-start',
+            alignItems: 'center',
             flexWrap: 'wrap',
             gap: 16,
           }}
         >
-          <Space direction="vertical" size={8}>
-            <Typography.Title level={2} style={{ margin: 0, fontWeight: 600 }}>
-              系统配置
-            </Typography.Title>
-            <Typography.Text type="secondary">
-              统一管理博客配置、存储策略、邮件服务与系统维护。
-            </Typography.Text>
-          </Space>
-          <Space size={8} style={{ flexShrink: 0, marginTop: 4 }}>
+          <Breadcrumb
+            items={[
+              { title: <Link to="/admin">首页</Link> },
+              { title: '系统配置' },
+            ]}
+          />
+          <Space size={8} style={{ flexShrink: 0 }}>
             <input
               type="file"
               accept=".json"

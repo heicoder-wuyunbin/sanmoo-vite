@@ -34,11 +34,12 @@ const CoreSettings: React.FC = () => {
   const uploadLocalUrlPrefix = '/uploads/';
 
   const avatarPreviewUrl = (() => {
-    if (!avatarValue) return null;
-    if (/^(https?:)?\/\//.test(avatarValue) || avatarValue.startsWith('data:')) return avatarValue;
-    if (avatarValue.startsWith('/')) return avatarValue;
+    const trimmedAvatar = avatarValue?.trim();
+    if (!trimmedAvatar) return null;
+    if (/^(https?:)?\/\//.test(trimmedAvatar) || trimmedAvatar.startsWith('data:')) return trimmedAvatar;
+    if (trimmedAvatar.startsWith('/')) return trimmedAvatar;
     const prefix = uploadLocalUrlPrefix || '/uploads/';
-    return `${prefix.endsWith('/') ? prefix : `${prefix}/`}${avatarValue}`;
+    return `${prefix.endsWith('/') ? prefix : `${prefix}/`}${trimmedAvatar}`;
   })();
 
   const avatarFileList: UploadFile[] = avatarPreviewUrl
