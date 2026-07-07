@@ -1,4 +1,5 @@
 import { request } from '@/services/request';
+import { getAccessToken } from '@/utils/auth';
 import type { ArticleItem, ArticleDetail, ArticleOption, ListResponse, WebArticleDetail } from './types';
 
 export async function fetchArticles(params: {
@@ -92,4 +93,23 @@ export async function likeArticle(id: number) {
 
 export async function fetchRandomArticle(excludeId?: number) {
   return request<ArticleItem>(`/web/articles/random`, { params: { exclude: excludeId } });
+}
+
+export function downloadArticlesCSV(keyword?: string) {
+  const token = getAccessToken();
+  const params = new URLSearchParams();
+  if (keyword) params.append('keyword', keyword);
+  const qs = params.toString();
+  const url = `/api/admin/articles/export${qs ? `?${qs}` : ''}`;
+  fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+    .then((res) => res.blob())
+    .then((blob) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `articles_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    });
 }

@@ -1,4 +1,4 @@
-import { PlusOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import {
   App,
@@ -23,6 +23,7 @@ import {
   type CategoryItem,
   createArticle,
   deleteArticle,
+  downloadArticlesCSV,
   fetchAdminArticleDetail,
   fetchArticles,
   fetchCategories,
@@ -454,6 +455,12 @@ const ArticlesPage: React.FC = () => {
             onClick={() => document.getElementById('markdown-import')?.click()}
           >
             导入文章
+          </Button>
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={() => downloadArticlesCSV(searchKeyword)}
+          >
+            导出CSV
           </Button>
           <input
             id="markdown-import"

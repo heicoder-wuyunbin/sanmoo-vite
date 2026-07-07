@@ -40,6 +40,7 @@ export {
   createArticle, updateArticle, updateArticleStatus, batchUpdateArticleStatus,
   deleteArticle, batchDeleteArticles, fetchPublishedArticleOptions, fetchArchives,
   fetchRelatedArticles, fetchHotArticles, likeArticle, fetchRandomArticle,
+  downloadArticlesCSV,
 } from './article-api';
 
 // ─── 分类 ────────────────────────────────────────────────────
@@ -65,6 +66,7 @@ export {
 export {
   fetchUsers, createUser, updateUser, deleteUser,
   batchDeleteUsers, toggleUserStatus, updateUserPassword,
+  downloadUsersCSV,
 } from './user-api';
 
 // ─── 仪表盘 & 日志 ───────────────────────────────────────────
