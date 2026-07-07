@@ -279,7 +279,8 @@ const Admin: React.FC = () => {
       menus.forEach((m) => {
         const groupKey = MODULE_GROUP_KEYS[m.module] || `group-${m.module}`;
         const label = MODULE_LABELS[m.module] || m.module;
-        const groupIcon = MODULE_ICON_MAP[m.module] ? <MODULE_ICON_MAP[m.module] /> : <FileTextOutlined />;
+        const groupIconComponent = MODULE_ICON_MAP[m.module];
+        const groupIcon = groupIconComponent ? React.createElement(groupIconComponent) : <FileTextOutlined />;
         if (!groupMap.has(groupKey)) {
           groupMap.set(groupKey, { label, icon: groupIcon, children: [] });
         }
