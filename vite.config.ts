@@ -120,15 +120,6 @@ export default defineConfig({
     sourcemap: false,
     // chunk 大小警告阈值
     chunkSizeWarningLimit: 500,
-    // 资源文件名格式
-    assetFileNames: (assetInfo) => {
-      if (assetInfo.name.endsWith('.css')) {
-        return 'assets/css/[name]-[hash][extname]';
-      }
-      return 'assets/[name]-[hash][extname]';
-    },
-    chunkFileNames: 'assets/js/[name]-[hash].js',
-    entryFileNames: 'assets/js/[name]-[hash].js',
   },
   // 优化依赖预构建
   optimizeDeps: {

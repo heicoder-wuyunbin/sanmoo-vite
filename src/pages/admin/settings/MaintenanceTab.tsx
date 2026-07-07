@@ -1,7 +1,7 @@
 import { DeleteOutlined, DatabaseOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   App, Button, Card, Col, Empty, Popconfirm, Row, Space, Statistic,
-  Table, Tag, Typography, Progress,
+  Table, Tag, Typography,
 } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
