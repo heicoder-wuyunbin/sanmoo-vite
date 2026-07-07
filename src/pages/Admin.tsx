@@ -43,6 +43,41 @@ import { usePermStore } from '@/store/usePermStore';
 
 const { Header, Sider, Content } = Layout;
 
+// 图标名称到组件的映射（用于后端动态菜单渲染）
+const ICON_MAP: Record<string, React.FC<any>> = {
+  HomeOutlined,
+  FileTextOutlined,
+  TagsOutlined,
+  FolderOutlined,
+  UserOutlined,
+  SettingOutlined,
+  FileImageOutlined,
+  GlobalOutlined,
+  MonitorOutlined,
+  BookOutlined,
+  BugOutlined,
+  WechatOutlined,
+  SafetyOutlined,
+  TeamOutlined,
+};
+
+// 模块中文名映射
+const MODULE_LABELS: Record<string, string> = {
+  dashboard: '系统',
+  article: '内容管理',
+  category: '内容管理',
+  tag: '内容管理',
+  topic: '内容管理',
+  link: '内容管理',
+  file: '媒体资源',
+  user: '用户权限',
+  mpuser: '用户权限',
+  role: '用户权限',
+  permission: '用户权限',
+  maintenance: '监控运维',
+  setting: '系统配置',
+};
+
 /**
  * Ant Design Pro 风格的管理后台布局。
  * - 侧边栏: 深蓝黑 (#001529) + 主色高亮
@@ -60,7 +95,7 @@ const Admin: React.FC = () => {
   const [form] = Form.useForm();
   const { token } = antTheme.useToken();
   const { isDark, toggleTheme } = useTheme();
-  const { isLoaded, loadPermissions, hasPerm } = usePermStore();
+  const { isLoaded, loadPermissions, hasPerm, menus } = usePermStore();
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -123,16 +158,15 @@ const Admin: React.FC = () => {
     },
   ];
 
-  const menuGroups = [
+  // 静态菜单配置（fallback，当后端未返回菜单时使用）
+  const staticMenuGroups = [
     {
-      key: 'group-system',
       label: '系统',
       items: [
         { key: '/admin', icon: <HomeOutlined />, label: '仪表盘', perm: 'dashboard:read' },
       ],
     },
     {
-      key: 'group-content',
       label: '内容管理',
       items: [
         { key: '/admin/articles', icon: <FileTextOutlined />, label: '文章管理', perm: 'article:list' },
@@ -143,14 +177,12 @@ const Admin: React.FC = () => {
       ],
     },
     {
-      key: 'group-media',
       label: '媒体资源',
       items: [
         { key: '/admin/files', icon: <FileImageOutlined />, label: '文件管理', perm: 'file:list' },
       ],
     },
     {
-      key: 'group-user-perm',
       label: '用户权限',
       items: [
         { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
@@ -160,7 +192,6 @@ const Admin: React.FC = () => {
       ],
     },
     {
-      key: 'group-monitor',
       label: '监控运维',
       items: [
         { key: '/admin/visitors', icon: <MonitorOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
@@ -168,7 +199,6 @@ const Admin: React.FC = () => {
       ],
     },
     {
-      key: 'group-setting',
       label: '系统配置',
       items: [
         { key: '/admin/settings', icon: <SettingOutlined />, label: '设置', perm: 'setting:read' },
@@ -176,24 +206,40 @@ const Admin: React.FC = () => {
     },
   ];
 
-  // 默认展开第一个有可见子项的组
-  const initialOpenKey =
-    menuGroups.find((g) => g.items.some((it) => !it.perm || hasPerm(it.perm)))?.key ||
-    menuGroups[0].key;
-  const [openKeys, setOpenKeys] = useState<string[]>([initialOpenKey]);
-
-  // 始终只展开一个组：点击新组时关闭其它；点击已展开组时收起
-  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
-    const latestOpenKey = keys.find((key) => !openKeys.includes(key));
-    if (latestOpenKey) {
-      setOpenKeys([latestOpenKey]);
-    } else {
-      setOpenKeys(keys);
-    }
-  };
-
+  // 动态菜单渲染（优先使用后端返回的菜单）
   const menuItems = useMemo(() => {
-    return menuGroups
+    // 如果后端返回了菜单，使用动态菜单
+    if (menus && menus.length > 0) {
+      // 按模块分组
+      const groupMap = new Map<string, typeof menus>();
+      menus.forEach((m) => {
+        const list = groupMap.get(m.module) || [];
+        list.push(m);
+        groupMap.set(m.module, list);
+      });
+
+      const result: MenuProps['items'] = [];
+      groupMap.forEach((items, module) => {
+        const label = MODULE_LABELS[module] || module;
+        const children = items.map((item) => {
+          const IconComp = ICON_MAP[item.icon] || FileTextOutlined;
+          return {
+            key: item.frontPath,
+            icon: <IconComp />,
+            label: <Link to={item.frontPath}>{item.name}</Link>,
+          };
+        });
+        result.push({
+          type: 'group' as const,
+          label,
+          children,
+        });
+      });
+      return result;
+    }
+
+    // fallback：使用静态菜单 + 权限过滤
+    return staticMenuGroups
       .map((group) => {
         const visibleItems = group.items
           .filter((item) => !item.perm || hasPerm(item.perm))
@@ -204,21 +250,20 @@ const Admin: React.FC = () => {
           }));
         if (visibleItems.length === 0) return null;
         return {
-          key: group.key,
-          type: 'submenu' as const,
+          type: 'group' as const,
           label: group.label,
           children: visibleItems,
         };
       })
       .filter(Boolean);
-  }, [hasPerm]);
+  }, [menus, hasPerm]);
 
   // 根据当前路由选中正确的菜单项
   const selectedKey = (() => {
     const path = location.pathname;
     // 仪表盘精确匹配，其余菜单项前缀匹配
     if (path === '/admin') return ['/admin'];
-    const allItems = menuGroups.flatMap((g) => g.items);
+    const allItems = staticMenuGroups.flatMap((g) => g.items);
     const match = allItems.find((item) => item.key !== '/admin' && path.startsWith(item.key));
     return match ? [match.key] : ['/admin'];
   })();
@@ -258,8 +303,6 @@ const Admin: React.FC = () => {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKey}
-          openKeys={openKeys}
-          onOpenChange={handleOpenChange}
           items={menuItems}
           style={{ borderInlineEnd: 'none', padding: '12px 8px' }}
         />

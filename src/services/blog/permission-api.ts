@@ -34,3 +34,7 @@ export async function deletePermission(id: number) {
 export async function fetchUserPermissions() {
   return request<{ permKeys: string[] }>('/admin/user/permissions');
 }
+
+export async function fetchUserMenus() {
+  return request<{ menus: { id: number; permKey: string; name: string; module: string; frontPath: string; icon: string; sortOrder: number }[] }>('/admin/user/menus');
+}

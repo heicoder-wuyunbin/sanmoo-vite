@@ -2,6 +2,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
+  DownloadOutlined,
   EditOutlined,
   PlusOutlined,
   SearchOutlined,
@@ -29,6 +30,7 @@ import {
   batchDeleteUsers,
   createUser,
   deleteUser,
+  downloadUsersCSV,
   fetchUsers,
   toggleUserStatus,
   type UserItem,
@@ -193,6 +195,12 @@ const UsersPage: React.FC = () => {
                   批量删除
                 </Button>
               </Popconfirm>
+              <Button
+                icon={<DownloadOutlined />}
+                onClick={() => downloadUsersCSV(crud.searchText)}
+              >
+                导出CSV
+              </Button>
               <Button
                 type="primary"
                 icon={<PlusOutlined />}

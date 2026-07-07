@@ -17,6 +17,7 @@ export type ListResponse<T> = {
 export type ArticleItem = {
   id: number;
   title: string;
+  slug?: string; // SEO 友好 URL 别名
   titleImage?: string;
   description?: string;
   content?: string;
@@ -26,6 +27,7 @@ export type ArticleItem = {
   likeNum?: number;
   isTop: boolean;
   isPublished: boolean;
+  publishTime?: string; // 定时发布时间
   categoryId?: number;
   categoryName?: string;
   tags: { id: number; name: string }[];

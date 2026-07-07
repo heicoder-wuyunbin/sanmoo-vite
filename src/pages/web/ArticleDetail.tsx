@@ -9,6 +9,7 @@ import WebShell from '@/pages/web/components/WebShell';
 import TableOfContents from '@/pages/web/components/TableOfContents';
 import Breadcrumb from '@/pages/web/components/Breadcrumb';
 import Image from '@/components/Image';
+import ImageLightbox from '@/pages/web/components/ImageLightbox';
 import { useQuery } from '@tanstack/react-query';
 import { addFavorite, removeFavorite, isFavorite, addHistory } from '@/services/local/localStorage';
 import { copyToClipboard } from '@/utils/clipboard';
@@ -34,6 +35,11 @@ const ArticleDetailPage: React.FC = () => {
   const [showBackTop, setShowBackTop] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
+  // 灯箱相关状态
+  const [lightboxVisible, setLightboxVisible] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState('');
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const cardStyle = useMemo<React.CSSProperties>(
     () => ({
@@ -294,6 +300,25 @@ const ArticleDetailPage: React.FC = () => {
     }
 
     setTimeout(addCopyButtons, 100);
+
+    // 图片灯箱处理
+    const addImageLightbox = () => {
+      const images = document.querySelectorAll('.md-body .md-img');
+      const imageSrcs: string[] = [];
+      images.forEach((img, index) => {
+        const src = (img as HTMLImageElement).src;
+        imageSrcs.push(src);
+        img.addEventListener('click', () => {
+          setLightboxImage(src);
+          setLightboxImages(imageSrcs);
+          setLightboxIndex(index);
+          setLightboxVisible(true);
+        });
+        (img as HTMLImageElement).style.cursor = 'zoom-in';
+      });
+    };
+
+    setTimeout(addImageLightbox, 200);
 
     return () => {
       observer.disconnect();
@@ -811,6 +836,24 @@ const ArticleDetailPage: React.FC = () => {
           }}
         />
       )}
+      <ImageLightbox
+        visible={lightboxVisible}
+        src={lightboxImage}
+        alt={article?.title || ''}
+        onClose={() => setLightboxVisible(false)}
+        images={lightboxImages}
+        currentIndex={lightboxIndex}
+        onPrev={() => {
+          const newIndex = lightboxIndex > 0 ? lightboxIndex - 1 : lightboxImages.length - 1;
+          setLightboxIndex(newIndex);
+          setLightboxImage(lightboxImages[newIndex]);
+        }}
+        onNext={() => {
+          const newIndex = lightboxIndex < lightboxImages.length - 1 ? lightboxIndex + 1 : 0;
+          setLightboxIndex(newIndex);
+          setLightboxImage(lightboxImages[newIndex]);
+        }}
+      />
     </>
   );
 };

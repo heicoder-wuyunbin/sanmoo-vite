@@ -1,9 +1,20 @@
 import { create } from 'zustand';
-import { fetchUserPermissions } from '@/services/blog/permission-api';
+import { fetchUserPermissions, fetchUserMenus } from '@/services/blog/permission-api';
+
+interface MenuItem {
+  id: number;
+  permKey: string;
+  name: string;
+  module: string;
+  frontPath: string;
+  icon: string;
+  sortOrder: number;
+}
 
 interface PermState {
   permKeys: string[];
   permSet: Set<string>;
+  menus: MenuItem[];
   isLoaded: boolean;
   loadPermissions: () => Promise<void>;
   clearPermissions: () => void;
@@ -15,15 +26,21 @@ interface PermState {
 export const usePermStore = create<PermState>((set, get) => ({
   permKeys: [],
   permSet: new Set<string>(),
+  menus: [],
   isLoaded: false,
 
   loadPermissions: async () => {
     try {
-      const res = await fetchUserPermissions();
-      const keys = res.data.permKeys || [];
+      const [permRes, menuRes] = await Promise.all([
+        fetchUserPermissions(),
+        fetchUserMenus(),
+      ]);
+      const keys = permRes.data.permKeys || [];
+      const menus = menuRes.data.menus || [];
       set({
         permKeys: keys,
         permSet: new Set(keys),
+        menus,
         isLoaded: true,
       });
     } catch (e) {
@@ -33,7 +50,7 @@ export const usePermStore = create<PermState>((set, get) => ({
   },
 
   clearPermissions: () => {
-    set({ permKeys: [], permSet: new Set(), isLoaded: false });
+    set({ permKeys: [], permSet: new Set(), menus: [], isLoaded: false });
   },
 
   hasPerm: (permKey: string) => {
