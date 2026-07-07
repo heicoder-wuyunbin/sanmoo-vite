@@ -1,6 +1,6 @@
 import { DatabaseOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import {
-  App, Breadcrumb, Button, Card, Col, Popconfirm, Row, Space, Statistic,
+  App, Button, Card, Col, Popconfirm, Row, Space, Statistic,
   Typography, theme as antTheme,
 } from 'antd';
 import React, { useCallback, useState } from 'react';
