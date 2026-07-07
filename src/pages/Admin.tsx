@@ -288,7 +288,7 @@ const Admin: React.FC = () => {
         groupMap.get(groupKey)!.children.push({
           key: m.frontPath,
           icon: <IconComp />,
-          label: m.name,
+          label: <Link to={m.frontPath}>{m.name}</Link>,
         });
       });
 
@@ -308,7 +308,7 @@ const Admin: React.FC = () => {
           .map((item) => ({
             key: item.key,
             icon: item.icon,
-            label: item.label,
+            label: <Link to={item.key}>{item.label}</Link>,
           }));
         if (visibleItems.length === 0) return;
         if (!firstKey) firstKey = group.key;
