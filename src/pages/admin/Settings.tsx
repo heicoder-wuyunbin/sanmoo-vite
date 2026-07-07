@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 
 const SettingsPage: React.FC = () => {
   const { message } = App.useApp();
-  const { token } = antTheme.useToken();
   const [importing, setImporting] = useState(false);
 
   const handleExport = () => {
