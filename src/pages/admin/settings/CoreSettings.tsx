@@ -11,7 +11,6 @@ import {
   Switch,
   Typography,
   Upload,
-  theme as antTheme,
   type UploadFile,
   type UploadProps,
 } from 'antd';
