@@ -139,9 +139,13 @@ export type StorageConfig = {
   uploadLocalUrlPrefix: string;
   uploadQiniuBucket: string;
   uploadQiniuDomain: string;
+  uploadQiniuAccessKey: string;
+  uploadQiniuSecretKey: string;
   uploadAliyunEndpoint: string;
   uploadAliyunBucket: string;
   uploadAliyunDomain: string;
+  uploadAliyunAccessKey: string;
+  uploadAliyunSecretKey: string;
 };
 
 export type EmailConfig = {

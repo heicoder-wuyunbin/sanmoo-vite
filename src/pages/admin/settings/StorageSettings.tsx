@@ -195,6 +195,26 @@ const StorageSettings: React.FC = () => {
                           }}
                         />
                       </Form.Item>
+                      <Form.Item name="uploadQiniuAccessKey" label="七牛 AccessKey">
+                        <Input
+                          placeholder="请输入七牛 AccessKey"
+                          size="large"
+                          style={{
+                            borderRadius: token.borderRadiusLG,
+                            transition: 'all 0.3s ease',
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item name="uploadQiniuSecretKey" label="七牛 SecretKey">
+                        <Input.Password
+                          placeholder="请输入七牛 SecretKey"
+                          size="large"
+                          style={{
+                            borderRadius: token.borderRadiusLG,
+                            transition: 'all 0.3s ease',
+                          }}
+                        />
+                      </Form.Item>
                       <Typography.Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
                         需要在七牛云控制台创建 Bucket 并配置域名。
                       </Typography.Text>
@@ -226,6 +246,26 @@ const StorageSettings: React.FC = () => {
                       <Form.Item name="uploadAliyunDomain" label="阿里云域名">
                         <Input
                           placeholder="https://xxx.oss-cn-hangzhou.aliyuncs.com"
+                          size="large"
+                          style={{
+                            borderRadius: token.borderRadiusLG,
+                            transition: 'all 0.3s ease',
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item name="uploadAliyunAccessKey" label="阿里云 AccessKey">
+                        <Input
+                          placeholder="请输入阿里云 AccessKey"
+                          size="large"
+                          style={{
+                            borderRadius: token.borderRadiusLG,
+                            transition: 'all 0.3s ease',
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item name="uploadAliyunSecretKey" label="阿里云 SecretKey">
+                        <Input.Password
+                          placeholder="请输入阿里云 SecretKey"
                           size="large"
                           style={{
                             borderRadius: token.borderRadiusLG,
