@@ -161,12 +161,14 @@ const Admin: React.FC = () => {
   // 静态菜单配置（fallback，当后端未返回菜单时使用）
   const staticMenuGroups = [
     {
+      key: 'group-system',
       label: '系统',
       items: [
         { key: '/admin', icon: <HomeOutlined />, label: '仪表盘', perm: 'dashboard:read' },
       ],
     },
     {
+      key: 'group-content',
       label: '内容管理',
       items: [
         { key: '/admin/articles', icon: <FileTextOutlined />, label: '文章管理', perm: 'article:list' },
@@ -177,12 +179,14 @@ const Admin: React.FC = () => {
       ],
     },
     {
+      key: 'group-media',
       label: '媒体资源',
       items: [
         { key: '/admin/files', icon: <FileImageOutlined />, label: '文件管理', perm: 'file:list' },
       ],
     },
     {
+      key: 'group-user-perm',
       label: '用户权限',
       items: [
         { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
@@ -192,6 +196,7 @@ const Admin: React.FC = () => {
       ],
     },
     {
+      key: 'group-monitor',
       label: '监控运维',
       items: [
         { key: '/admin/visitors', icon: <MonitorOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
@@ -199,6 +204,7 @@ const Admin: React.FC = () => {
       ],
     },
     {
+      key: 'group-setting',
       label: '系统配置',
       items: [
         { key: '/admin/settings', icon: <SettingOutlined />, label: '设置', perm: 'setting:read' },
@@ -206,57 +212,92 @@ const Admin: React.FC = () => {
     },
   ];
 
+  // 模块名到组 key 的映射（用于动态菜单）
+  const MODULE_GROUP_KEYS: Record<string, string> = {
+    dashboard: 'group-system',
+    article: 'group-content',
+    category: 'group-content',
+    tag: 'group-content',
+    topic: 'group-content',
+    link: 'group-content',
+    file: 'group-media',
+    user: 'group-user-perm',
+    mpuser: 'group-user-perm',
+    role: 'group-user-perm',
+    permission: 'group-user-perm',
+    maintenance: 'group-monitor',
+    setting: 'group-setting',
+  };
+
   // 动态菜单渲染（优先使用后端返回的菜单）
-  const menuItems = useMemo(() => {
-    // 如果后端返回了菜单，使用动态菜单
+  const { menuItems, firstGroupKey } = useMemo(() => {
+    let result: MenuProps['items'] = [];
+    let firstKey = '';
+
     if (menus && menus.length > 0) {
-      // 按模块分组
-      const groupMap = new Map<string, typeof menus>();
+      const groupMap = new Map<string, { label: string; children: any[] }>();
       menus.forEach((m) => {
-        const list = groupMap.get(m.module) || [];
-        list.push(m);
-        groupMap.set(m.module, list);
+        const groupKey = MODULE_GROUP_KEYS[m.module] || `group-${m.module}`;
+        const label = MODULE_LABELS[m.module] || m.module;
+        if (!groupMap.has(groupKey)) {
+          groupMap.set(groupKey, { label, children: [] });
+        }
+        const IconComp = ICON_MAP[m.icon] || FileTextOutlined;
+        groupMap.get(groupKey)!.children.push({
+          key: m.frontPath,
+          icon: <IconComp />,
+          label: <Link to={m.frontPath}>{m.name}</Link>,
+        });
       });
 
-      const result: MenuProps['items'] = [];
-      groupMap.forEach((items, module) => {
-        const label = MODULE_LABELS[module] || module;
-        const children = items.map((item) => {
-          const IconComp = ICON_MAP[item.icon] || FileTextOutlined;
-          return {
-            key: item.frontPath,
-            icon: <IconComp />,
-            label: <Link to={item.frontPath}>{item.name}</Link>,
-          };
-        });
+      groupMap.forEach((group, key) => {
+        if (!firstKey) firstKey = key;
         result.push({
-          type: 'group' as const,
-          label,
-          children,
+          key,
+          label: group.label,
+          children: group.children,
         });
       });
-      return result;
+    } else {
+      result = staticMenuGroups
+        .map((group) => {
+          const visibleItems = group.items
+            .filter((item) => !item.perm || hasPerm(item.perm))
+            .map((item) => ({
+              key: item.key,
+              icon: item.icon,
+              label: <Link to={item.key}>{item.label}</Link>,
+            }));
+          if (visibleItems.length === 0) return null;
+          if (!firstKey) firstKey = group.key;
+          return {
+            key: group.key,
+            label: group.label,
+            children: visibleItems,
+          };
+        })
+        .filter(Boolean) as MenuProps['items'];
     }
 
-    // fallback：使用静态菜单 + 权限过滤
-    return staticMenuGroups
-      .map((group) => {
-        const visibleItems = group.items
-          .filter((item) => !item.perm || hasPerm(item.perm))
-          .map((item) => ({
-            key: item.key,
-            icon: item.icon,
-            label: <Link to={item.key}>{item.label}</Link>,
-          }));
-        if (visibleItems.length === 0) return null;
-        return {
-          type: 'group' as const,
-          label: group.label,
-          children: visibleItems,
-        };
-      })
-      .filter(Boolean);
+    return { menuItems: result, firstGroupKey: firstKey };
   }, [menus, hasPerm]);
+
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (firstGroupKey) {
+      setOpenKeys([firstGroupKey]);
+    }
+  }, [firstGroupKey]);
+
+  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
+    const latestOpenKey = keys.find((key) => !openKeys.includes(key));
+    if (latestOpenKey) {
+      setOpenKeys([latestOpenKey]);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
 
   // 根据当前路由选中正确的菜单项
   const selectedKey = (() => {
@@ -303,6 +344,8 @@ const Admin: React.FC = () => {
           theme="dark"
           mode="inline"
           selectedKeys={selectedKey}
+          openKeys={openKeys}
+          onOpenChange={handleOpenChange}
           items={menuItems}
           style={{ borderInlineEnd: 'none', padding: '12px 8px' }}
         />
