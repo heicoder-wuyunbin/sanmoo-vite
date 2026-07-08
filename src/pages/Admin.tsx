@@ -107,21 +107,21 @@ const MODULE_ICON_MAP: Record<string, React.FC<any>> = {
   setting: SettingOutlined,
 };
 
-// 模块中文名映射
+// 模块中文名映射（符合站长后台定位）
 const MODULE_LABELS: Record<string, string> = {
-  dashboard: '系统',
+  dashboard: '概览',
   article: '内容管理',
   category: '内容管理',
   tag: '内容管理',
   topic: '内容管理',
   link: '内容管理',
   file: '媒体资源',
-  user: '用户权限',
-  mpuser: '用户权限',
-  role: '用户权限',
-  permission: '用户权限',
+  user: '账号管理',
+  mpuser: '账号管理',
+  role: '账号管理',
+  permission: '账号管理',
 
-  setting: '系统配置',
+  setting: '站点设置',
 };
 
 /**
@@ -221,8 +221,8 @@ const Admin: React.FC = () => {
 
   const staticMenuGroups: StaticMenuGroup[] = [
     {
-      key: 'group-system',
-      label: '系统',
+      key: 'group-overview',
+      label: '概览',
       icon: <BarChartOutlined />,
       items: [
         { key: '/admin', icon: <HomeOutlined />, label: '仪表盘', perm: 'dashboard:read' },
@@ -249,55 +249,61 @@ const Admin: React.FC = () => {
       ],
     },
     {
-      key: 'group-user-perm',
-      label: '用户权限',
+      key: 'group-account',
+      label: '账号管理',
       icon: <UserOutlined />,
       items: [
-        { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
-        { key: '/admin/mp-users', icon: <WechatOutlined />, label: '微信用户', perm: 'mpuser:list' },
-        { key: '/admin/roles', icon: <TeamOutlined />, label: '角色管理', perm: 'role:list' },
-        { key: '/admin/permissions', icon: <LockOutlined />, label: '权限列表', perm: 'permission:list' },
+        // 冻结能力：用户管理、角色管理、权限管理（平台化扩张，见 frozen-capabilities.md §2.1/2.2）
+        // { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
+        { key: '/admin/mp-users', icon: <WechatOutlined />, label: '读者', perm: 'mpuser:list' },
+        // { key: '/admin/roles', icon: <TeamOutlined />, label: '权限角色', perm: 'role:list' },
+        // { key: '/admin/permissions', icon: <LockOutlined />, label: '权限列表', perm: 'permission:list' },
       ],
     },
     {
       key: 'group-monitor',
-      label: '监控运维',
+      label: '访问日志',
       icon: <BarChartOutlined />,
       items: [
-        { key: '/admin/visitors', icon: <LineChartOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
+        { key: '/admin/visitors', icon: <LineChartOutlined />, label: '访问日志', perm: 'dashboard:visitors' },
         { key: '/admin/errors', icon: <BugOutlined />, label: '错误日志', perm: 'dashboard:errors' },
       ],
     },
     {
       key: 'group-setting',
-      label: '系统配置',
+      label: '站点设置',
       icon: <SettingOutlined />,
       items: [
-        { key: '/admin/settings/core', icon: <CrownOutlined />, label: '核心配置', perm: 'setting:core:read' },
-        { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '隐私政策', perm: 'setting:privacy:read' },
-        { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '社交链接', perm: 'setting:social:read' },
+        // 站点品牌配置
+        { key: '/admin/settings/core', icon: <CrownOutlined />, label: '站点品牌', perm: 'setting:core:read' },
+        // 合规配置
+        { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '合规配置', perm: 'setting:privacy:read' },
+        // 渠道配置
+        { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '渠道配置', perm: 'setting:social:read' },
+        // 基础设施配置
         { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置', perm: 'setting:search:read' },
         { key: '/admin/settings/storage', icon: <CloudServerOutlined />, label: '存储配置', perm: 'setting:storage:read' },
         { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
-        { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
+        // 冻结能力：缓存管理（低频运维，见 frozen-capabilities.md §2.4）
+        // { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
       ],
     },
   ];
 
   // 模块名到组 key 的映射（用于动态菜单）
   const MODULE_GROUP_KEYS: Record<string, string> = {
-    dashboard: 'group-system',
+    dashboard: 'group-overview',
     article: 'group-content',
     category: 'group-content',
     tag: 'group-content',
     topic: 'group-content',
     link: 'group-content',
     file: 'group-media',
-    user: 'group-user-perm',
-    mpuser: 'group-user-perm',
-    role: 'group-user-perm',
-    permission: 'group-user-perm',
-  setting: 'group-setting',
+    user: 'group-account',
+    mpuser: 'group-account',
+    role: 'group-account',
+    permission: 'group-account',
+    setting: 'group-setting',
   };
 
   // 动态菜单渲染（优先使用后端返回的菜单）
@@ -444,7 +450,7 @@ const Admin: React.FC = () => {
           ) : (
             <>
               <span style={{ color: '#fff' }}>Sanmoo Blog</span>
-              <span className="pro-sider-logo-sub">Admin Console</span>
+              <span className="pro-sider-logo-sub">站长后台</span>
             </>
           )}
         </div>
@@ -495,10 +501,10 @@ const Admin: React.FC = () => {
               style={{ fontSize: 18 }}
             />
             <Typography.Text strong style={{ fontSize: 16, color: token.colorText }}>
-              管理后台
+              站长后台
             </Typography.Text>
             <Typography.Text style={{ fontSize: 12, color: token.colorTextSecondary }}>
-              Sanmoo Blog · Admin
+              Sanmoo Blog · 内容管理
             </Typography.Text>
           </Space>
 
