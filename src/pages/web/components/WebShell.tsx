@@ -30,7 +30,7 @@ const WebShell: React.FC<Props> = ({ children, hideSidebar }) => {
   const blogName = settings?.coreConfig?.blogName || 'Sanmoo Blog';
   const author = settings?.coreConfig?.author || 'Author';
   const introduction =
-    settings?.coreConfig?.introduction || '面向后端开发者的技术沉淀与成长记录';
+    settings?.coreConfig?.introduction || '个人原创技术内容发布与知识整理平台';
   const rssEnabled = settings?.coreConfig?.rssEnabled !== false;
 
   return (
@@ -50,7 +50,11 @@ const WebShell: React.FC<Props> = ({ children, hideSidebar }) => {
         ) : null}
       </Layout>
 
-      <WebFooter blogName={blogName} rssEnabled={rssEnabled} />
+      <WebFooter
+        blogName={blogName}
+        rssEnabled={rssEnabled}
+        contactEmail={settings?.emailConfig?.from}
+      />
 
       <SearchModal
         visible={searchModalVisible}

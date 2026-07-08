@@ -143,7 +143,7 @@ const ArticleDetailPage: React.FC = () => {
     if (isFavorited) {
       removeFavorite(article.id);
       setIsFavorited(false);
-      antdMessage.success('已取消收藏');
+      antdMessage.success('已取消书签');
     } else {
       addFavorite({
         id: article.id,
@@ -162,7 +162,7 @@ const ArticleDetailPage: React.FC = () => {
         topics: article.topics,
       });
       setIsFavorited(true);
-      antdMessage.success('已添加收藏');
+      antdMessage.success('已添加书签');
     }
   };
 

@@ -71,7 +71,7 @@ const HomePage: React.FC = () => {
   const total = data?.total || 0;
   const blogName = settings?.coreConfig?.blogName || 'Sanmoo Blog';
   const introduction =
-    settings?.coreConfig?.introduction || '面向后端开发者的技术沉淀与成长记录';
+    settings?.coreConfig?.introduction || '个人原创技术内容发布与知识整理平台';
 
   const featuredArticle = useMemo(() => {
     if (articles.length === 0) {
@@ -112,7 +112,7 @@ const HomePage: React.FC = () => {
                     color: token.colorPrimary,
                   }}
                 >
-                  Backend Art
+                  Backend Art · 个人原创
                 </Tag>
               </div>
 
@@ -197,7 +197,7 @@ const HomePage: React.FC = () => {
                         推荐延伸
                       </Typography.Title>
                       <Typography.Text style={helperTextStyle}>
-                        适合继续深入阅读的专题内容与关联文章。
+                        适合继续深入阅读的专题内容与关联文章
                       </Typography.Text>
                     </div>
                   </Space>
@@ -228,7 +228,7 @@ const HomePage: React.FC = () => {
                       最新文章
                     </Typography.Title>
                     <Typography.Text style={helperTextStyle}>
-                      普通列表轻量呈现，重点突出标题、摘要与阅读入口。
+                      按发布时间排列，点击标题进入阅读
                     </Typography.Text>
                   </div>
                 </Space>

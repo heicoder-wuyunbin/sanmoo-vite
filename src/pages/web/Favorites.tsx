@@ -34,12 +34,12 @@ const FavoritesPage: React.FC = () => {
         title={
           <Typography.Title level={2} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             <HeartOutlined style={{ color: '#ff4d4f' }} />
-            我的收藏
+            我的书签
           </Typography.Title>
         }
       >
         {favorites.length === 0 ? (
-          <Empty description="暂无收藏的文章" />
+          <Empty description="暂无书签" />
         ) : (
           <Space direction="vertical" size={16} style={{ width: '100%' }}>
             {favorites.map((item: FavoriteItem) => (
@@ -117,7 +117,7 @@ const FavoritesPage: React.FC = () => {
                     (e.currentTarget as HTMLElement).style.color = token.colorTextSecondary;
                   }}
                 >
-                  取消收藏
+                  取消书签
                 </button>
               </Link>
             ))}

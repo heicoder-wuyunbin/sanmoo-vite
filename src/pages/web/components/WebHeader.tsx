@@ -38,8 +38,8 @@ const navItems = [
   { key: '/categories', label: '分类', icon: <AppstoreOutlined /> },
   { key: '/tags', label: '标签', icon: <TagsOutlined /> },
   { key: '/topics', label: '专题', icon: <BookOutlined /> },
-  { key: '/favorites', label: '收藏', icon: <HeartOutlined /> },
-  { key: '/history', label: '历史', icon: <HistoryOutlined /> },
+  { key: '/favorites', label: '书签', icon: <HeartOutlined /> },
+  { key: '/history', label: '阅读记录', icon: <HistoryOutlined /> },
   { key: '/links', label: '友链', icon: <ShareAltOutlined /> },
   { key: '/about', label: '关于', icon: <InfoCircleOutlined /> },
 ];
@@ -108,7 +108,7 @@ const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
             </div>
             {isDesktop ? (
               <div style={{ color: token.colorTextTertiary, fontSize: 11, marginTop: 2 }}>
-                Backend Art · 技术沉淀
+                Backend Art · 个人原创内容站
               </div>
             ) : null}
           </div>

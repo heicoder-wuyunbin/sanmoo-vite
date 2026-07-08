@@ -42,7 +42,7 @@ const AboutPage: React.FC = () => {
               style={{ marginBottom: 16 }}
             />
             <Tag color="blue" style={{ borderRadius: 999, paddingInline: 12 }}>
-              Backend Art
+              个人原创内容创作者
             </Tag>
             <Typography.Title
               level={2}

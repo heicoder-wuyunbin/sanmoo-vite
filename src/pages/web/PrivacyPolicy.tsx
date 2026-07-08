@@ -41,7 +41,7 @@ const PrivacyPolicyPage: React.FC = () => {
                 maxWidth: 720,
               }}
             >
-              本隐私政策旨在说明本站如何收集、使用、存储和保护您的个人信息
+              本隐私政策旨在说明本站如何收集、使用、存储和保护您的个人信息。本站为个人备案网站，仅提供原创技术内容发布与阅读服务。
             </Typography.Paragraph>
           </Space>
         </Card>
@@ -129,8 +129,53 @@ const PrivacyPolicyPage: React.FC = () => {
             七、联系我们
           </Typography.Title>
           <Typography.Paragraph style={{ color: token.colorTextSecondary, lineHeight: 1.8 }}>
-            如果您对本隐私政策有任何疑问或建议，请通过网站提供的联系方式与我们联系。
+            如果您对本隐私政策有任何疑问或建议，可通过以下方式联系站长：
           </Typography.Paragraph>
+          <ul style={{ color: token.colorTextSecondary, paddingLeft: 20, lineHeight: 2 }}>
+            <li>通过网站页脚「联系站长」链接发送邮件</li>
+            <li>通过关于页面列出的社交平台联系作者</li>
+          </ul>
+          <Typography.Paragraph style={{ color: token.colorTextSecondary, lineHeight: 1.8 }}>
+            我们会在合理时间内回复您的来信。
+          </Typography.Paragraph>
+        </Card>
+
+        <Card style={cardStyle} styles={{ body: { padding: 28 } }}>
+          <Typography.Title level={3} style={{ marginBottom: 16, color: token.colorText }}>
+            八、站点性质声明
+          </Typography.Title>
+          <Typography.Paragraph style={{ color: token.colorTextSecondary, lineHeight: 1.8 }}>
+            本站为个人备案网站，定位为个人原创技术内容发布与知识整理平台，不提供以下服务：
+          </Typography.Paragraph>
+          <ul style={{ color: token.colorTextSecondary, paddingLeft: 20, lineHeight: 2 }}>
+            <li>用户注册与公开发布</li>
+            <li>评论社区</li>
+            <li>会员付费与交易</li>
+            <li>社交关系链</li>
+          </ul>
+        </Card>
+
+        <Card style={cardStyle} styles={{ body: { padding: 28 } }}>
+          <Typography.Title level={3} style={{ marginBottom: 16, color: token.colorText }}>
+            九、备案信息
+          </Typography.Title>
+          <Typography.Paragraph style={{ color: token.colorTextSecondary, lineHeight: 1.8 }}>
+            本站已完成 ICP 备案与公安联网备案：
+          </Typography.Paragraph>
+          <ul style={{ color: token.colorTextSecondary, paddingLeft: 20, lineHeight: 2 }}>
+            <li>
+              ICP 备案号：
+              <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" style={{ color: token.colorPrimary }}>
+                闽ICP备2026004727号-1
+              </a>
+            </li>
+            <li>
+              公安备案号：
+              <a href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank" rel="noopener noreferrer" style={{ color: token.colorPrimary }}>
+                闽公网安备35020302036974号
+              </a>
+            </li>
+          </ul>
         </Card>
 
         <Card style={{ ...cardStyle, textAlign: 'center' }} styles={{ body: { padding: 20 } }}>

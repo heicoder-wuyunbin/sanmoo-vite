@@ -39,7 +39,7 @@ const HistoryPage: React.FC = () => {
         title={
           <Typography.Title level={2} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             <HistoryOutlined style={{ color: token.colorPrimary }} />
-            阅读历史
+            阅读记录
           </Typography.Title>
         }
         extra={history.length > 0 && (
