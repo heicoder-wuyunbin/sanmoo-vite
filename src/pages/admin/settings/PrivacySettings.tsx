@@ -1,4 +1,4 @@
-import { FileTextOutlined } from '@ant-design/icons';
+﻿import { FileTextOutlined } from '@ant-design/icons';
 import { App, Button, Card, Form, Input, Space, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchPrivacyConfig, updatePrivacyConfig } from '@/services/blog/settings-api';
@@ -82,7 +82,7 @@ const PrivacySettings: React.FC = () => {
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.1s both',
             }}
-            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
               <Form.Item name="privacyPolicy" label="政策内容">

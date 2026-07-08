@@ -1,4 +1,4 @@
-import { GithubOutlined, GlobalOutlined, UserOutlined, CheckCircleOutlined } from '@ant-design/icons';
+﻿import { GithubOutlined, GlobalOutlined, UserOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { App, Button, Card, Col, Form, Input, Row, Space, Switch, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchSocialConfig, updateSocialConfig } from '@/services/blog/settings-api';
@@ -105,7 +105,7 @@ const SocialSettings: React.FC = () => {
                     borderRadius: token.borderRadiusLG,
                     animation: `fadeInUp 0.4s ease-out ${0.1 + index * 0.05}s both`,
                   }}
-                  headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                  styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
                 >
                   <Form.Item name={`${item.key}Home`} label={`${item.label} 链接`}>
                     <Input

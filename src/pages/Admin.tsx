@@ -29,7 +29,6 @@ import {
   GlobalOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  MonitorOutlined,
   BookOutlined,
   BugOutlined,
   WechatOutlined,
@@ -69,7 +68,6 @@ const ICON_MAP: Record<string, React.FC<any>> = {
   SettingOutlined,
   FileImageOutlined,
   GlobalOutlined,
-  MonitorOutlined,
   BookOutlined,
   BugOutlined,
   WechatOutlined,
@@ -105,7 +103,7 @@ const MODULE_ICON_MAP: Record<string, React.FC<any>> = {
   mpuser: WechatOutlined,
   role: TeamOutlined,
   permission: LockOutlined,
-  maintenance: MonitorOutlined,
+
   setting: SettingOutlined,
 };
 
@@ -122,7 +120,7 @@ const MODULE_LABELS: Record<string, string> = {
   mpuser: '用户权限',
   role: '用户权限',
   permission: '用户权限',
-  maintenance: '监控运维',
+
   setting: '系统配置',
 };
 
@@ -264,7 +262,7 @@ const Admin: React.FC = () => {
     {
       key: 'group-monitor',
       label: '监控运维',
-      icon: <MonitorOutlined />,
+      icon: <BarChartOutlined />,
       items: [
         { key: '/admin/visitors', icon: <LineChartOutlined />, label: '访问记录', perm: 'dashboard:visitors' },
         { key: '/admin/errors', icon: <BugOutlined />, label: '错误日志', perm: 'dashboard:errors' },
@@ -299,8 +297,7 @@ const Admin: React.FC = () => {
     mpuser: 'group-user-perm',
     role: 'group-user-perm',
     permission: 'group-user-perm',
-    maintenance: 'group-monitor',
-    setting: 'group-setting',
+  setting: 'group-setting',
   };
 
   // 动态菜单渲染（优先使用后端返回的菜单）
@@ -465,7 +462,12 @@ const Admin: React.FC = () => {
       </Sider>
 
       {/* ---------- 右侧布局 ---------- */}
-      <Layout style={{ background: token.colorBgLayout }}>
+      <Layout
+        style={{
+          background: token.colorBgLayout,
+          height: '100vh',
+        }}
+      >
         {/* 顶部栏 */}
         <Header
           className="pro-header"
@@ -482,6 +484,7 @@ const Admin: React.FC = () => {
             position: 'sticky',
             top: 0,
             zIndex: 10,
+            flexShrink: 0,
           }}
         >
           <Space align="center" size={12}>
@@ -533,10 +536,18 @@ const Admin: React.FC = () => {
         </Header>
 
         {/* 内容区 */}
-        <Content style={{ margin: '16px', padding: 0 }}>
+        <Content
+          style={{
+            margin: '16px',
+            padding: 0,
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
+          }}
+        >
           <div
             style={{
-              minHeight: 'calc(100vh - 88px)',
+              minHeight: '100%',
               background: token.colorBgContainer,
               borderRadius: token.borderRadiusLG,
               padding: 20,

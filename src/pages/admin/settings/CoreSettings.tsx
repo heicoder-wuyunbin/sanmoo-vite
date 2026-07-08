@@ -1,4 +1,4 @@
-import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
+﻿import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import {
   App,
   Avatar,
@@ -131,7 +131,7 @@ const CoreSettings: React.FC = () => {
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.1s both',
                 }}
-                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
               >
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <div style={{ textAlign: 'center' }}>
@@ -205,7 +205,7 @@ const CoreSettings: React.FC = () => {
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.15s both',
                 }}
-                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
               >
                 <Space direction="vertical" size={20} style={{ width: '100%' }}>
                   <Form.Item

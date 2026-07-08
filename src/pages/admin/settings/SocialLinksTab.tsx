@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, Space, Switch } from 'antd';
+﻿import { Button, Card, Form, Input, Space, Switch } from 'antd';
 import React from 'react';
 import type { SettingsTabProps } from './types';
 import { ADMIN_CARD_STYLE } from '@/styles/layout';
@@ -25,3 +25,4 @@ const SocialLinksTab: React.FC<SettingsTabProps> = ({ saveConfig, savingConfig }
 );
 
 export default SocialLinksTab;
+

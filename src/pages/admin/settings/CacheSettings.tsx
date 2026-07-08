@@ -1,4 +1,4 @@
-import { ClearOutlined, DatabaseOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
+﻿import { ClearOutlined, DatabaseOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import {
   App, Button, Card, Col, Empty, Popconfirm, Row, Space, Statistic,
   Table, Tag, Typography, theme as antTheme,
@@ -103,7 +103,7 @@ const CacheSettings: React.FC = () => {
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.1s both',
             }}
-            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space size="middle" wrap>
               <Popconfirm
@@ -171,7 +171,7 @@ const CacheSettings: React.FC = () => {
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.15s both',
             }}
-            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={8}>
@@ -258,7 +258,7 @@ const CacheSettings: React.FC = () => {
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.2s both',
             }}
-            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             {cacheStats?.prefixCounts && Object.keys(cacheStats.prefixCounts).length > 0 ? (
               <Table

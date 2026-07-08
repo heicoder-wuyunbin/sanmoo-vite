@@ -1,4 +1,4 @@
-import { App, Button, Card, Form, Input, Space, Switch, Typography } from 'antd';
+﻿import { App, Button, Card, Form, Input, Space, Switch, Typography } from 'antd';
 import React, { useState } from 'react';
 import { syncMeiliSearch } from '@/services/blog/api';
 import type { SettingsTabProps } from './types';
@@ -59,3 +59,4 @@ const SearchConfigTab: React.FC<SettingsTabProps> = ({ saveConfig, savingConfig 
 };
 
 export default SearchConfigTab;
+

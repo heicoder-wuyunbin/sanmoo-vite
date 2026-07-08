@@ -4,7 +4,7 @@ import {
   Typography, theme as antTheme,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { fetchSearchConfig, updateSearchConfig, syncMeiliSearch } from '@/services/blog/settings-api';
+import { fetchSearchConfig, updateSearchConfig, syncMeiliSearch, fetchMeiliSearchStats } from '@/services/blog/settings-api';
 import type { SearchConfig } from '@/services/blog/types';
 
 const SearchSettings: React.FC = () => {
@@ -40,10 +40,17 @@ const SearchSettings: React.FC = () => {
   const refetchInfo = async () => {
     setInfoLoading(true);
     try {
+      const res = await fetchMeiliSearchStats();
+      setSyncInfo({
+        lastSyncTime: res.data.lastSyncTime,
+        articleCount: res.data.articleCount,
+        indexStatus: res.data.indexStatus,
+      });
+    } catch {
       setSyncInfo({
         lastSyncTime: '-',
         articleCount: 0,
-        indexStatus: 'unknown',
+        indexStatus: 'error',
       });
     } finally {
       setInfoLoading(false);
@@ -115,8 +122,8 @@ const SearchSettings: React.FC = () => {
                   border: `1px solid ${token.colorBorderSecondary}`,
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.1s both',
+                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
                 }}
-                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
               >
                 <Form.Item name="recommendStrategy" label="推荐算法">
                   <Select
@@ -146,8 +153,8 @@ const SearchSettings: React.FC = () => {
                   border: `1px solid ${token.colorBorderSecondary}`,
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.15s both',
+                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
                 }}
-                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
               >
                 <Form.Item name="searchEngine" label="选择引擎">
                   <Select
@@ -176,13 +183,13 @@ const SearchSettings: React.FC = () => {
                   border: `1px solid ${token.colorBorderSecondary}`,
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.2s both',
+                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
                 }}
-                headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
               >
                 <Form.Item
                   name="hotSearchMode"
-                  label="使用 MeiliSearch"
-                  tooltip="开启后使用 MeiliSearch 搜索引擎和真热门；关闭时使用内置搜索和配置的关键词"
+                  label="真实热门搜索"
+                  tooltip="开启后根据用户搜索历史统计热门关键词；关闭时使用配置的热门搜索词"
                   valuePropName="checked"
                 >
                   <Switch
@@ -194,7 +201,7 @@ const SearchSettings: React.FC = () => {
                   />
                 </Form.Item>
                 <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                  开启后自动根据搜索热度生成热门关键词。
+                  开启后自动根据搜索热度生成热门关键词，关闭时使用下方配置的备用热门词。
                 </Typography.Text>
               </Card>
             </Col>
@@ -207,8 +214,8 @@ const SearchSettings: React.FC = () => {
               border: `1px solid ${token.colorBorderSecondary}`,
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.25s both',
+              borderBottom: `1px solid ${token.colorBorderSecondary}`,
             }}
-            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space direction="vertical" size={20} style={{ width: '100%' }}>
               <Form.Item name="meilisearchHost" label="MeiliSearch 地址">
@@ -257,10 +264,10 @@ const SearchSettings: React.FC = () => {
                     transition: 'all 0.3s ease',
                   }}
                 />
-                <Typography.Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-                  仅在关闭 MeiliSearch 模式下生效，输入数组格式的热门搜索词。
-                </Typography.Text>
               </Form.Item>
+              <Typography.Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
+                仅在关闭 MeiliSearch 模式下生效，输入数组格式的热门搜索词。
+              </Typography.Text>
             </Space>
           </Card>
 
@@ -271,8 +278,8 @@ const SearchSettings: React.FC = () => {
               border: `1px solid ${token.colorBorderSecondary}`,
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.3s both',
+              borderBottom: `1px solid ${token.colorBorderSecondary}`,
             }}
-            headStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
               <Row gutter={[16, 16]}>
@@ -291,7 +298,7 @@ const SearchSettings: React.FC = () => {
                 <Col xs={24} sm={8}>
                   <Statistic
                     title="索引状态"
-                    value={syncInfo?.indexStatus === 'ready' ? '正常' : '未知'}
+                    value={syncInfo?.indexStatus === 'healthy' ? '正常' : syncInfo?.indexStatus === 'error' ? '异常' : '未知'}
                     style={{
                       background: `${token.colorBgLayout}`,
                       padding: '16px',
@@ -402,3 +409,4 @@ const SearchSettings: React.FC = () => {
 };
 
 export default SearchSettings;
+

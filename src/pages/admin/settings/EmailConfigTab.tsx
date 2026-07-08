@@ -1,4 +1,4 @@
-import { App, Button, Card, Form, Input, Space, Switch, Typography } from 'antd';
+﻿import { App, Button, Card, Form, Input, Space, Switch, Typography } from 'antd';
 import React, { useState } from 'react';
 import { sendEmailVerificationCode, verifyEmailVerificationCode } from '@/services/blog/api';
 import type { SettingsTabProps } from './types';
@@ -90,3 +90,4 @@ const EmailConfigTab: React.FC<SettingsTabProps> = ({ form, saveConfig, savingCo
 };
 
 export default EmailConfigTab;
+

@@ -72,7 +72,7 @@ export async function updateEmailConfig(data: Partial<EmailConfig>) {
 export async function sendEmailVerificationCode(emailConfig: {
   host: string; port: string; username: string; password: string; from: string; loginMfaEnabled?: boolean;
 }) {
-  return request<void>('/admin/settings/email/send-code', { method: 'POST', data: { emailConfig } });
+  return request<{ identifier: string }>('/admin/settings/email/send-code', { method: 'POST', data: { emailConfig } });
 }
 
 export async function verifyEmailVerificationCode(email: string, code: string) {
@@ -85,6 +85,10 @@ export async function fetchHotSearches() {
 
 export async function syncMeiliSearch() {
   return request<{ count: number; msg: string }>('/admin/search/sync', { method: 'POST' });
+}
+
+export async function fetchMeiliSearchStats() {
+  return request<{ articleCount: number; indexStatus: string; lastSyncTime: string }>('/admin/search/stats');
 }
 
 // ─── 缓存管理 ────────────────────────────────────────────────

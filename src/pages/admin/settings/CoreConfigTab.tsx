@@ -1,4 +1,4 @@
-import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
+﻿import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import {
   App,
   Avatar,
@@ -119,3 +119,4 @@ const CoreConfigTab: React.FC<SettingsTabProps> = ({ form, saveConfig, savingCon
 };
 
 export default CoreConfigTab;
+

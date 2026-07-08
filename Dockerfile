@@ -4,6 +4,15 @@ FROM node:22-alpine AS build
 # 配置 Alpine 国内镜像源（加速 apk add，如果需要的话）
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
+# 安装中文语言支持，确保 UTF-8 编码正确
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
+
+# 设置语言环境变量
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 # 设置工作目录
 WORKDIR /app
 
@@ -20,7 +29,7 @@ RUN pnpm config set registry https://registry.npmmirror.com
 # 安装依赖
 RUN pnpm install
 
-# 复制项目文件
+# 复制项目文件（node_modules 被 .dockerignore 排除）
 COPY . .
 
 # 构建项目

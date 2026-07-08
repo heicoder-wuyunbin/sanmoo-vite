@@ -1,4 +1,4 @@
-import { ClearOutlined, DatabaseOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
+﻿import { ClearOutlined, DatabaseOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import {
   App, Button, Card, Col, Empty, Popconfirm, Row, Space, Statistic,
   Table, Tag, Typography,
@@ -104,3 +104,4 @@ const CacheTab: React.FC = () => {
 };
 
 export default CacheTab;
+
