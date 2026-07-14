@@ -3,7 +3,7 @@ import { Divider, Layout, Space, Typography, theme as antTheme } from 'antd';
 import { FileTextOutlined, MailOutlined, SafetyCertificateOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { fetchWebCompliance } from '@/services/blog/settings-api';
-import type { ComplianceInfo, FilingInfo } from '@/services/blog/types';
+import type { ComplianceInfo, FilingInfo, ContactInfo } from '@/services/blog/types';
 
 const { Footer } = Layout;
 
@@ -26,6 +26,7 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
   const { token } = antTheme.useToken();
   const [compliance, setCompliance] = useState<ComplianceInfo | null>(null);
   const [filingInfo, setFilingInfo] = useState<FilingInfo | null>(null);
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -34,6 +35,9 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
         setCompliance(res.data);
         if (res.data?.filingInfo) {
           setFilingInfo(parseJson<FilingInfo>(res.data.filingInfo));
+        }
+        if (res.data?.contactInfo) {
+          setContactInfo(parseJson<ContactInfo>(res.data.contactInfo));
         }
       } catch {
         console.warn('获取合规信息失败，使用默认备案信息');
@@ -87,8 +91,8 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
             RSS
           </a>
         )}
-        {contactEmail ? (
-          <a href={`mailto:${contactEmail}`} style={linkStyle}>
+        {contactInfo?.email || contactEmail ? (
+          <a href={`mailto:${contactInfo?.email || contactEmail}`} style={linkStyle}>
             <MailOutlined style={{ fontSize: 12 }} />
             联系站长
           </a>
@@ -116,6 +120,11 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
           >
             闽ICP备2026004727号-1
           </a>
+        )}
+        {filingInfo?.recordType && (
+          <span style={{ color: token.colorTextTertiary, marginRight: 12 }}>
+            · {filingInfo.recordType}
+          </span>
         )}
         <a
           href="http://www.beian.gov.cn/portal/registerSystemInfo"
