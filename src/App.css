@@ -4,9 +4,15 @@
  * 这里仅补充自定义组件需要的工具类和布局类
  * ========================================================================= */
 
-.ant-layout {
+.ant-layout:not(.admin-layout) {
   min-height: 100vh;
   background: var(--web-page-bg);
+}
+
+/* ---------- 管理后台布局覆盖 ---------- */
+.admin-layout.ant-layout {
+  min-height: 0;
+  height: 100vh;
 }
 
 /* ---------- Pro 风格页面容器 ---------- */
@@ -188,15 +194,10 @@ html[data-theme='dark'] ::-webkit-scrollbar-thumb {
 /* ---------- 路由过渡动画 ---------- */
 .route-transition-container {
   position: relative;
-  min-height: calc(100vh - 88px);
-  overflow: hidden;
+  min-height: 0;
 }
 
 .route-transition-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
   padding: 0;
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
