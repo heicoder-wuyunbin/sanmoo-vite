@@ -4,6 +4,7 @@ import {
   App,
   Breadcrumb,
   Button,
+  Image,
   Input,
   Popconfirm,
   Space,
@@ -15,14 +16,15 @@ import {
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  type BlogSettings,
   deleteAdminFile,
   type FileItem,
   fetchAdminFiles,
-  fetchSettings,
   uploadAdminFile,
 } from '@/services/blog/api';
 import AdminCard from '@/components/admin/AdminCard';
+
+const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg']);
+const isImageFile = (name: string) => IMAGE_EXTS.has(name.substring(name.lastIndexOf('.')).toLowerCase());
 
 const FilesPage: React.FC = () => {
   const { message } = App.useApp();
@@ -33,11 +35,6 @@ const FilesPage: React.FC = () => {
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [keyword, setKeyword] = useState('');
-  const [settings, setSettings] = useState<BlogSettings>();
-
-  const resolveFileUrl = (item: FileItem) => {
-    return item.url;
-  };
 
   const load = useCallback(async (
     nextPage = page,
@@ -46,19 +43,15 @@ const FilesPage: React.FC = () => {
   ) => {
     setLoading(true);
     try {
-      const [listRes, settingsRes] = await Promise.all([
-        fetchAdminFiles({
-          page: nextPage,
-          size: nextSize,
-          keyword: nextKeyword || undefined,
-        }),
-        fetchSettings(true),
-      ]);
+      const listRes = await fetchAdminFiles({
+        page: nextPage,
+        size: nextSize,
+        keyword: nextKeyword || undefined,
+      });
       setList(listRes.data.list || []);
       setTotal(listRes.data.total || 0);
       setPage(nextPage);
       setSize(nextSize);
-      setSettings(settingsRes.data);
     } finally {
       setLoading(false);
     }
@@ -142,14 +135,27 @@ const FilesPage: React.FC = () => {
             }}
             columns={[
               { title: 'ID', dataIndex: 'id', width: 130 },
-              { title: '文件名', dataIndex: 'name' },
+              {
+                title: '文件名',
+                dataIndex: 'name',
+                render: (value: string) => value.split('/').pop() || value,
+              },
               {
                 title: '访问地址',
                 dataIndex: 'url',
-                render: (value: string) => (
-                  <Typography.Text copyable={{ text: value }}>
-                    {value}
-                  </Typography.Text>
+                render: (value: string, record: FileItem) => (
+                  isImageFile(record.name) ? (
+                    <Image
+                      src={value}
+                      alt={record.name}
+                      style={{ maxWidth: 120, maxHeight: 80, objectFit: 'contain', borderRadius: 4 }}
+                      preview={{ mask: '预览' }}
+                    />
+                  ) : (
+                    <Typography.Text copyable={{ text: value }}>
+                      {value}
+                    </Typography.Text>
+                  )
                 ),
               },
               {
