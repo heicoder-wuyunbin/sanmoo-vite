@@ -6,6 +6,7 @@ import type {
   CacheStatsResult,
   CoreConfig,
   PrivacyConfig,
+  ComplianceInfo,
   SocialConfig,
   SearchConfig,
   StorageConfig,
@@ -103,4 +104,8 @@ export async function warmupCache() {
 
 export async function fetchCacheStats() {
   return request<CacheStatsResult>('/admin/cache/stats');
+}
+
+export async function fetchWebCompliance() {
+  return request<ComplianceInfo>('/web/compliance');
 }

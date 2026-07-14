@@ -1,4 +1,4 @@
-﻿import { FileTextOutlined } from '@ant-design/icons';
+import { FileTextOutlined, ShieldOutlined, MailOutlined, DatabaseOutlined, UserDeleteOutlined } from '@ant-design/icons';
 import { App, Button, Card, Form, Input, Space, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchPrivacyConfig, updatePrivacyConfig } from '@/services/blog/settings-api';
@@ -60,10 +60,10 @@ const PrivacySettings: React.FC = () => {
         >
           <Space direction="vertical" size={8}>
             <Typography.Title level={3} style={{ margin: 0, fontWeight: 600 }}>
-              隐私政策
+              合规配置
             </Typography.Title>
             <Typography.Text type="secondary">
-              配置博客隐私政策内容，确保符合相关法律法规要求。
+              配置博客合规信息，包括隐私政策、备案信息、联系方式等，确保符合相关法律法规要求。
             </Typography.Text>
           </Space>
         </div>
@@ -82,12 +82,11 @@ const PrivacySettings: React.FC = () => {
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.1s both',
             }}
-            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
           >
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
               <Form.Item name="privacyPolicy" label="政策内容">
                 <Input.TextArea
-                  rows={15}
+                  rows={10}
                   placeholder="请输入隐私政策内容...
 
 1. 信息收集：我们会收集您的浏览记录和互动数据，以优化用户体验。
@@ -112,6 +111,146 @@ const PrivacySettings: React.FC = () => {
             </Space>
           </Card>
 
+          <Card
+            size="small"
+            title={
+              <Space>
+                <ShieldOutlined style={{ color: token.colorPrimary }} />
+                <span>备案信息</span>
+              </Space>
+            }
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              marginTop: 24,
+              animation: 'fadeInUp 0.4s ease-out 0.2s both',
+            }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Form.Item name="filingInfo" label="备案信息（JSON格式）">
+                <Input.TextArea
+                  rows={4}
+                  placeholder='{"icpCode": "京ICP备xxxxxxxx号", "filingUrl": "https://beian.miit.gov.cn", "recordType": "个人"}'
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    lineHeight: 1.8,
+                  }}
+                />
+              </Form.Item>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                备案信息将展示在网站页脚和隐私政策页面，需要填写符合格式的JSON字符串。
+              </Typography.Text>
+            </Space>
+          </Card>
+
+          <Card
+            size="small"
+            title={
+              <Space>
+                <MailOutlined style={{ color: token.colorPrimary }} />
+                <span>联系方式</span>
+              </Space>
+            }
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              marginTop: 24,
+              animation: 'fadeInUp 0.4s ease-out 0.3s both',
+            }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Form.Item name="contactInfo" label="联系方式（JSON格式）">
+                <Input.TextArea
+                  rows={4}
+                  placeholder='{"email": "contact@example.com", "wechat": "example_wx", "github": "example"}'
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    lineHeight: 1.8,
+                  }}
+                />
+              </Form.Item>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                联系方式将展示在隐私政策页面的「联系我们」部分，需要填写符合格式的JSON字符串。
+              </Typography.Text>
+            </Space>
+          </Card>
+
+          <Card
+            size="small"
+            title={
+              <Space>
+                <DatabaseOutlined style={{ color: token.colorPrimary }} />
+                <span>数据保留说明</span>
+              </Space>
+            }
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              marginTop: 24,
+              animation: 'fadeInUp 0.4s ease-out 0.4s both',
+            }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Form.Item name="dataRetentionPolicy" label="数据保留说明">
+                <Input.TextArea
+                  rows={6}
+                  placeholder="访问日志保留30天，错误日志保留90天，文章统计数据保留365天。用户基础信息将长期保留，直到用户主动申请删除。"
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    lineHeight: 1.8,
+                  }}
+                />
+              </Form.Item>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                数据保留说明将展示在隐私政策页面，说明各类数据的保留期限和处理方式。
+              </Typography.Text>
+            </Space>
+          </Card>
+
+          <Card
+            size="small"
+            title={
+              <Space>
+                <UserDeleteOutlined style={{ color: token.colorPrimary }} />
+                <span>账号注销说明</span>
+              </Space>
+            }
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              marginTop: 24,
+              animation: 'fadeInUp 0.4s ease-out 0.5s both',
+            }}
+          >
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <Form.Item name="accountDeletionGuide" label="账号注销说明">
+                <Input.TextArea
+                  rows={6}
+                  placeholder="小程序用户可在个人中心页面点击\"注销账号\"按钮，系统将删除您的所有个人数据，包括用户信息、收藏记录、浏览历史等。注销后无法恢复，请谨慎操作。"
+                  style={{
+                    borderRadius: token.borderRadiusLG,
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    lineHeight: 1.8,
+                  }}
+                />
+              </Form.Item>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                账号注销说明将展示在隐私政策页面，说明用户如何申请删除账号和个人数据。
+              </Typography.Text>
+            </Space>
+          </Card>
+
           <div
             style={{
               marginTop: 24,
@@ -119,7 +258,7 @@ const PrivacySettings: React.FC = () => {
               borderTop: `1px solid ${token.colorBorderSecondary}`,
               display: 'flex',
               justifyContent: 'flex-end',
-              animation: 'fadeInUp 0.4s ease-out 0.2s both',
+              animation: 'fadeInUp 0.4s ease-out 0.6s both',
             }}
           >
             <Space>

@@ -110,6 +110,30 @@ export type CoreConfig = {
 
 export type PrivacyConfig = {
   privacyPolicy: string;
+  filingInfo: string;
+  contactInfo: string;
+  dataRetentionPolicy: string;
+  accountDeletionGuide: string;
+};
+
+export type ComplianceInfo = {
+  privacyPolicy: string;
+  filingInfo: string;
+  contactInfo: string;
+  dataRetentionPolicy: string;
+  accountDeletionGuide: string;
+};
+
+export type FilingInfo = {
+  icpCode: string;
+  filingUrl: string;
+  recordType: string;
+};
+
+export type ContactInfo = {
+  email: string;
+  wechat: string;
+  github: string;
 };
 
 export type SocialConfig = {

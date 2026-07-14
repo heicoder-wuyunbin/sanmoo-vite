@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Divider, Layout, Space, Typography, theme as antTheme } from 'antd';
 import { FileTextOutlined, MailOutlined, SafetyCertificateOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { fetchWebCompliance } from '@/services/blog/settings-api';
+import type { ComplianceInfo, FilingInfo } from '@/services/blog/types';
 
 const { Footer } = Layout;
+
+const parseJson = <T>(str: string): T | null => {
+  if (!str) return null;
+  try {
+    return JSON.parse(str) as T;
+  } catch {
+    return null;
+  }
+};
 
 type WebFooterProps = {
   blogName: string;
@@ -13,6 +24,21 @@ type WebFooterProps = {
 
 const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmail }) => {
   const { token } = antTheme.useToken();
+  const [compliance, setCompliance] = useState<ComplianceInfo | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetchWebCompliance();
+        setCompliance(res.data);
+      } catch {
+        console.warn('获取合规信息失败，使用默认备案信息');
+      }
+    };
+    void load();
+  }, []);
+
+  const filingInfo = useMemo(() => parseJson<FilingInfo>(compliance?.filingInfo || ''), [compliance]);
 
   const linkStyle: React.CSSProperties = {
     color: token.colorTextTertiary,
@@ -70,14 +96,25 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
       <Divider style={{ maxWidth: 360, margin: '0 auto 10px', borderColor: token.colorBorderSecondary }} />
 
       <div>
-        <a
-          href="https://beian.miit.gov.cn/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: token.colorTextTertiary, marginRight: 12 }}
-        >
-          闽ICP备2026004727号-1
-        </a>
+        {filingInfo?.icpCode ? (
+          <a
+            href={filingInfo.filingUrl || 'https://beian.miit.gov.cn/'}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: token.colorTextTertiary, marginRight: 12 }}
+          >
+            {filingInfo.icpCode}
+          </a>
+        ) : (
+          <a
+            href="https://beian.miit.gov.cn/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: token.colorTextTertiary, marginRight: 12 }}
+          >
+            闽ICP备2026004727号-1
+          </a>
+        )}
         <a
           href="http://www.beian.gov.cn/portal/registerSystemInfo"
           target="_blank"
