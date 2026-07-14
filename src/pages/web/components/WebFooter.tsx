@@ -7,7 +7,7 @@ import type { ComplianceInfo, FilingInfo, ContactInfo } from '@/services/blog/ty
 
 const { Footer } = Layout;
 
-const parseJson = <T>(str: string): T | null => {
+const parseJson = <T,>(str: string): T | null => {
   if (!str) return null;
   try {
     return JSON.parse(str) as T;
