@@ -293,11 +293,11 @@ export type ErrorLogRecord = {
 // ─── 文件 ────────────────────────────────────────────────────
 
 export type FileItem = {
-  id: number;
-  filename: string;
+  id: string;
+  name: string;
   size: number;
-  lastModified: string;
-  path: string;
+  url: string;
+  createTime: string;
 };
 
 // ─── 归档 ────────────────────────────────────────────────────

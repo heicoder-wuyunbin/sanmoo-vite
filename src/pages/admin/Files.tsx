@@ -35,9 +35,8 @@ const FilesPage: React.FC = () => {
   const [keyword, setKeyword] = useState('');
   const [settings, setSettings] = useState<BlogSettings>();
 
-  const resolveFileUrl = (name: string) => {
-    const prefix = settings?.storageConfig?.uploadLocalUrlPrefix || '/uploads/';
-    return `${prefix.endsWith('/') ? prefix : `${prefix}/`}${name}`;
+  const resolveFileUrl = (item: FileItem) => {
+    return item.url;
   };
 
   const load = useCallback(async (
@@ -110,7 +109,8 @@ const FilesPage: React.FC = () => {
                   setUploading(true);
                   try {
                     const res = await uploadAdminFile(file as File);
-                    message.success(`上传成功：${res.data.filename}`);
+                    const name = res.data?.url || (file as File).name;
+                    message.success(`上传成功：${name}`);
                     onSuccess?.({}, new XMLHttpRequest());
                     await load(1, size, keyword);
                   } catch (error) {
@@ -142,13 +142,13 @@ const FilesPage: React.FC = () => {
             }}
             columns={[
               { title: 'ID', dataIndex: 'id', width: 130 },
-              { title: '文件名', dataIndex: 'filename' },
+              { title: '文件名', dataIndex: 'name' },
               {
                 title: '访问地址',
-                dataIndex: 'filename',
+                dataIndex: 'url',
                 render: (value: string) => (
-                  <Typography.Text copyable={{ text: resolveFileUrl(value) }}>
-                    {resolveFileUrl(value)}
+                  <Typography.Text copyable={{ text: value }}>
+                    {value}
                   </Typography.Text>
                 ),
               },
@@ -159,8 +159,8 @@ const FilesPage: React.FC = () => {
                 render: (value) => <Tag>{(value / 1024).toFixed(1)} KB</Tag>,
               },
               {
-                title: '更新时间',
-                dataIndex: 'lastModified',
+                title: '创建时间',
+                dataIndex: 'createTime',
                 width: 180,
                 render: (value) => dayjs(value).format('YYYY-MM-DD HH:mm:ss'),
               },

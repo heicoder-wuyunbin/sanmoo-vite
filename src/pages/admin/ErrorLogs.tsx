@@ -6,7 +6,7 @@ import type { ErrorLogRecord } from '@/services/blog/api';
 import { fetchErrorLogs, deleteErrorLog, batchDeleteErrorLogs, exportErrorLogs, clearAllErrorLogs } from '@/services/blog/api';
 
 const ErrorLogsPage: React.FC = () => {
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [records, setRecords] = useState<ErrorLogRecord[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -47,7 +47,7 @@ const ErrorLogsPage: React.FC = () => {
   };
 
   const handleClear = () => {
-    Modal.confirm({
+    modal.confirm({
       title: '确认清空所有记录',
       content: '此操作将删除所有错误日志，无法恢复。确定要继续吗？',
       okText: '确认清空',

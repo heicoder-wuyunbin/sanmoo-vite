@@ -571,7 +571,9 @@ const Admin: React.FC = () => {
                     minHeight: 400,
                   }}
                 >
-                  <Spin size="large" tip="加载中..." />
+                  <Spin size="large">
+                    <div style={{ padding: 16, color: 'rgba(0,0,0,0.45)' }}>加载中...</div>
+                  </Spin>
                 </div>
               }
             >

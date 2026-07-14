@@ -4,7 +4,7 @@ import type { FileItem } from './types';
 export async function uploadAdminFile(file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  return request<{ id: number; filename: string; size: number; path: string }>(
+  return request<{ url: string; size: number }>(
     '/admin/files/upload',
     { method: 'POST', data: formData, requestType: 'form' },
   );

@@ -1,4 +1,4 @@
-﻿import { GithubOutlined, GlobalOutlined, UserOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { GithubOutlined, GlobalOutlined, UserOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { App, Button, Card, Col, Form, Input, Row, Space, Switch, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchSocialConfig, updateSocialConfig } from '@/services/blog/settings-api';
@@ -23,7 +23,14 @@ const SocialSettings: React.FC = () => {
       setLoading(true);
       try {
         const res = await fetchSocialConfig();
-        form.setFieldsValue(res.data);
+        const data = res.data || {};
+        // 链接为空时，强制关闭对应的滑块
+        SOCIAL_ITEMS.forEach((item) => {
+          if (!data[`${item.key}Home`]) {
+            data[`${item.key}Show`] = false;
+          }
+        });
+        form.setFieldsValue(data);
       } catch {
         message.error('加载社交链接配置失败');
       } finally {
@@ -44,6 +51,11 @@ const SocialSettings: React.FC = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  // 链接输入变化时，自动同步滑块状态
+  const handleLinkChange = (key: string, value: string) => {
+    form.setFieldsValue({ [`${key}Show`]: !!value });
   };
 
   return (
@@ -112,6 +124,7 @@ const SocialSettings: React.FC = () => {
                       placeholder={item.placeholder}
                       size="large"
                       prefix={item.icon}
+                      onChange={(e) => handleLinkChange(item.key, e.target.value)}
                       style={{
                         borderRadius: token.borderRadiusLG,
                         transition: 'all 0.3s ease',

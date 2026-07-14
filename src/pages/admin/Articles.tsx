@@ -52,7 +52,7 @@ type FormValues = {
 };
 
 const ArticlesPage: React.FC = () => {
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { token } = antTheme.useToken();
   const [form] = Form.useForm<FormValues>();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -189,7 +189,7 @@ const ArticlesPage: React.FC = () => {
     );
     if (publishedSelected.length > 0) {
       const titles = publishedSelected.map((a) => a.title).join('、');
-      Modal.warning({
+      modal.warning({
         title: '无法批量删除',
         content: `选中的文章中有 ${publishedSelected.length} 篇未下架：${titles}。请先下架后再执行删除操作。`,
       });

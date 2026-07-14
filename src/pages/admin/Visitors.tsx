@@ -6,7 +6,7 @@ import type { VisitorRecord } from '@/services/blog/api';
 import { fetchVisitorRecords, deleteVisitorRecord, batchDeleteVisitorRecords, clearAllVisitorRecords } from '@/services/blog/api';
 
 const VisitorsPage: React.FC = () => {
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [records, setRecords] = useState<VisitorRecord[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -46,7 +46,7 @@ const VisitorsPage: React.FC = () => {
   };
 
   const handleClear = () => {
-    Modal.confirm({
+    modal.confirm({
       title: '确认清空所有记录',
       content: '此操作将删除所有访问记录，无法恢复。确定要继续吗？',
       okText: '确认清空',
