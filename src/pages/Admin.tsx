@@ -426,7 +426,7 @@ const Admin: React.FC = () => {
   })();
 
   return (
-    <Layout style={{ minHeight: '100vh', background: token.colorBgLayout }}>
+    <Layout style={{ height: '100vh', background: token.colorBgLayout, overflow: 'hidden' }}>
       {/* ---------- 侧边栏（AntD Pro 经典深色） ---------- */}
       <Sider
         collapsible
@@ -472,7 +472,7 @@ const Admin: React.FC = () => {
       <Layout
         style={{
           background: token.colorBgLayout,
-          height: '100vh',
+          overflow: 'hidden',
         }}
       >
         {/* 顶部栏 */}
