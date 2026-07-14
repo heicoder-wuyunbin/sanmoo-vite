@@ -104,11 +104,6 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
     [editing?.id],
   );
 
-  const resolveFileUrl = (name: string) => {
-    const prefix = settings?.storageConfig?.uploadLocalUrlPrefix || '/uploads/';
-    return `${prefix.endsWith('/') ? prefix : prefix + '/'}${name}`;
-  };
-
   const loadFileList = async (
     nextPage = filePage,
     nextSize = fileSize,
@@ -134,8 +129,7 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
     loadFileList(1, fileSize);
   };
 
-  const insertFromFile = (filename: string) => {
-    const url = resolveFileUrl(filename);
+  const insertFromFile = (url: string) => {
     if (pickerTarget === 'titleImage') {
       form.setFieldValue('titleImage', url);
       message.success('已设置标题图');
@@ -320,48 +314,86 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
           >
             <Input placeholder="请输入文章标题" />
           </Form.Item>
-          <Form.Item name="titleImage" label="标题图 URL">
-            <Space.Compact style={{ width: '100%' }}>
-              <Input placeholder="请输入图片 URL" />
-              <Upload
-                showUploadList={false}
-                customRequest={async ({ file, onSuccess, onError }) => {
-                  try {
-                    const res = await uploadAdminFile(file as File);
-                    const prefix =
-                      settings?.storageConfig?.uploadLocalUrlPrefix ||
-                      '/uploads/';
-                    const url = `${prefix.endsWith('/') ? prefix : prefix + '/'}${res.data.filename}`;
-                    form.setFieldValue('titleImage', url);
-                    message.success('标题图上传成功');
-                    onSuccess?.({}, new XMLHttpRequest());
-                  } catch (error) {
-                    onError?.(error as Error);
-                  }
-                }}
-              >
-                <Button>上传</Button>
-              </Upload>
-              <Button onClick={() => openFilePicker('titleImage')}>
-                从文件库选择
-              </Button>
-            </Space.Compact>
-          </Form.Item>
-          {titleImageValue && titleImageValue !== '' ? (
-            <>
-              <Typography.Text type="secondary">标题图预览</Typography.Text>
-              <img
-                src={titleImageValue}
-                alt="title"
+          <Form.Item name="titleImage" label="标题图">
+            {titleImageValue && titleImageValue !== '' ? (
+              <div
                 style={{
-                  maxWidth: '100%',
+                  position: 'relative',
                   borderRadius: token.borderRadiusLG,
                   border: `1px solid ${token.colorBorderSecondary}`,
-                  boxShadow: token.boxShadow,
+                  overflow: 'hidden',
+                  backgroundColor: token.colorBgContainer,
                 }}
-              />
-            </>
-          ) : null}
+              >
+                <img
+                  src={titleImageValue}
+                  alt="title"
+                  style={{
+                    width: '100%',
+                    maxHeight: 240,
+                    objectFit: 'contain',
+                    display: 'block',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    padding: '8px 12px',
+                    background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography.Text style={{ color: '#fff', fontSize: 12 }}>
+                    已选择标题图
+                  </Typography.Text>
+                  <Space size={8}>
+                    <Button
+                      size="small"
+                      type="primary"
+                      onClick={() => openFilePicker('titleImage')}
+                    >
+                      更换
+                    </Button>
+                    <Button
+                      size="small"
+                      danger
+                      onClick={() => form.setFieldValue('titleImage', '')}
+                    >
+                      清除
+                    </Button>
+                  </Space>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  border: `1px dashed ${token.colorBorder}`,
+                  borderRadius: token.borderRadiusLG,
+                  padding: 32,
+                  textAlign: 'center',
+                  backgroundColor: token.colorBgContainer,
+                }}
+              >
+                <Button
+                  type="primary"
+                  onClick={() => openFilePicker('titleImage')}
+                >
+                  从文件库选择
+                </Button>
+                <Typography.Text
+                  type="secondary"
+                  style={{ display: 'block', marginTop: 8, fontSize: 12 }}
+                >
+                  请从文件库中选择图片作为标题图
+                </Typography.Text>
+              </div>
+            )}
+          </Form.Item>
           <Form.Item
             name="description"
             label="摘要"
@@ -439,7 +471,6 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
         fileTotal={fileTotal}
         fileLoading={fileLoading}
         pickerTarget={pickerTarget}
-        settings={settings}
         onOpenChange={setPickerOpen}
         onLoadFileList={loadFileList}
         onInsert={insertFromFile}

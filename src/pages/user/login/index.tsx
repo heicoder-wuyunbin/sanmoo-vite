@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import confetti from 'canvas-confetti';
-import { login, sendLoginVerificationCode } from '@/services/blog/api';
+import { login, sendLoginVerificationCode, checkMFA } from '@/services/blog/api';
 import type { RequestError } from '@/services/request';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -32,6 +32,8 @@ const Login: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [sendingCode, setSendingCode] = React.useState(false);
   const [mfaRequired, setMfaRequired] = React.useState(false);
+  const [identifier, setIdentifier] = React.useState('');
+  const [userId, setUserId] = React.useState<number | null>(null);
   const setAuthInfo = useAuthStore((state) => state.setAuthInfo);
   const [form] = Form.useForm<LoginFormValues>();
 
@@ -132,6 +134,26 @@ const Login: React.FC = () => {
     setLoading(true);
     setExpression('loading');
     try {
+      // 如果开启了 MFA，需要先检查是否需要验证码
+      if (!mfaRequired) {
+        // 先检查该用户是否需要邮箱验证码
+        const mfaRes = await checkMFA({ username: values.username });
+        if (mfaRes.data?.needMfa) {
+          setMfaRequired(true);
+          message.info('该账号已开启邮箱验证码，请先发送并填写验证码');
+          setExpression('focused');
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 如果 MFA 已开启，需要带验证码登录
+      if (mfaRequired && !values.code) {
+        message.error('请输入邮箱验证码');
+        setLoading(false);
+        return;
+      }
+
       const response = await login(values);
       const data: {
         accessToken?: string;
@@ -170,12 +192,6 @@ const Login: React.FC = () => {
       }, 600);
     } catch (error) {
       const requestError = error as RequestError;
-      if (requestError.errorCode === 'MFA_REQUIRED') {
-        setMfaRequired(true);
-        message.info('该账号已开启邮箱验证码登录，请先发送并填写验证码');
-        setExpression('focused');
-        return;
-      }
 
       const errorMessage = requestError.errorMessage || requestError.message || '';
       const networkErrorMessages = ['Failed to fetch', 'Network request failed'];
@@ -196,9 +212,10 @@ const Login: React.FC = () => {
     try {
       const { username, password } = await form.validateFields(['username', 'password']);
       setSendingCode(true);
-      await sendLoginVerificationCode({ username, password });
-      setMfaRequired(true);
-      message.success('验证码已发送，请查收邮箱');
+      const res = await sendLoginVerificationCode({ username, password });
+      setUserId(res.data?.userId || null);
+      setIdentifier(res.data?.identifier || '');
+      message.success('验证码已发送，请核对识别码后输入验证码');
     } catch (error) {
       const formError = error as { errorFields?: unknown[] };
       if (formError?.errorFields?.length) return;
@@ -265,14 +282,29 @@ const Login: React.FC = () => {
             </Form.Item>
 
             {mfaRequired ? (
-              <Form.Item name="code" rules={[{ required: true, message: '请输入邮箱验证码' }]}>
-                <Space.Compact style={{ width: '100%' }}>
-                  <Input placeholder="邮箱验证码" autoComplete="one-time-code" />
-                  <Button onClick={onSendCode} loading={sendingCode}>
-                    发送验证码
-                  </Button>
-                </Space.Compact>
-              </Form.Item>
+              <>
+                <div style={{ marginBottom: 16 }}>
+                  <Typography.Text type="secondary" style={{ fontSize: 13 }}>
+                    验证码已发送至邮箱，请核对识别码后输入验证码。
+                  </Typography.Text>
+                </div>
+                <Form.Item name="code" rules={[{ required: true, message: '请输入邮箱验证码' }]}>
+                  <Space.Compact style={{ width: '100%' }}>
+                    <Input
+                      prefix={
+                        <span style={{ fontWeight: 600, color: '#1890ff', marginRight: 8, letterSpacing: 2 }}>
+                          {identifier || '---'}
+                        </span>
+                      }
+                      placeholder="请输入验证码"
+                      autoComplete="one-time-code"
+                    />
+                    <Button onClick={onSendCode} loading={sendingCode}>
+                      发送验证码
+                    </Button>
+                  </Space.Compact>
+                </Form.Item>
+              </>
             ) : (
               <Form.Item>
                 <Typography.Text type="secondary" style={{ fontSize: 12 }}>

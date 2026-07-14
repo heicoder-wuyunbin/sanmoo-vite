@@ -141,7 +141,8 @@ const ArticleCard: React.FC<Props> = ({
                     style={{
                       width: '100%',
                       height: 260,
-                      objectFit: 'cover',
+                      objectFit: 'contain',
+                      background: '#f5f5f5',
                       transition: 'transform 0.4s ease',
                       transform: isHovered ? 'scale(1.03)' : 'scale(1)',
                     }}

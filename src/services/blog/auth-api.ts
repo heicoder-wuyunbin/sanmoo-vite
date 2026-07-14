@@ -11,7 +11,11 @@ export async function login(data: { username: string; password: string; code?: s
 }
 
 export async function sendLoginVerificationCode(data: { username: string; password: string }) {
-  return request<{ userId: number }>('/auth/send-verification-code', { method: 'POST', data });
+  return request<{ userId: number; identifier: string }>('/auth/send-verification-code', { method: 'POST', data });
+}
+
+export async function checkMFA(data: { username: string }) {
+  return request<{ needMfa: boolean }>('/auth/check-mfa', { method: 'POST', data });
 }
 
 export async function changePassword(

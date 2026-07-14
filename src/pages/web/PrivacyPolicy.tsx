@@ -4,7 +4,7 @@ import WebShell from './components/WebShell';
 import { fetchWebCompliance } from '@/services/blog/settings-api';
 import type { ComplianceInfo, FilingInfo, ContactInfo } from '@/services/blog/types';
 
-const parseJson = <T>(str: string): T | null => {
+const parseJson = <T,>(str: string): T | null => {
   if (!str) return null;
   try {
     return JSON.parse(str) as T;

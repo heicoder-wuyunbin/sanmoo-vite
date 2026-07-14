@@ -1,6 +1,12 @@
-import { Modal, Table, Typography, Space, Divider, Button } from 'antd';
+import { Modal, Table, Typography, Space, Divider, Button, Image } from 'antd';
 import React from 'react';
-import type { BlogSettings, FileItem } from '@/services/blog/api';
+import type { FileItem } from '@/services/blog/api';
+
+const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+const isImageFile = (name: string) => {
+  const lower = name.toLowerCase();
+  return IMAGE_EXTS.some((ext) => lower.endsWith(ext));
+};
 
 type FileManagerModalProps = {
   open: boolean;
@@ -10,10 +16,9 @@ type FileManagerModalProps = {
   fileTotal: number;
   fileLoading: boolean;
   pickerTarget: 'titleImage' | 'content';
-  settings?: BlogSettings;
   onOpenChange: (open: boolean) => void;
   onLoadFileList: (page?: number, size?: number) => void;
-  onInsert: (filename: string, target: 'titleImage' | 'content') => void;
+  onInsert: (url: string, target: 'titleImage' | 'content') => void;
 };
 
 const FileManagerModal: React.FC<FileManagerModalProps> = ({
@@ -24,19 +29,16 @@ const FileManagerModal: React.FC<FileManagerModalProps> = ({
   fileTotal,
   fileLoading,
   pickerTarget,
-  settings,
   onOpenChange,
   onLoadFileList,
   onInsert,
 }) => {
-  const resolveFileUrl = (name: string) => {
-    const prefix = settings?.storageConfig?.uploadLocalUrlPrefix || '/uploads/';
-    return `${prefix.endsWith('/') ? prefix : prefix + '/'}${name}`;
+  const handleInsert = (url: string) => {
+    onInsert(url, pickerTarget);
   };
 
-  const handleInsert = (filename: string) => {
-    onInsert(filename, pickerTarget);
-  };
+  // 只保留图片文件
+  const imageFiles = fileList.filter((f) => isImageFile(f.name));
 
   return (
     <Modal
@@ -44,6 +46,7 @@ const FileManagerModal: React.FC<FileManagerModalProps> = ({
       open={open}
       width={820}
       footer={null}
+      zIndex={1100}
       onCancel={() => onOpenChange(false)}
       styles={{
         content: {
@@ -79,7 +82,7 @@ const FileManagerModal: React.FC<FileManagerModalProps> = ({
       <Table<FileItem>
         rowKey="id"
         loading={fileLoading}
-        dataSource={fileList}
+        dataSource={imageFiles}
         size="middle"
         pagination={{
           current: filePage,
@@ -90,14 +93,25 @@ const FileManagerModal: React.FC<FileManagerModalProps> = ({
             onLoadFileList(nextPage, nextSize),
         }}
         columns={[
-          { title: '文件名', dataIndex: 'filename' },
           {
-            title: 'URL',
-            dataIndex: 'filename',
+            title: '文件名',
+            dataIndex: 'name',
+            render: (value: string) => value.split('/').pop(),
+          },
+          {
+            title: '预览',
+            dataIndex: 'url',
             render: (value: string) => (
-              <Typography.Text copyable={{ text: resolveFileUrl(value) }}>
-                {resolveFileUrl(value)}
-              </Typography.Text>
+              <Image
+                src={value}
+                style={{
+                  maxWidth: 120,
+                  maxHeight: 80,
+                  objectFit: 'contain',
+                  borderRadius: 4,
+                }}
+                preview={{ mask: '预览' }}
+              />
             ),
           },
           {
@@ -107,7 +121,7 @@ const FileManagerModal: React.FC<FileManagerModalProps> = ({
               <Button
                 size="small"
                 type="primary"
-                onClick={() => handleInsert(record.filename)}
+                onClick={() => handleInsert(record.url)}
               >
                 插入
               </Button>
