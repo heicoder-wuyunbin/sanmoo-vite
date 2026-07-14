@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { Suspense, useState, useEffect, useMemo } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Spin } from 'antd';
 import {
   Layout,
   Menu,
@@ -560,7 +561,22 @@ const Admin: React.FC = () => {
               boxShadow: token.boxShadowTertiary,
             }}
           >
-            <Outlet />
+            <Suspense
+              fallback={
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: 400,
+                  }}
+                >
+                  <Spin size="large" tip="加载中..." />
+                </div>
+              }
+            >
+              <Outlet />
+            </Suspense>
           </div>
         </Content>
       </Layout>

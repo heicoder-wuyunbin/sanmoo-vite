@@ -347,9 +347,11 @@ const EmailSettings: React.FC = () => {
             </Form.Item>
           </Card>
 
-          
-        {/* 验证码模态框 */}
-          <Modal
+        </Form>
+      </Card>
+
+      {/* 验证码模态框 */}
+      <Modal
         title={
           <Space>
             <ExclamationCircleOutlined style={{ color: token.colorPrimary }} />
@@ -420,8 +422,6 @@ const EmailSettings: React.FC = () => {
           </div>
         </Space>
       </Modal>
-        </Form>
-      </Card>
 
       <style>{`
         @keyframes fadeIn {

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Breadcrumb, Col, Row, Table, Tag, Typography, theme as antTheme, Card, Space } from 'antd';
 import React, { useState } from 'react';
 import {
+  useArticleReadStatistics,
   useCategoryReadStatistics,
   useCategoryStats,
   useContentTrend,
@@ -33,6 +34,7 @@ const DashboardPage: React.FC = () => {
   const { data: categoryReadStats = [], isLoading: categoryReadLoading } = useCategoryReadStatistics();
   const { data: tagReadStats = [], isLoading: tagReadLoading } = useTagReadStatistics();
   const { data: contentTrend = [], isLoading: contentTrendLoading } = useContentTrend(trendDays);
+  const { data: articleReadStats, isLoading: articleReadLoading } = useArticleReadStatistics(1, 10);
 
   const stats = overview?.stats;
   const pvList = overview?.pvList ?? [];
@@ -253,6 +255,64 @@ const DashboardPage: React.FC = () => {
                   align: 'right',
                   render: (value: number) => (
                     <Tag color="green">{value.toLocaleString()}</Tag>
+                  ),
+                },
+              ]}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ── 第六行：文章阅读量排行 ── */}
+      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+        <Col xs={24}>
+          <Card title="文章阅读量排行 TOP 10" loading={articleReadLoading} style={chartCardStyle}>
+            <Table
+              dataSource={articleReadStats?.list || []}
+              rowKey="id"
+              pagination={false}
+              scroll={{ y: 300 }}
+              columns={[
+                {
+                  title: '排名',
+                  key: 'rank',
+                  width: 80,
+                  align: 'center',
+                  render: (_: unknown, __: unknown, index: number) => {
+                    const rank = index + 1;
+                    const colors = ['#f5222d', '#fa8c16', '#faad14'];
+                    return (
+                      <Tag
+                        color={rank <= 3 ? colors[rank - 1] : 'default'}
+                        style={{ minWidth: 28, textAlign: 'center' }}
+                      >
+                        {rank}
+                      </Tag>
+                    );
+                  },
+                },
+                {
+                  title: '文章标题',
+                  dataIndex: 'title',
+                  key: 'title',
+                  ellipsis: true,
+                },
+                {
+                  title: '分类',
+                  dataIndex: 'categoryName',
+                  key: 'categoryName',
+                  width: 120,
+                  ellipsis: true,
+                },
+                {
+                  title: '阅读量',
+                  dataIndex: 'readNum',
+                  key: 'readNum',
+                  width: 120,
+                  align: 'right',
+                  sorter: (a: any, b: any) => a.readNum - b.readNum,
+                  render: (value: number) => (
+                    <Tag color="blue">{value.toLocaleString()}</Tag>
                   ),
                 },
               ]}

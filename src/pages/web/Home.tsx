@@ -1,4 +1,4 @@
-import { TagOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, BookOutlined, TagOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import {
   App,
@@ -16,10 +16,11 @@ import {
 } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import ArticleCard from './components/ArticleCard';
-import { fetchArticles } from '@/services/blog/api';
+import { fetchArticles, fetchWebTopics } from '@/services/blog/api';
 import WebShell from '@/pages/web/components/WebShell';
 import { useQuery } from '@tanstack/react-query';
 import { useLayoutStore } from '@/store/useLayoutStore';
+import type { TopicItem } from '@/services/blog/types';
 
 const HomePage: React.FC = () => {
   const { token } = antTheme.useToken();
@@ -60,6 +61,15 @@ const HomePage: React.FC = () => {
       return res.data;
     },
   });
+
+  const { data: topicsData } = useQuery({
+    queryKey: ['homeTopics'],
+    queryFn: async () => {
+      const res = await fetchWebTopics({ page: 1, size: 4 });
+      return res.data;
+    },
+  });
+  const featuredTopics = useMemo(() => topicsData?.list || [], [topicsData]);
 
   useEffect(() => {
     if (error) {
@@ -173,6 +183,63 @@ const HomePage: React.FC = () => {
             </Space>
           </div>
         </Card>
+
+        {featuredTopics.length > 0 && (
+          <Card style={cardStyle} styles={{ body: { padding: 24 } }}>
+            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <Typography.Title level={3} style={{ margin: 0, color: token.colorTextHeading }}>
+                    <AppstoreOutlined style={{ marginRight: 8 }} />
+                    专题精选
+                  </Typography.Title>
+                  <Typography.Text style={helperTextStyle}>
+                    体系化阅读，从入门到深入
+                  </Typography.Text>
+                </div>
+                <Link to="/topics">
+                  <Button type="link">查看全部专题</Button>
+                </Link>
+              </div>
+              <Row gutter={[16, 16]}>
+                {featuredTopics.map((topic: TopicItem) => (
+                  <Col key={topic.id} xs={24} sm={12} md={6}>
+                    <Link to={`/topics/${topic.id}`} style={{ textDecoration: 'none' }}>
+                      <Card
+                        style={{
+                          ...cardStyle,
+                          height: '100%',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s',
+                        }}
+                        styles={{ body: { padding: 16 } }}
+                        hoverable
+                      >
+                        <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                          <Typography.Text strong style={{ fontSize: 15 }}>
+                            <BookOutlined style={{ marginRight: 6, color: token.colorPrimary }} />
+                            {topic.title}
+                          </Typography.Text>
+                          {topic.description && (
+                            <Typography.Paragraph
+                              ellipsis={{ rows: 2 }}
+                              style={{ margin: 0, fontSize: 13, color: token.colorTextSecondary }}
+                            >
+                              {topic.description}
+                            </Typography.Paragraph>
+                          )}
+                          <Tag color="blue" style={{ borderRadius: 999, paddingInline: 10 }}>
+                            {topic.articleCount} 篇文章
+                          </Tag>
+                        </Space>
+                      </Card>
+                    </Link>
+                  </Col>
+                ))}
+              </Row>
+            </Space>
+          </Card>
+        )}
 
         <Spin spinning={isLoading}>
           {featuredArticle ? (

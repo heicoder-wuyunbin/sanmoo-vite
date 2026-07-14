@@ -259,39 +259,114 @@ const TopicsPage: React.FC = () => {
           </Card>
         </Spin>
 
-        {/* 文章列表 */}
-        {selectedTopicId ? (
+        {/* 专题详情 */}
+        {selectedTopicId && activeTopic ? (
           <Spin spinning={articlesQuery.isLoading}>
-            <Card style={cardStyle} styles={{ body: { padding: 24 } }}>
+            {/* 专题头部 */}
+            <Card style={cardStyle} styles={{ body: { padding: 28 } }}>
               <Space direction="vertical" size={16} style={{ width: '100%' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 12,
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <div>
-                    <Typography.Title level={3} style={{ margin: 0, color: token.colorText }}>
-                      专题：{activeTopic?.title || ''}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: 280 }}>
+                    <Tag
+                      icon={<BookOutlined />}
+                      color="blue"
+                      style={{ ...tagStyle, width: 'fit-content', marginBottom: 12 }}
+                    >
+                      专题系列
+                    </Tag>
+                    <Typography.Title level={2} style={{ margin: 0, color: token.colorText, fontSize: 28 }}>
+                      {activeTopic.title}
                     </Typography.Title>
-                    <Typography.Text style={{ color: token.colorTextSecondary }}>
-                      {activeTopic?.description
-                        ? activeTopic.description
-                        : `围绕 ${activeTopic?.title || '当前专题'} 的系列文章`}
-                    </Typography.Text>
+                    <Typography.Paragraph
+                      style={{
+                        margin: '12px 0 0',
+                        color: token.colorTextSecondary,
+                        fontSize: 15,
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      {activeTopic.description || `围绕 ${activeTopic.title} 的系列文章，体系化阅读，从入门到深入。`}
+                    </Typography.Paragraph>
                   </div>
                   <Link to="/topics">
-                    <Button>查看全部专题</Button>
+                    <Button>返回专题列表</Button>
                   </Link>
+                </div>
+
+                {/* 专题统计 */}
+                <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <BookOutlined style={{ color: token.colorPrimary, fontSize: 16 }} />
+                    <Typography.Text style={{ color: token.colorTextSecondary }}>
+                      共 <strong style={{ color: token.colorText }}>{activeTopic.articleCount}</strong> 篇文章
+                    </Typography.Text>
+                  </div>
+                  {activeTopic.createTime && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <Typography.Text style={{ color: token.colorTextSecondary }}>
+                        创建于 {activeTopic.createTime.slice(0, 10)}
+                      </Typography.Text>
+                    </div>
+                  )}
+                </div>
+
+                {/* 学习路径提示 */}
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    background: token.colorInfoBg,
+                    borderRadius: token.borderRadius,
+                    border: `1px solid ${token.colorInfoBorder}`,
+                  }}
+                >
+                  <Typography.Text style={{ color: token.colorInfoText, fontSize: 13 }}>
+                    💡 建议按顺序阅读，从基础概念到进阶实践，逐步构建知识体系
+                  </Typography.Text>
+                </div>
+              </Space>
+            </Card>
+
+            {/* 文章列表 */}
+            <Card style={cardStyle} styles={{ body: { padding: 24 } }}>
+              <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography.Title level={4} style={{ margin: 0, color: token.colorText }}>
+                    专题文章
+                  </Typography.Title>
+                  <Typography.Text style={{ color: token.colorTextSecondary }}>
+                    共 {total} 篇
+                  </Typography.Text>
                 </div>
 
                 {articles.length > 0 ? (
                   <Space direction="vertical" size={14} style={{ width: '100%' }}>
-                    {articles.map((item: any) => (
-                      <ArticleCard key={item.id} article={item} maxTags={4} />
+                    {articles.map((item: any, index: number) => (
+                      <div key={item.id} style={{ position: 'relative' }}>
+                        {/* 序号标记 */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: -8,
+                            top: 20,
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
+                            background: token.colorPrimary,
+                            color: '#fff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            zIndex: 1,
+                          }}
+                        >
+                          {index + 1}
+                        </div>
+                        <div style={{ paddingLeft: 24 }}>
+                          <ArticleCard article={item} maxTags={4} />
+                        </div>
+                      </div>
                     ))}
                   </Space>
                 ) : (

@@ -1,4 +1,4 @@
-import { FileTextOutlined, ShieldOutlined, MailOutlined, DatabaseOutlined, UserDeleteOutlined } from '@ant-design/icons';
+import { FileTextOutlined, SafetyOutlined, MailOutlined, DatabaseOutlined, UserDeleteOutlined } from '@ant-design/icons';
 import { App, Button, Card, Form, Input, Space, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchPrivacyConfig, updatePrivacyConfig } from '@/services/blog/settings-api';
@@ -115,7 +115,7 @@ const PrivacySettings: React.FC = () => {
             size="small"
             title={
               <Space>
-                <ShieldOutlined style={{ color: token.colorPrimary }} />
+                <SafetyOutlined style={{ color: token.colorPrimary }} />
                 <span>备案信息</span>
               </Space>
             }
@@ -235,7 +235,7 @@ const PrivacySettings: React.FC = () => {
               <Form.Item name="accountDeletionGuide" label="账号注销说明">
                 <Input.TextArea
                   rows={6}
-                  placeholder="小程序用户可在个人中心页面点击\"注销账号\"按钮，系统将删除您的所有个人数据，包括用户信息、收藏记录、浏览历史等。注销后无法恢复，请谨慎操作。"
+                  placeholder={'小程序用户可在个人中心页面点击"注销账号"按钮，系统将删除您的所有个人数据，包括用户信息、收藏记录、浏览历史等。注销后无法恢复，请谨慎操作。'}
                   style={{
                     borderRadius: token.borderRadiusLG,
                     transition: 'all 0.3s ease',
