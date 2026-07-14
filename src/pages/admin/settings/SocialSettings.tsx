@@ -123,6 +123,61 @@ const SocialSettings: React.FC = () => {
             ))}
           </Row>
 
+          <Card
+            size="small"
+            title="渠道开关"
+            style={{
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              marginTop: 24,
+              animation: 'fadeInUp 0.4s ease-out 0.35s both',
+            }}
+            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+          >
+            <Row gutter={[24, 24]}>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  name="webEnabled"
+                  label="Web 端展示"
+                  valuePropName="checked"
+                >
+                  <Space>
+                    <Switch
+                      checkedChildren="开启"
+                      unCheckedChildren="关闭"
+                      style={{
+                        background: token.colorPrimary,
+                      }}
+                    />
+                    <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                      控制是否在 Web 端展示社交链接入口
+                    </Typography.Text>
+                  </Space>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  name="mpEnabled"
+                  label="小程序端展示"
+                  valuePropName="checked"
+                >
+                  <Space>
+                    <Switch
+                      checkedChildren="开启"
+                      unCheckedChildren="关闭"
+                      style={{
+                        background: token.colorPrimary,
+                      }}
+                    />
+                    <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                      控制是否在小程序端展示社交链接入口
+                    </Typography.Text>
+                  </Space>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Card>
+
           <div
             style={{
               marginTop: 24,

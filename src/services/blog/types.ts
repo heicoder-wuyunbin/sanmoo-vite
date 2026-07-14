@@ -105,6 +105,7 @@ export type CoreConfig = {
   introduction: string;
   avatar: string;
   poster: string;
+  siteUrl?: string;
   rssEnabled?: boolean;
 };
 
@@ -145,6 +146,8 @@ export type SocialConfig = {
   csdnShow: boolean;
   giteeShow: boolean;
   zhihuShow: boolean;
+  webEnabled?: boolean;
+  mpEnabled?: boolean;
 };
 
 export type SearchConfig = {

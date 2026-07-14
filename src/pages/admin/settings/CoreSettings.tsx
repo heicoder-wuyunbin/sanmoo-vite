@@ -250,6 +250,21 @@ const CoreSettings: React.FC = () => {
                   </Form.Item>
 
                   <Form.Item
+                    name="siteUrl"
+                    label="站点地址"
+                    rules={[{ type: 'url', message: '请输入有效的 URL 地址' }]}
+                  >
+                    <Input
+                      placeholder="https://example.com"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
                     name="rssEnabled"
                     label="RSS 订阅"
                     valuePropName="checked"
