@@ -117,11 +117,11 @@ export type PrivacyConfig = {
 };
 
 export type ComplianceInfo = {
-  privacyPolicy: string;
-  filingInfo: string;
-  contactInfo: string;
-  dataRetentionPolicy: string;
-  accountDeletionGuide: string;
+  privacyPolicy?: string;
+  filingInfo?: string;
+  contactInfo?: string;
+  dataRetentionPolicy?: string;
+  accountDeletionGuide?: string;
 };
 
 export type FilingInfo = {

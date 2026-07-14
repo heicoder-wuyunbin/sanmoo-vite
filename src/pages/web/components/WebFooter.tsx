@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider, Layout, Space, Typography, theme as antTheme } from 'antd';
 import { FileTextOutlined, MailOutlined, SafetyCertificateOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -25,20 +25,22 @@ type WebFooterProps = {
 const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmail }) => {
   const { token } = antTheme.useToken();
   const [compliance, setCompliance] = useState<ComplianceInfo | null>(null);
+  const [filingInfo, setFilingInfo] = useState<FilingInfo | null>(null);
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await fetchWebCompliance();
         setCompliance(res.data);
+        if (res.data?.filingInfo) {
+          setFilingInfo(parseJson<FilingInfo>(res.data.filingInfo));
+        }
       } catch {
         console.warn('获取合规信息失败，使用默认备案信息');
       }
     };
     void load();
   }, []);
-
-  const filingInfo = useMemo(() => parseJson<FilingInfo>(compliance?.filingInfo || ''), [compliance]);
 
   const linkStyle: React.CSSProperties = {
     color: token.colorTextTertiary,

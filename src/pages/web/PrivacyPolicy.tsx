@@ -17,6 +17,8 @@ const PrivacyPolicyPage: React.FC = () => {
   const { token } = antTheme.useToken();
   const [loading, setLoading] = useState(true);
   const [compliance, setCompliance] = useState<ComplianceInfo | null>(null);
+  const [filingInfo, setFilingInfo] = useState<FilingInfo | null>(null);
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -24,6 +26,12 @@ const PrivacyPolicyPage: React.FC = () => {
       try {
         const res = await fetchWebCompliance();
         setCompliance(res.data);
+        if (res.data?.filingInfo) {
+          setFilingInfo(parseJson<FilingInfo>(res.data.filingInfo));
+        }
+        if (res.data?.contactInfo) {
+          setContactInfo(parseJson<ContactInfo>(res.data.contactInfo));
+        }
       } catch {
         console.warn('获取合规信息失败，使用默认内容');
       } finally {
@@ -32,9 +40,6 @@ const PrivacyPolicyPage: React.FC = () => {
     };
     void load();
   }, []);
-
-  const filingInfo = useMemo(() => parseJson<FilingInfo>(compliance?.filingInfo || ''), [compliance]);
-  const contactInfo = useMemo(() => parseJson<ContactInfo>(compliance?.contactInfo || ''), [compliance]);
 
   const cardStyle = useMemo<React.CSSProperties>(
     () => ({
