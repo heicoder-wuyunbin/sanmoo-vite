@@ -276,6 +276,7 @@ const EmailSettings: React.FC = () => {
             size="small"
             title="安全设置"
             style={{
+              marginTop: 24,
               border: `1px solid ${token.colorBorderSecondary}`,
               borderRadius: token.borderRadiusLG,
               animation: 'fadeInUp 0.4s ease-out 0.2s both',
@@ -292,9 +293,7 @@ const EmailSettings: React.FC = () => {
                   checkedChildren="开启"
                   unCheckedChildren="关闭"
                   disabled={!configVerified}
-                  style={{
-                    background: token.colorPrimary,
-                  }}
+                  className="email-mfa-switch"
                   onChange={async (checked) => {
                     setSaving(true);
                     try {
@@ -416,6 +415,12 @@ const EmailSettings: React.FC = () => {
         }
         .email-settings-container {
           width: 100%;
+        }
+        .email-mfa-switch.ant-switch:not(.ant-switch-checked) {
+          background: rgba(0, 0, 0, 0.25);
+        }
+        .email-mfa-switch.ant-switch.ant-switch-disabled:not(.ant-switch-checked) {
+          background: rgba(0, 0, 0, 0.15);
         }
         .input-group-addon.ant-input {
           text-align: center;

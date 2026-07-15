@@ -95,21 +95,37 @@ export async function fetchRandomArticle(excludeId?: number) {
   return request<ArticleItem>(`/web/articles/random`, { params: { exclude: excludeId } });
 }
 
-export function downloadArticlesCSV(keyword?: string) {
+export async function downloadArticlesCSV(keyword?: string) {
   const token = getAccessToken();
   const params = new URLSearchParams();
   if (keyword) params.append('keyword', keyword);
   const qs = params.toString();
   const url = `/api/admin/articles/export${qs ? `?${qs}` : ''}`;
-  fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-    .then((res) => res.blob())
-    .then((blob) => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `articles_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-    });
+  try {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || `导出失败 (HTTP ${res.status})`);
+    }
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const json = await res.json();
+      if (!json.success) {
+        throw new Error(json.errorMessage || '导出失败');
+      }
+    }
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `articles_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : '导出失败';
+    // 使用 antd message 提示错误
+    import('antd').then(({ message }) => message.error(msg));
+    console.error('导出 CSV 失败:', err);
+  }
 }

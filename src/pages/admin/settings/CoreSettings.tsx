@@ -274,9 +274,7 @@ const CoreSettings: React.FC = () => {
                       <Switch
                         checkedChildren="开启"
                         unCheckedChildren="关闭"
-                        style={{
-                          background: token.colorPrimary,
-                        }}
+                        className="core-rss-switch"
                       />
                       <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                         开启后将生成 RSS 订阅源，方便读者订阅博客更新
@@ -334,6 +332,9 @@ const CoreSettings: React.FC = () => {
         }
         .core-settings-container {
           width: 100%;
+        }
+        .core-rss-switch.ant-switch:not(.ant-switch-checked) {
+          background: rgba(0, 0, 0, 0.25);
         }
       `}</style>
     </div>
