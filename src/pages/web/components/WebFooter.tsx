@@ -24,7 +24,7 @@ type WebFooterProps = {
 
 const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmail }) => {
   const { token } = antTheme.useToken();
-  const [compliance, setCompliance] = useState<ComplianceInfo | null>(null);
+  const [, setCompliance] = useState<ComplianceInfo | null>(null);
   const [filingInfo, setFilingInfo] = useState<FilingInfo | null>(null);
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
 

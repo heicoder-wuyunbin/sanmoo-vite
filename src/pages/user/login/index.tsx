@@ -33,7 +33,6 @@ const Login: React.FC = () => {
   const [sendingCode, setSendingCode] = React.useState(false);
   const [mfaRequired, setMfaRequired] = React.useState(false);
   const [identifier, setIdentifier] = React.useState('');
-  const [userId, setUserId] = React.useState<number | null>(null);
   const setAuthInfo = useAuthStore((state) => state.setAuthInfo);
   const [form] = Form.useForm<LoginFormValues>();
 
@@ -213,7 +212,6 @@ const Login: React.FC = () => {
       const { username, password } = await form.validateFields(['username', 'password']);
       setSendingCode(true);
       const res = await sendLoginVerificationCode({ username, password });
-      setUserId(res.data?.userId || null);
       setIdentifier(res.data?.identifier || '');
       message.success('验证码已发送，请核对识别码后输入验证码');
     } catch (error) {

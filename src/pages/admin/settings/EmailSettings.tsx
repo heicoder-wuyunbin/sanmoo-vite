@@ -14,7 +14,7 @@ const EmailSettings: React.FC = () => {
   const { token } = antTheme.useToken();
   const [form] = Form.useForm<EmailConfig>();
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [configVerified, setConfigVerified] = useState(false);
@@ -130,30 +130,6 @@ const EmailSettings: React.FC = () => {
       message.error((e instanceof Error ? e.message : '') || '邮箱验证码校验失败');
     } finally {
       setEmailVerifying(false);
-    }
-  };
-
-  const handleSave = async () => {
-    // 如果配置被修改且未重新验证，阻止保存
-    if (isConfigModified() && !configVerified) {
-      message.error('邮箱配置已修改，请先点击「测试连接」验证邮箱配置后再保存');
-      return;
-    }
-    setSaving(true);
-    try {
-      const values = await form.validateFields();
-      const emailConfig = values as EmailConfig;
-      if (!emailConfig.from) {
-        emailConfig.from = emailConfig.username;
-      }
-      await updateEmailConfig(emailConfig);
-      message.success('邮件配置保存成功');
-      setOriginalConfig(emailConfig);
-      setConfigVerified(true);
-    } catch {
-      message.error('保存失败，请检查表单');
-    } finally {
-      setSaving(false);
     }
   };
 

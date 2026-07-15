@@ -177,7 +177,7 @@ const FilesPage: React.FC = () => {
                   <Popconfirm
                     title="确认删除该文件？"
                     onConfirm={async () => {
-                      await deleteAdminFile(record.id);
+                      await deleteAdminFile(Number(record.id));
                       message.success('删除成功');
                       await load(page, size, keyword);
                     }}

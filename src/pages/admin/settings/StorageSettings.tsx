@@ -1,4 +1,4 @@
-﻿import { CloudOutlined, CloudServerOutlined, DatabaseOutlined } from '@ant-design/icons';
+import { CloudOutlined, CloudServerOutlined, DatabaseOutlined } from '@ant-design/icons';
 import { App, Button, Card, Col, Form, Input, Row, Select, Space, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchStorageConfig, updateStorageConfig } from '@/services/blog/settings-api';
@@ -93,7 +93,7 @@ const StorageSettings: React.FC = () => {
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.1s both',
                 }}
-                styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                styles={{ header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
               >
                 <Form.Item
                   name="uploadStrategy"
@@ -142,7 +142,7 @@ const StorageSettings: React.FC = () => {
                   animation: 'fadeInUp 0.4s ease-out 0.15s both',
                   background: `${token.colorBgContainer}`,
                 }}
-                styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                styles={{ header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
               >
                 <Space direction="vertical" size={20} style={{ width: '100%' }}>
                   {uploadStrategy === 'LOCAL' && (

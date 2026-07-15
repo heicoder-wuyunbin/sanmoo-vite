@@ -26,8 +26,10 @@ const SocialSettings: React.FC = () => {
         const data = res.data || {};
         // 链接为空时，强制关闭对应的滑块
         SOCIAL_ITEMS.forEach((item) => {
-          if (!data[`${item.key}Home`]) {
-            data[`${item.key}Show`] = false;
+          const homeKey = `${item.key}Home` as keyof SocialConfig;
+          const showKey = `${item.key}Show` as keyof SocialConfig;
+          if (!data[homeKey]) {
+            (data as any)[showKey] = false;
           }
         });
         form.setFieldsValue(data);
@@ -117,7 +119,7 @@ const SocialSettings: React.FC = () => {
                     borderRadius: token.borderRadiusLG,
                     animation: `fadeInUp 0.4s ease-out ${0.1 + index * 0.05}s both`,
                   }}
-                  styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                  styles={{ header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
                 >
                   <Form.Item name={`${item.key}Home`} label={`${item.label} 链接`}>
                     <Input
@@ -145,7 +147,7 @@ const SocialSettings: React.FC = () => {
               marginTop: 24,
               animation: 'fadeInUp 0.4s ease-out 0.35s both',
             }}
-            styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+            styles={{ header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
           >
             <Row gutter={[24, 24]}>
               <Col xs={24} md={12}>

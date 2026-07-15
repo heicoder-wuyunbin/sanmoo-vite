@@ -13,7 +13,6 @@ import {
   Switch,
   theme as antTheme,
   Typography,
-  Upload,
 } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -22,7 +21,6 @@ import {
   type BlogSettings,
   type FileItem,
   fetchAdminFiles,
-  uploadAdminFile,
 } from '@/services/blog/api';
 import FileManagerModal from './FileManagerModal';
 import { marked } from 'marked';
@@ -59,7 +57,6 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
   categories,
   tags,
   topics,
-  settings,
   form,
   draftState,
   onOpenChange,

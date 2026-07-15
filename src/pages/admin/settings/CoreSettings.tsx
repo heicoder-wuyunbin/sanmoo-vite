@@ -1,4 +1,4 @@
-﻿import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import {
   App,
   Avatar,
@@ -66,7 +66,7 @@ const CoreSettings: React.FC = () => {
     setAvatarUploading(true);
     try {
       const result = await uploadAdminFile(file as File);
-      const savedPath = result.data.path || result.data.filename;
+      const savedPath = result.data.url;
       form.setFieldValue('avatar', savedPath);
       message.success('头像上传成功');
       onSuccess?.('ok');
@@ -131,7 +131,7 @@ const CoreSettings: React.FC = () => {
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.1s both',
                 }}
-                styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                styles={{ header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
               >
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
                   <div style={{ textAlign: 'center' }}>
@@ -205,7 +205,7 @@ const CoreSettings: React.FC = () => {
                   borderRadius: token.borderRadiusLG,
                   animation: 'fadeInUp 0.4s ease-out 0.15s both',
                 }}
-                styles={{ borderBottom: `1px solid ${token.colorBorderSecondary}` }}
+                styles={{ header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
               >
                 <Space direction="vertical" size={20} style={{ width: '100%' }}>
                   <Form.Item

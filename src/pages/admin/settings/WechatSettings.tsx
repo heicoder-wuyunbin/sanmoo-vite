@@ -1,4 +1,4 @@
-import { WechatOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { WechatOutlined } from '@ant-design/icons';
 import { App, Button, Card, Col, Form, Input, Row, Space, Switch, Tag, Typography, theme as antTheme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { fetchWechatConfig, updateWechatConfig } from '@/services/blog/settings-api';
