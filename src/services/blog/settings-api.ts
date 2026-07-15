@@ -11,6 +11,7 @@ import type {
   SearchConfig,
   StorageConfig,
   EmailConfig,
+  WechatConfig,
 } from './types';
 
 export async function fetchSettings(admin = false) {
@@ -108,4 +109,12 @@ export async function fetchCacheStats() {
 
 export async function fetchWebCompliance() {
   return request<ComplianceInfo>('/web/compliance');
+}
+
+export async function fetchWechatConfig() {
+  return request<WechatConfig>('/admin/settings/wechat');
+}
+
+export async function updateWechatConfig(data: Partial<WechatConfig>) {
+  return request<void>('/admin/settings/wechat', { method: 'PUT', data });
 }

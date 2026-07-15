@@ -32,7 +32,7 @@ export type {
 } from './types';
 
 // ─── 认证 ────────────────────────────────────────────────────
-export { login, sendLoginVerificationCode, changePassword } from './auth-api';
+export { login, sendLoginVerificationCode, checkMFA, changePassword } from './auth-api';
 
 // ─── 文章 ────────────────────────────────────────────────────
 export {

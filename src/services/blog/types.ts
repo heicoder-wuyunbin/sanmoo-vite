@@ -185,11 +185,20 @@ export type EmailConfig = {
   loginMfaEnabled?: boolean;
 };
 
+export type WechatConfig = {
+  wxDevAppId: string;
+  wxDevAppSecret: string;
+  wxProdAppId: string;
+  wxProdAppSecret: string;
+  wxEnvMode: boolean; // false=开发环境, true=生产环境
+};
+
 export type BlogSettings = {
   coreConfig: CoreConfig & { privacyPolicy?: string };
   uiConfig: SocialConfig & SearchConfig;
   storageConfig?: StorageConfig;
   emailConfig?: EmailConfig;
+  wechatConfig?: WechatConfig;
 };
 
 // ─── 仪表盘 ──────────────────────────────────────────────────

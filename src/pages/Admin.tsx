@@ -285,6 +285,7 @@ const Admin: React.FC = () => {
         { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置', perm: 'setting:search:read' },
         { key: '/admin/settings/storage', icon: <CloudServerOutlined />, label: '存储配置', perm: 'setting:storage:read' },
         { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
+        { key: '/admin/settings/wechat', icon: <WechatOutlined />, label: '微信配置', perm: 'setting:wechat:read' },
         // 冻结能力：缓存管理（低频运维，见 frozen-capabilities.md §2.4）
         // { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
       ],
