@@ -28,7 +28,6 @@ const TagsAdmin = lazy(() => import('@/pages/admin/Tags'));
 const TopicsAdmin = lazy(() => import('@/pages/admin/Topics'));
 const LinksAdmin = lazy(() => import('@/pages/admin/Links'));
 const Files = lazy(() => import('@/pages/admin/Files'));
-const Users = lazy(() => import('@/pages/admin/Users'));
 const VisitorsPage = lazy(() => import('@/pages/admin/Visitors'));
 const ErrorLogsPage = lazy(() => import('@/pages/admin/ErrorLogs'));
 const MPUsers = lazy(() => import('@/pages/admin/MPUsers'));
@@ -39,10 +38,7 @@ const SocialSettings = lazy(() => import('@/pages/admin/settings/SocialSettings'
 const SearchSettings = lazy(() => import('@/pages/admin/settings/SearchSettings'));
 const StorageSettings = lazy(() => import('@/pages/admin/settings/StorageSettings'));
 const EmailSettings = lazy(() => import('@/pages/admin/settings/EmailSettings'));
-const CacheSettings = lazy(() => import('@/pages/admin/settings/CacheSettings'));
 const WechatSettings = lazy(() => import('@/pages/admin/settings/WechatSettings'));
-const Roles = lazy(() => import('@/pages/admin/Roles'));
-const Permissions = lazy(() => import('@/pages/admin/Permissions'));
 const NotFound = lazy(() => import('@/pages/404'));
 const RouteTransition = lazy(() => import('@/components/RouteTransition'));
 
@@ -114,7 +110,8 @@ const AppRoutes: React.FC = () => {
                 <Route path="topics" element={<TopicsAdmin />} />
                 <Route path="links" element={<LinksAdmin />} />
                 <Route path="files" element={<Files />} />
-                <Route path="users" element={<Users />} />
+                {/* 冻结能力：用户管理、角色管理、权限管理（平台化扩张，见 frozen-capabilities.md §2.1/2.2） */}
+                {/* <Route path="users" element={<Users />} /> */}
                 <Route path="visitors" element={<VisitorsPage />} />
                 <Route path="errors" element={<ErrorLogsPage />} />
                 <Route path="mp-users" element={<MPUsers />} />
@@ -126,11 +123,11 @@ const AppRoutes: React.FC = () => {
                   <Route path="search" element={<SearchSettings />} />
                   <Route path="storage" element={<StorageSettings />} />
                   <Route path="email" element={<EmailSettings />} />
-                  <Route path="cache" element={<CacheSettings />} />
                   <Route path="wechat" element={<WechatSettings />} />
                 </Route>
-                <Route path="roles" element={<Roles />} />
-                <Route path="permissions" element={<Permissions />} />
+                {/* 冻结能力：角色管理、权限管理（平台化扩张） */}
+                {/* <Route path="roles" element={<Roles />} /> */}
+                {/* <Route path="permissions" element={<Permissions />} /> */}
               </Route>
             </Route>
 
