@@ -201,7 +201,7 @@ const ArticleDetailPage: React.FC = () => {
   }, [fontSize]);
 
   useEffect(() => {
-    if (!article || Number.isNaN(articleId)) return;
+    if (!article || articleId == null || Number.isNaN(articleId)) return;
     const savedPositions = localStorage.getItem(READ_POSITION_KEY);
     if (savedPositions) {
       try {
@@ -219,7 +219,7 @@ const ArticleDetailPage: React.FC = () => {
   }, [article, articleId]);
 
   useEffect(() => {
-    if (Number.isNaN(articleId)) return;
+    if (articleId == null || Number.isNaN(articleId)) return;
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       if (scrollTop > 100) {

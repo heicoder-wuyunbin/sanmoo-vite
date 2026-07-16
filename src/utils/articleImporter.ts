@@ -37,19 +37,14 @@ async function importSingleArticle(item: ArticleImportItem): Promise<{ status: A
 
   const result = res.data?.results?.[0];
   if (!result) {
-    return { status: 'failed', error: '未知错误' };
+    return { status: 'failed' as const, error: '未知错误' };
   }
 
   if (result.success) {
-    return { status: 'success', id: result.id };
+    return { status: 'success' as const, id: result.id };
   }
 
-  // 后端返回的 status 字段区分 skipped 和 failed
-  if (result.status === 'skipped') {
-    return { status: 'skipped', error: result.error };
-  }
-
-  return { status: 'failed', error: result.error || '导入失败' };
+  return { status: 'failed' as const, error: result.error || '导入失败' };
 }
 
 /**

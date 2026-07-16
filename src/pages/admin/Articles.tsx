@@ -9,14 +9,12 @@ import {
   Modal,
   Popconfirm,
   Space,
-  Table,
   theme as antTheme,
   Typography,
   Upload,
   Alert,
   Checkbox,
   Tag,
-  Progress,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AdminCard from '@/components/admin/AdminCard';
@@ -37,7 +35,6 @@ import {
   fetchSettings,
   fetchTags,
   fetchTopics,
-  importArticles,
   refreshArticleSlug,
   type TagItem,
   type TopicItem,
@@ -777,7 +774,7 @@ const ArticlesPage: React.FC = () => {
           <Upload.Dragger
             accept=".csv,.md,.markdown"
             multiple
-            beforeUpload={(file, fileList) => {
+            beforeUpload={(_file, fileList) => {
               handleBatchImport(fileList);
               setImportUploadOpen(false);
               return false;

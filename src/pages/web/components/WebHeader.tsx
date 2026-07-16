@@ -16,7 +16,6 @@ import {
   ShareAltOutlined,
 } from '@ant-design/icons';
 import {
-  Avatar,
   Button,
   Dropdown,
   Grid,
@@ -55,7 +54,6 @@ const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
   const screens = useBreakpoint();
   const isDesktop = !!screens.lg;
   const isTablet = !!screens.md && !screens.lg;
-  const isMobile = !screens.md;
   const location = useLocation();
   const { token } = antTheme.useToken();
   const { isDark, toggleTheme } = useTheme();
