@@ -28,7 +28,6 @@ export type {
   MPUserProfile, RadarData, MPUserDetail,
   ListResponse,
   ArticleReadStat, CategoryReadStat, TagReadStat, ContentTrendItem,
-  PermissionItem, PermissionTreeNode, RoleItem,
 } from './types';
 
 // ─── 认证 ────────────────────────────────────────────────────
@@ -64,9 +63,7 @@ export {
 
 // ─── 用户管理 ────────────────────────────────────────────────
 export {
-  fetchUsers, createUser, updateUser, deleteUser,
-  batchDeleteUsers, toggleUserStatus, updateUserPassword,
-  downloadUsersCSV,
+  updateUserPassword,
 } from './user-api';
 
 // ─── 仪表盘 & 日志 ───────────────────────────────────────────
@@ -84,7 +81,6 @@ export {
   fetchSettings, updateSettings,
   sendEmailVerificationCode, verifyEmailVerificationCode,
   fetchHotSearches, syncMeiliSearch,
-  clearCache, warmupCache, fetchCacheStats,
 } from './settings-api';
 
 // ─── 文件 ────────────────────────────────────────────────────
@@ -92,9 +88,7 @@ export { uploadAdminFile, fetchAdminFiles, deleteAdminFile } from './file-api';
 
 // ─── 小程序用户 ──────────────────────────────────────────────
 export {
-  fetchMPUsers, fetchMPUserDetail, fetchMPUserProfile,
-  generateMPUserProfile, generateMPUserTags,
-  refreshRadar, deleteMPUserTag,
+  fetchMPUsers,
 } from './mp-user-api';
 
 // ─── 友情链接 ────────────────────────────────────────────────
@@ -103,17 +97,6 @@ export {
   deleteLink, batchDeleteLinks,
 } from './link-api';
 export type { LinkItem, LinkCreateRequest, LinkUpdateRequest } from './link-api';
-
-// ─── 角色 & 权限 ─────────────────────────────────────────────
-export {
-  fetchRoles, fetchAllRoles, createRole, updateRole, deleteRole,
-  fetchRolePermissions, assignRolePermissions, assignUserRoles,
-} from './role-api';
-export {
-  fetchPermissions, fetchPermissionTree, fetchPermission,
-  createPermission, updatePermission, deletePermission,
-  fetchUserPermissions,
-} from './permission-api';
 
 // ─── 工具函数 ────────────────────────────────────────────────
 export { unwrapList, unwrapPagedList } from './helpers';

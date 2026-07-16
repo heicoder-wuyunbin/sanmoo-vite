@@ -55,75 +55,8 @@ import {
 import { clearAuth, getCurrentUser, getCurrentUserId } from '@/utils/auth';
 import { updateUserPassword } from '@/services/blog/api';
 import { useTheme } from '@/hooks/useTheme';
-import { usePermStore } from '@/store/usePermStore';
 
 const { Header, Sider, Content } = Layout;
-
-// 图标名称到组件的映射（用于后端动态菜单渲染）
-const ICON_MAP: Record<string, React.FC<any>> = {
-  HomeOutlined,
-  FileTextOutlined,
-  TagsOutlined,
-  FolderOutlined,
-  UserOutlined,
-  SettingOutlined,
-  FileImageOutlined,
-  GlobalOutlined,
-  BookOutlined,
-  BugOutlined,
-  WechatOutlined,
-  SafetyOutlined,
-  TeamOutlined,
-  BarChartOutlined,
-  LineChartOutlined,
-  DatabaseOutlined,
-  PictureOutlined,
-  LinkOutlined,
-  LockOutlined,
-  KeyOutlined,
-  EyeOutlined,
-  FileSearchOutlined,
-  CrownOutlined,
-  ShareAltOutlined,
-  SearchOutlined,
-  SaveOutlined,
-  MailOutlined,
-  ThunderboltOutlined,
-  CloudServerOutlined,
-};
-
-const MODULE_ICON_MAP: Record<string, React.FC<any>> = {
-  dashboard: BarChartOutlined,
-  article: FileTextOutlined,
-  category: FolderOutlined,
-  tag: TagsOutlined,
-  topic: BookOutlined,
-  link: LinkOutlined,
-  file: PictureOutlined,
-  user: UserOutlined,
-  mpuser: WechatOutlined,
-  role: TeamOutlined,
-  permission: LockOutlined,
-
-  setting: SettingOutlined,
-};
-
-// 模块中文名映射（符合站长后台定位）
-const MODULE_LABELS: Record<string, string> = {
-  dashboard: '概览',
-  article: '内容管理',
-  category: '内容管理',
-  tag: '内容管理',
-  topic: '内容管理',
-  link: '内容管理',
-  file: '媒体资源',
-  user: '账号管理',
-  mpuser: '账号管理',
-  role: '账号管理',
-  permission: '账号管理',
-
-  setting: '站点设置',
-};
 
 /**
  * Ant Design Pro 风格的管理后台布局。
@@ -142,19 +75,12 @@ const Admin: React.FC = () => {
   const [form] = Form.useForm();
   const { token } = antTheme.useToken();
   const { isDark, toggleTheme } = useTheme();
-  const { isLoaded, loadPermissions, hasPerm, menus } = usePermStore();
 
   useEffect(() => {
     const user = getCurrentUser();
     if (user && user.username) setCurrentUser(user.username);
     setCurrentUserId(getCurrentUserId());
   }, []);
-
-  useEffect(() => {
-    if (!isLoaded) {
-      loadPermissions();
-    }
-  }, [isLoaded, loadPermissions]);
 
   const handleLogout = () => {
     clearAuth();
@@ -209,7 +135,6 @@ const Admin: React.FC = () => {
     key: string;
     icon: React.ReactNode;
     label: React.ReactNode;
-    perm?: string;
     children?: StaticMenuItem[];
   }
 
@@ -226,7 +151,7 @@ const Admin: React.FC = () => {
       label: '概览',
       icon: <BarChartOutlined />,
       items: [
-        { key: '/admin', icon: <HomeOutlined />, label: '仪表盘', perm: 'dashboard:read' },
+        { key: '/admin', icon: <HomeOutlined />, label: '仪表盘' },
       ],
     },
     {
@@ -234,11 +159,11 @@ const Admin: React.FC = () => {
       label: '内容管理',
       icon: <FileTextOutlined />,
       items: [
-        { key: '/admin/articles', icon: <FileTextOutlined />, label: '文章管理', perm: 'article:list' },
-        { key: '/admin/categories', icon: <FolderOutlined />, label: '分类管理', perm: 'category:list' },
-        { key: '/admin/tags', icon: <TagsOutlined />, label: '标签管理', perm: 'tag:list' },
-        { key: '/admin/topics', icon: <BookOutlined />, label: '专题管理', perm: 'topic:list' },
-        { key: '/admin/links', icon: <LinkOutlined />, label: '友情链接', perm: 'link:list' },
+        { key: '/admin/articles', icon: <FileTextOutlined />, label: '文章管理' },
+        { key: '/admin/categories', icon: <FolderOutlined />, label: '分类管理' },
+        { key: '/admin/tags', icon: <TagsOutlined />, label: '标签管理' },
+        { key: '/admin/topics', icon: <BookOutlined />, label: '专题管理' },
+        { key: '/admin/links', icon: <LinkOutlined />, label: '友情链接' },
       ],
     },
     {
@@ -246,7 +171,7 @@ const Admin: React.FC = () => {
       label: '媒体资源',
       icon: <PictureOutlined />,
       items: [
-        { key: '/admin/files', icon: <FileImageOutlined />, label: '文件管理', perm: 'file:list' },
+        { key: '/admin/files', icon: <FileImageOutlined />, label: '文件管理' },
       ],
     },
     {
@@ -256,7 +181,7 @@ const Admin: React.FC = () => {
       items: [
         // 冻结能力：用户管理、角色管理、权限管理（平台化扩张，见 frozen-capabilities.md §2.1/2.2）
         // { key: '/admin/users', icon: <UserOutlined />, label: '用户管理', perm: 'user:list' },
-        { key: '/admin/mp-users', icon: <WechatOutlined />, label: '读者', perm: 'mpuser:list' },
+        { key: '/admin/mp-users', icon: <WechatOutlined />, label: '读者' },
         // { key: '/admin/roles', icon: <TeamOutlined />, label: '权限角色', perm: 'role:list' },
         // { key: '/admin/permissions', icon: <LockOutlined />, label: '权限列表', perm: 'permission:list' },
       ],
@@ -266,8 +191,8 @@ const Admin: React.FC = () => {
       label: '访问日志',
       icon: <BarChartOutlined />,
       items: [
-        { key: '/admin/visitors', icon: <LineChartOutlined />, label: '访问日志', perm: 'dashboard:visitors' },
-        { key: '/admin/errors', icon: <BugOutlined />, label: '错误日志', perm: 'dashboard:errors' },
+        { key: '/admin/visitors', icon: <LineChartOutlined />, label: '访问日志' },
+        { key: '/admin/errors', icon: <BugOutlined />, label: '错误日志' },
       ],
     },
     {
@@ -276,131 +201,52 @@ const Admin: React.FC = () => {
       icon: <SettingOutlined />,
       items: [
         // 站点品牌配置
-        { key: '/admin/settings/core', icon: <CrownOutlined />, label: '站点品牌', perm: 'setting:core:read' },
+        { key: '/admin/settings/core', icon: <CrownOutlined />, label: '站点品牌' },
         // 合规配置
-        { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '合规配置', perm: 'setting:privacy:read' },
+        { key: '/admin/settings/privacy', icon: <LockOutlined />, label: '合规配置' },
         // 渠道配置
-        { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '渠道配置', perm: 'setting:social:read' },
+        { key: '/admin/settings/social', icon: <ShareAltOutlined />, label: '渠道配置' },
         // 基础设施配置
-        { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置', perm: 'setting:search:read' },
-        { key: '/admin/settings/storage', icon: <CloudServerOutlined />, label: '存储配置', perm: 'setting:storage:read' },
-        { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置', perm: 'setting:email:read' },
-        { key: '/admin/settings/wechat', icon: <WechatOutlined />, label: '微信配置', perm: 'setting:wechat:read' },
+        { key: '/admin/settings/search', icon: <SearchOutlined />, label: '搜索配置' },
+        { key: '/admin/settings/storage', icon: <CloudServerOutlined />, label: '存储配置' },
+        { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置' },
+        { key: '/admin/settings/wechat', icon: <WechatOutlined />, label: '微信配置' },
         // 冻结能力：缓存管理（低频运维，见 frozen-capabilities.md §2.4）
         // { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
       ],
     },
   ];
 
-  // 模块名到组 key 的映射（用于动态菜单）
-  const MODULE_GROUP_KEYS: Record<string, string> = {
-    dashboard: 'group-overview',
-    article: 'group-content',
-    category: 'group-content',
-    tag: 'group-content',
-    topic: 'group-content',
-    link: 'group-content',
-    file: 'group-media',
-    user: 'group-account',
-    mpuser: 'group-account',
-    role: 'group-account',
-    permission: 'group-account',
-    setting: 'group-setting',
-  };
-
-  // 动态菜单渲染（优先使用后端返回的菜单）
-  const { menuItems, firstGroupKey } = useMemo(() => {
-    const result: MenuProps['items'] = [];
-    let firstKey = '';
-
-    if (menus && menus.length > 0) {
-      const groupMap = new Map<string, { label: string; icon: React.ReactNode; children: any[] }>();
-      menus.forEach((m) => {
-        const groupKey = MODULE_GROUP_KEYS[m.module] || `group-${m.module}`;
-        const label = MODULE_LABELS[m.module] || m.module;
-        const groupIconComponent = MODULE_ICON_MAP[m.module];
-        const groupIcon = groupIconComponent ? React.createElement(groupIconComponent) : <FileTextOutlined />;
-        if (!groupMap.has(groupKey)) {
-          groupMap.set(groupKey, { label, icon: groupIcon, children: [] });
+  // 静态菜单渲染
+  const menuItems = useMemo<MenuProps['items']>(() => {
+    return staticMenuGroups.map((group) => ({
+      key: group.key,
+      label: group.label,
+      icon: group.icon,
+      children: group.items.map((item) => {
+        if ('children' in item && item.children) {
+          return {
+            key: item.key,
+            icon: item.icon,
+            label: item.label,
+            children: item.children.map((child: any) => ({
+              key: child.key,
+              icon: child.icon,
+              label: <Link to={child.key}>{child.label}</Link>,
+            })),
+          };
         }
-        const IconComp = ICON_MAP[m.icon] || MODULE_ICON_MAP[m.module] || FileTextOutlined;
+        return {
+          key: item.key,
+          icon: item.icon,
+          label: <Link to={item.key}>{item.label}</Link>,
+        };
+      }),
+    }));
+  }, []);
 
-        if (m.frontPath !== '/admin/settings') {
-          groupMap.get(groupKey)!.children.push({
-            key: m.frontPath,
-            icon: <IconComp />,
-            label: <Link to={m.frontPath}>{m.name}</Link>,
-          });
-        }
-      });
-
-      groupMap.forEach((group, key) => {
-        if (!firstKey) firstKey = key;
-        result.push({
-          key,
-          label: group.label,
-          icon: group.icon,
-          children: group.children,
-        });
-      });
-    } else {
-      staticMenuGroups.forEach((group) => {
-        const visibleItems = group.items
-          .filter((item) => !item.perm || hasPerm(item.perm))
-          .map((item) => {
-            if ('children' in item && item.children) {
-              const visibleChildren = item.children
-                .filter((child: any) => !child.perm || hasPerm(child.perm))
-                .map((child: any) => ({
-                  key: child.key,
-                  icon: child.icon,
-                  label: <Link to={child.key}>{child.label}</Link>,
-                }));
-              if (visibleChildren.length === 0) return null;
-              return {
-                key: item.key,
-                icon: item.icon,
-                label: item.label,
-                children: visibleChildren,
-              };
-            }
-            return {
-              key: item.key,
-              icon: item.icon,
-              label: <Link to={item.key}>{item.label}</Link>,
-            };
-          })
-          .filter(Boolean);
-        if (visibleItems.length === 0) return;
-        if (!firstKey) firstKey = group.key;
-        result.push({
-          key: group.key,
-          label: group.label,
-          icon: group.icon,
-          children: visibleItems,
-        });
-      });
-    }
-
-    return { menuItems: result, firstGroupKey: firstKey };
-  }, [menus, hasPerm]);
-
-  const [openKeys, setOpenKeys] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (firstGroupKey) {
-      setOpenKeys([firstGroupKey]);
-    }
-  }, [firstGroupKey]);
-
-  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
-    const latestOpenKey = keys.find((key) => !openKeys.includes(key));
-    if (latestOpenKey) {
-      setOpenKeys([latestOpenKey]);
-    } else {
-      setOpenKeys(keys);
-    }
-  };
+  // 所有菜单组默认展开
+  const openKeys = staticMenuGroups.map((g) => g.key);
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key.startsWith('/')) {
@@ -462,7 +308,6 @@ const Admin: React.FC = () => {
           mode="inline"
           selectedKeys={selectedKey}
           openKeys={openKeys}
-          onOpenChange={handleOpenChange}
           onClick={handleMenuClick}
           items={menuItems}
           style={{ borderInlineEnd: 'none', padding: '12px 8px' }}

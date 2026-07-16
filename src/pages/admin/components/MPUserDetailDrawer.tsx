@@ -23,6 +23,8 @@ import {
   fetchMPUserDetail,
   fetchMPUserProfile,
   refreshRadar,
+} from '@/services/blog/mp-user-api';
+import {
   type MPUserDetail,
   type MPUserProfile,
   type RadarData,
