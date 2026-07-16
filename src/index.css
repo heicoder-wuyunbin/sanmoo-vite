@@ -12,10 +12,10 @@
   --web-bg-secondary: #f0f0f0;
   --web-header-bg: #ffffff;
 
-  --web-primary: #1677ff;
-  --web-primary-hover: #4096ff;
-  --web-primary-active: #0958d9;
-  --web-primary-soft: rgba(22, 119, 255, 0.08);
+  --web-primary: #4F46E5;
+  --web-primary-hover: #6366F1;
+  --web-primary-active: #4338CA;
+  --web-primary-soft: rgba(79, 70, 229, 0.08);
 
   --web-success: #52c41a;
   --web-warning: #faad14;
@@ -46,18 +46,41 @@
 
   --web-header-height: 56px;
 
-  /* 渐变 - 浅色模式下柔和、与 Pro 风格一致的蓝/米渐变 */
+  /* 渐变 - 浅色模式下柔和、与 Pro 风格一致的靛蓝/米渐变 */
   --web-gradient-hero: linear-gradient(
     135deg,
-    rgba(230, 244, 255, 0.95) 0%,
+    rgba(224, 231, 255, 0.95) 0%,
     rgba(247, 248, 250, 0.95) 55%,
     rgba(255, 250, 241, 0.95) 100%
   );
   --web-gradient-card: linear-gradient(
     135deg,
     rgba(255, 255, 255, 1) 0%,
-    rgba(239, 246, 255, 0.95) 100%
+    rgba(224, 231, 255, 0.95) 100%
   );
+
+  /* 文章 Meta 标签颜色 */
+  --tag-time-bg: #EEF2FF;
+  --tag-time-border: #A5B4FC;
+  --tag-time-text: #4F46E5;
+  --tag-read-bg: #F0FDF4;
+  --tag-read-border: #86EFAC;
+  --tag-read-text: #16A34A;
+  --tag-duration-bg: #F5F3FF;
+  --tag-duration-border: #C4B5FD;
+  --tag-duration-text: #7C3AED;
+  --tag-words-bg: #FDF2F8;
+  --tag-words-border: #F9A8D4;
+  --tag-words-text: #DB2777;
+  --tag-category-bg: #FFFBEB;
+  --tag-category-border: #FDE68A;
+  --tag-category-text: #D97706;
+
+  /* 搜索弹窗颜色 */
+  --search-text: #1f2937;
+  --search-text-secondary: #6b7280;
+  --search-border: #f0f0f0;
+  --search-item-hover: #f5f5f5;
 }
 
 html[data-theme='dark'] {
@@ -67,10 +90,10 @@ html[data-theme='dark'] {
   --web-bg-secondary: #2a2a2a;
   --web-header-bg: #1f1f1f;
 
-  --web-primary: #4096ff;
-  --web-primary-hover: #69b1ff;
-  --web-primary-active: #0958d9;
-  --web-primary-soft: rgba(64, 150, 255, 0.15);
+  --web-primary: #818CF8;
+  --web-primary-hover: #A5B4FC;
+  --web-primary-active: #6366F1;
+  --web-primary-soft: rgba(129, 140, 248, 0.15);
 
   --web-success: #49aa19;
   --web-warning: #d89614;
@@ -106,6 +129,29 @@ html[data-theme='dark'] {
     rgba(31, 31, 31, 1) 0%,
     rgba(23, 37, 84, 0.6) 100%
   );
+
+  /* 文章 Meta 标签颜色 - 深色模式 */
+  --tag-time-bg: rgba(79, 70, 229, 0.12);
+  --tag-time-border: rgba(79, 70, 229, 0.3);
+  --tag-time-text: #A5B4FC;
+  --tag-read-bg: rgba(22, 163, 74, 0.12);
+  --tag-read-border: rgba(22, 163, 74, 0.3);
+  --tag-read-text: #4ADE80;
+  --tag-duration-bg: rgba(124, 58, 237, 0.12);
+  --tag-duration-border: rgba(124, 58, 237, 0.3);
+  --tag-duration-text: #C4B5FD;
+  --tag-words-bg: rgba(219, 39, 119, 0.12);
+  --tag-words-border: rgba(219, 39, 119, 0.3);
+  --tag-words-text: #F9A8D4;
+  --tag-category-bg: rgba(217, 119, 6, 0.12);
+  --tag-category-border: rgba(217, 119, 6, 0.3);
+  --tag-category-text: #FCD34D;
+
+  /* 搜索弹窗颜色 - 深色模式 */
+  --search-text: #e2e8f0;
+  --search-text-secondary: #94a3b8;
+  --search-border: #334155;
+  --search-item-hover: #1e293b;
 }
 
 /* 滚动条 - 深色模式下更柔和 */
@@ -127,6 +173,8 @@ body,
   min-height: 100%;
   font-family:
     AlibabaSans,
+    'PingFang SC',
+    'Microsoft YaHei',
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',

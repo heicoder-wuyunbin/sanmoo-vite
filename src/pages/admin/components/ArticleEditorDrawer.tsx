@@ -1,5 +1,6 @@
 import { MdEditor } from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
+import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
@@ -11,8 +12,9 @@ import {
   Select,
   Space,
   Switch,
-  theme as antTheme,
+  Tooltip,
   Typography,
+  theme as antTheme,
 } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -49,6 +51,7 @@ type ArticleEditorDrawerProps = {
   onOpenChange: (open: boolean) => void;
   onSubmit: () => Promise<void>;
   onReset: () => void;
+  onRefreshSlug?: () => Promise<void>;
 };
 
 const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
@@ -62,6 +65,7 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
   onOpenChange,
   onSubmit,
   onReset,
+  onRefreshSlug,
 }) => {
   const { message } = App.useApp();
   const { token } = antTheme.useToken();
@@ -80,6 +84,8 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
   const [fileLoading, setFileLoading] = React.useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
+  const [slug, setSlug] = useState<string>('');
+  const [slugLoading, setSlugLoading] = useState(false);
 
   const contentValue = Form.useWatch('content', form);
   const titleImageValue = Form.useWatch('titleImage', form);
@@ -142,6 +148,7 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
   useEffect(() => {
     if (open) {
       if (editing) {
+        setSlug(editing.slug || '');
         form.setFieldsValue({
           title: editing.title,
           titleImage: editing.titleImage,
@@ -154,6 +161,7 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
           isPublished: Boolean(editing.isPublished),
         });
       } else {
+        setSlug('');
         form.resetFields();
         if (draftState) {
           form.setFieldsValue({
@@ -175,6 +183,23 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
       }
     }
   }, [open, editing, draftState, form]);
+
+  const handleRefreshSlug = async () => {
+    if (!onRefreshSlug || !editing) return;
+    setSlugLoading(true);
+    try {
+      await onRefreshSlug();
+      // 刷新编辑详情以获取新的 slug
+      const { fetchAdminArticleDetail } = await import('@/services/blog/api');
+      const res = await fetchAdminArticleDetail(editing.id);
+      setSlug(res.data?.article?.slug || '');
+      message.success('Slug 已刷新');
+    } catch {
+      message.error('刷新 Slug 失败');
+    } finally {
+      setSlugLoading(false);
+    }
+  };
 
   const saveDraft = React.useCallback(() => {
     if (!open || editing) return;
@@ -311,6 +336,25 @@ const ArticleEditorDrawer: React.FC<ArticleEditorDrawerProps> = ({
           >
             <Input placeholder="请输入文章标题" />
           </Form.Item>
+          {editing && (
+            <Form.Item label="Slug">
+              <Space.Compact style={{ width: '100%' }}>
+                <Input
+                  value={slug}
+                  readOnly
+                  placeholder="slug 将根据标题自动生成"
+                  style={{ color: token.colorTextSecondary }}
+                />
+                <Tooltip title="根据当前标题重新生成 Slug">
+                  <Button
+                    icon={<ReloadOutlined />}
+                    loading={slugLoading}
+                    onClick={handleRefreshSlug}
+                  />
+                </Tooltip>
+              </Space.Compact>
+            </Form.Item>
+          )}
           <Form.Item name="titleImage" label="标题图">
             {titleImageValue && titleImageValue !== '' ? (
               <div

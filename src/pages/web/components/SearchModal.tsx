@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Modal, Input, Tag, List, Button, Spin, Empty, type InputRef } from 'antd';
 import { SearchOutlined, ClockCircleOutlined, FireOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { fetchArticles, fetchHotSearches } from '@/services/blog/api';
+import { fetchArticles, fetchHotSearches, getArticleUrl } from '@/services/blog/api';
 import type { ArticleItem } from '@/services/blog/api';
 
 const SEARCH_HISTORY_KEY = 'sanmoo_search_history';
@@ -115,7 +115,7 @@ const SearchModal: React.FC<Props> = ({ visible, onCancel }) => {
 
   const handleArticleClick = (article: ArticleItem) => {
     onCancel();
-    navigate(`/article/${article.id}`);
+    navigate(getArticleUrl(article));
   };
 
   const handleQuickSearch = () => {
@@ -134,9 +134,9 @@ const SearchModal: React.FC<Props> = ({ visible, onCancel }) => {
       styles={{ body: { padding: 0, maxHeight: '70vh', overflowY: 'auto' } }}
       wrapProps={{ style: { top: '10%' } }}
     >
-      <div style={{ padding: 20, borderBottom: '1px solid #f0f0f0' }}>
+      <div style={{ padding: 20, borderBottom: `1px solid var(--search-border)` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <SearchOutlined style={{ color: '#8c8c8c', fontSize: 20 }} />
+          <SearchOutlined style={{ color: 'var(--search-text-secondary)', fontSize: 20 }} />
           <Input
             ref={inputRef}
             value={searchText}
@@ -166,14 +166,14 @@ const SearchModal: React.FC<Props> = ({ visible, onCancel }) => {
                 <List.Item
                   key={item.id}
                   onClick={() => handleArticleClick(item)}
-                  style={{ cursor: 'pointer', padding: '12px 20px', borderBottom: '1px solid #f5f5f5' }}
+                  style={{ cursor: 'pointer', padding: '12px 20px', borderBottom: '1px solid var(--search-border)' }}
                 >
                   <List.Item.Meta
                     title={
-                      <span style={{ color: '#1f1f1f', fontSize: 14 }}>{item.title}</span>
+                      <span style={{ color: 'var(--search-text)', fontSize: 14 }}>{item.title}</span>
                     }
                     description={
-                      <span style={{ color: '#999', fontSize: 12 }}>
+                      <span style={{ color: 'var(--search-text-secondary)', fontSize: 12 }}>
                         {item.description || '暂无描述'}
                       </span>
                     }
@@ -184,7 +184,7 @@ const SearchModal: React.FC<Props> = ({ visible, onCancel }) => {
           ) : (
             <Empty description="未找到相关文章" style={{ padding: 40 }} />
           )}
-          <div style={{ padding: 16, textAlign: 'center', borderTop: '1px solid #f0f0f0' }}>
+          <div style={{ padding: 16, textAlign: 'center', borderTop: `1px solid var(--search-border)` }}>
             <Button type="link" onClick={handleQuickSearch}>
               查看完整搜索结果
             </Button>
@@ -196,7 +196,7 @@ const SearchModal: React.FC<Props> = ({ visible, onCancel }) => {
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
                 <FireOutlined style={{ color: '#ff6b6b', marginRight: 6 }} />
-                <span style={{ fontSize: 14, fontWeight: 500, color: '#333' }}>热门搜索</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--search-text)' }}>热门搜索</span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {hotSearches.map((word, index) => (
@@ -217,14 +217,14 @@ const SearchModal: React.FC<Props> = ({ visible, onCancel }) => {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <ClockCircleOutlined style={{ color: '#919191', marginRight: 6 }} />
-                  <span style={{ fontSize: 14, fontWeight: 500, color: '#333' }}>搜索历史</span>
+                  <ClockCircleOutlined style={{ color: 'var(--search-text-secondary)', marginRight: 6 }} />
+                  <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--search-text)' }}>搜索历史</span>
                 </div>
                 <Button
                   type="text"
                   size="small"
                   onClick={clearSearchHistory}
-                  style={{ color: '#999', padding: 0 }}
+                  style={{ color: 'var(--search-text-secondary)', padding: 0 }}
                 >
                   清空
                 </Button>

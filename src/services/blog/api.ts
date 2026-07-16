@@ -33,11 +33,12 @@ export { login, sendLoginVerificationCode, checkMFA, changePassword } from './au
 
 // ─── 文章 ────────────────────────────────────────────────────
 export {
-  fetchArticles, fetchArticleDetail, fetchAdminArticleDetail,
+  fetchArticles, fetchArticleDetail, fetchArticleBySlug, getArticleUrl, fetchAdminArticleDetail,
   createArticle, updateArticle, updateArticleStatus, batchUpdateArticleStatus,
   deleteArticle, batchDeleteArticles, fetchPublishedArticleOptions, fetchArchives,
   fetchRelatedArticles, fetchHotArticles, likeArticle, fetchRandomArticle,
-  downloadArticlesCSV,
+  downloadArticlesCSV, refreshArticleSlug, batchRefreshArticleSlugs,
+  importArticles, exportArticlesCSV,
 } from './article-api';
 
 // ─── 分类 ────────────────────────────────────────────────────

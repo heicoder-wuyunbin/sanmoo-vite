@@ -17,7 +17,7 @@ import {
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import WebShell from './web/components/WebShell';
-import { fetchHotArticles, fetchHotSearches, type ArticleItem } from '@/services/blog/api';
+import { fetchHotArticles, fetchHotSearches, getArticleUrl, type ArticleItem } from '@/services/blog/api';
 
 const NotFound: React.FC = () => {
   const { token } = antTheme.useToken();
@@ -216,7 +216,7 @@ const NotFound: React.FC = () => {
               {hotArticles.map((item, index) => (
                 <Link
                   key={item.id}
-                  to={`/article/${item.id}`}
+                  to={getArticleUrl(item)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

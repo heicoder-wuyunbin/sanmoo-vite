@@ -16,6 +16,7 @@ import { Helmet } from 'react-helmet-async';
 import {
   type ArchiveItem,
   fetchArchives,
+  getArticleUrl,
 } from '@/services/blog/api';
 import WebShell from '@/pages/web/components/WebShell';
 import { useQuery } from '@tanstack/react-query';
@@ -199,7 +200,7 @@ const ArchivesPage: React.FC = () => {
                                   {item.createTime ? item.createTime.slice(5, 10) : '--'}
                                 </Typography.Text>
                                 <Link
-                                  to={`/article/${item.id}`}
+                                  to={getArticleUrl(item)}
                                   style={{
                                     color: token.colorText,
                                     fontSize: 14,

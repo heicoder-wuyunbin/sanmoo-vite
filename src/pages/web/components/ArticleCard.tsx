@@ -2,6 +2,7 @@ import { ArrowRightOutlined, FireOutlined } from '@ant-design/icons';
 import { Card, Space, Tag, Typography, theme as antTheme } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getArticleUrl } from '@/services/blog/api';
 import ArticleMetaTags from './ArticleMetaTags';
 
 export interface ArticleItem {
@@ -121,7 +122,7 @@ const ArticleCard: React.FC<Props> = ({
         onMouseLeave={() => setIsHovered(false)}
         styles={{ body: { padding: 0 } }}
       >
-        <Link to={`/article/${article.id}`} style={linkStyle}>
+        <Link to={getArticleUrl(article)} style={linkStyle}>
           <div style={{ padding: 28, ...featuredInnerStyle }}>
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
               <Tag
@@ -213,7 +214,7 @@ const ArticleCard: React.FC<Props> = ({
             延伸阅读
           </Tag>
           <Typography.Title level={4} style={{ margin: 0, ...titleStyle }}>
-            <Link to={`/article/${article.id}`} style={{ color: 'inherit' }}>
+            <Link to={getArticleUrl(article)} style={{ color: 'inherit' }}>
               {article.title}
             </Link>
           </Typography.Title>
@@ -222,7 +223,7 @@ const ArticleCard: React.FC<Props> = ({
           </Typography.Paragraph>
           <ArticleMetaTags meta={article} maxTags={3} />
           <Link
-            to={`/article/${article.id}`}
+            to={getArticleUrl(article)}
             onMouseEnter={() => setButtonHovered(true)}
             onMouseLeave={() => setButtonHovered(false)}
             style={{
@@ -243,11 +244,11 @@ const ArticleCard: React.FC<Props> = ({
   }
 
   return (
-    <Link to={`/article/${article.id}`} style={{ textDecoration: 'none' }}>
+    <Link to={getArticleUrl(article)} style={{ textDecoration: 'none' }}>
       <Card
         style={{
           ...cardStyle,
-          borderLeft: `4px solid ${isHovered ? token.colorPrimary : `color-mix(in srgb, ${token.colorPrimary} 85%, transparent)`}`,
+          borderLeft: `4px solid ${isHovered ? token.colorPrimary : `${token.colorPrimary}20`}`,
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

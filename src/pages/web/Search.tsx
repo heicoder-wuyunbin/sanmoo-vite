@@ -15,7 +15,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import WebShell from '@/pages/web/components/WebShell';
-import { fetchArticles } from '@/services/blog/api';
+import { fetchArticles, getArticleUrl } from '@/services/blog/api';
 import type { ArticleItem } from '@/services/blog/api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -88,7 +88,7 @@ const SearchPage: React.FC = () => {
   };
 
   const handleArticleClick = (article: ArticleItem) => {
-    navigate(`/article/${article.id}`);
+    navigate(getArticleUrl(article));
   };
 
   return (

@@ -8,7 +8,7 @@ import { theme as antTheme } from 'antd';
  */
 
 // ------- 共享常量 -------
-export const PRIMARY_COLOR = '#1677ff';
+export const PRIMARY_COLOR = '#4F46E5';
 export const SUCCESS_COLOR = '#52c41a';
 export const WARNING_COLOR = '#faad14';
 export const ERROR_COLOR = '#ff4d4f';
@@ -55,8 +55,8 @@ export const lightTokens = {
 
 // ------- Dark 主题 -------
 export const darkTokens = {
-  colorPrimary: '#4096ff',
-  colorInfo: '#4096ff',
+  colorPrimary: '#818CF8',
+  colorInfo: '#818CF8',
   colorSuccess: '#49aa19',
   colorWarning: '#d89614',
   colorError: '#cf1322',
@@ -103,7 +103,7 @@ export const lightTheme: ThemeConfig = {
     Menu: {
       darkItemBg: '#001529',
       darkSubMenuItemBg: '#000c17',
-      darkItemSelectedBg: '#1677ff',
+      darkItemSelectedBg: '#4F46E5',
       itemHeight: 40,
       itemBorderRadius: 4,
     },
@@ -146,7 +146,7 @@ export const darkTheme: ThemeConfig = {
     Menu: {
       darkItemBg: '#001529',
       darkSubMenuItemBg: '#000c17',
-      darkItemSelectedBg: '#1677ff',
+      darkItemSelectedBg: '#4F46E5',
       itemHeight: 40,
       itemBorderRadius: 4,
     },

@@ -1,10 +1,10 @@
-import { LeftOutlined, RightOutlined, ThunderboltOutlined, HeartOutlined, HeartFilled, FontSizeOutlined, ArrowUpOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined, ThunderboltOutlined, HeartOutlined, HeartFilled, FontSizeOutlined, ArrowUpOutlined, ShareAltOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
-import { App, Button, Card, Empty, Space, Spin, Tag, Typography, theme as antTheme } from 'antd';
+import { App, Button, Card, Empty, Space, Spin, Tag, Typography, theme as antTheme, FloatButton, Drawer } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { fetchArticleDetail, fetchRelatedArticles, likeArticle, fetchRandomArticle, type WebArticleDetail, type ArticleItem } from '@/services/blog/api';
+import { fetchArticleDetail, fetchArticleBySlug, fetchRelatedArticles, likeArticle, fetchRandomArticle, getArticleUrl, type WebArticleDetail, type ArticleItem } from '@/services/blog/api';
 import WebShell from '@/pages/web/components/WebShell';
 import TableOfContents from '@/pages/web/components/TableOfContents';
 import Breadcrumb from '@/pages/web/components/Breadcrumb';
@@ -26,7 +26,7 @@ const FONT_SIZE_MAP: Record<FontSize, number> = {
 const READ_POSITION_KEY = 'article-read-position';
 
 const ArticleDetailPage: React.FC = () => {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const { message: antdMessage } = App.useApp();
   const { token } = antTheme.useToken();
   const [progress, setProgress] = useState(0);
@@ -40,6 +40,8 @@ const ArticleDetailPage: React.FC = () => {
   const [lightboxImage, setLightboxImage] = useState('');
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  // TOC 抽屉
+  const [tocDrawerVisible, setTocDrawerVisible] = useState(false);
 
   const cardStyle = useMemo<React.CSSProperties>(
     () => ({
@@ -51,27 +53,32 @@ const ArticleDetailPage: React.FC = () => {
     [token],
   );
 
-  const articleId = Number(id);
+  const articleId = slug ? undefined : Number(id);
+  const articleSlug = slug || undefined;
 
   const { data: articleData, isLoading, error } = useQuery<WebArticleDetail>({
-    queryKey: ['article', articleId],
+    queryKey: ['article', articleId ?? articleSlug],
     queryFn: async () => {
-      const res = await fetchArticleDetail(articleId);
+      if (articleSlug) {
+        const res = await fetchArticleBySlug(articleSlug);
+        return res.data;
+      }
+      const res = await fetchArticleDetail(articleId!);
       return res.data;
     },
-    enabled: !Number.isNaN(articleId) && articleId > 0,
+    enabled: (!!articleId && articleId > 0) || !!articleSlug,
   });
 
   const article = articleData?.article;
   const toc = articleData?.toc || [];
 
   const { data: relatedArticles } = useQuery<ArticleItem[]>({
-    queryKey: ['relatedArticles', articleId],
+    queryKey: ['relatedArticles', articleId ?? articleSlug],
     queryFn: async () => {
-      const res = await fetchRelatedArticles(articleId, 6);
+      const res = await fetchRelatedArticles(article?.id ?? 0, 6);
       return res.data || [];
     },
-    enabled: !Number.isNaN(articleId) && articleId > 0 && !isLoading,
+    enabled: (!!articleId && articleId > 0 || !!articleSlug) && !!article && !isLoading,
   });
 
   useEffect(() => {
@@ -116,7 +123,7 @@ const ArticleDetailPage: React.FC = () => {
 
   const handleShare = async () => {
     if (!article) return;
-    const shareUrl = `${window.location.origin}/article/${article.id}`;
+    const shareUrl = `${window.location.origin}${getArticleUrl(article)}`;
     try {
       if (navigator.share) {
         await navigator.share({
@@ -349,10 +356,10 @@ const ArticleDetailPage: React.FC = () => {
           <title>{article.title} - Sanmoo Blog</title>
           <meta name="description" content={article.description || article.title} />
           <meta name="keywords" content={article.tags?.map(t => t.name).join(', ') || ''} />
-          <link rel="canonical" href={`${window.location.origin}/article/${article.id}`} />
+          <link rel="canonical" href={`${window.location.origin}${getArticleUrl(article)}`} />
           <meta property="og:title" content={article.title} />
           <meta property="og:description" content={article.description || article.title} />
-          <meta property="og:url" content={`${window.location.origin}/article/${article.id}`} />
+          <meta property="og:url" content={`${window.location.origin}${getArticleUrl(article)}`} />
           <meta property="og:image" content={article.titleImage || ''} />
           <meta property="og:type" content="article" />
           <meta property="og:article:published_time" content={dayjs(article.createTime).format('YYYY-MM-DD')} />
@@ -402,7 +409,7 @@ const ArticleDetailPage: React.FC = () => {
                     '@type': 'ListItem',
                     position: article.categoryName ? 3 : 2,
                     name: article.title,
-                    item: `${window.location.origin}/article/${article.id}`,
+                    item: `${window.location.origin}${getArticleUrl(article)}`,
                   },
                 ].filter(Boolean),
               },
@@ -428,7 +435,7 @@ const ArticleDetailPage: React.FC = () => {
                     <Breadcrumb items={[
                       { label: '首页', path: '/' },
                       article.categoryName ? { label: article.categoryName, path: `/categories/${article.categoryId}` } : null,
-                      { label: article.title, path: `/article/${article.id}` },
+                      { label: article.title, path: getArticleUrl(article) },
                     ].filter(Boolean) as any} />
                     {article.titleImage ? (
                       <Image
@@ -513,9 +520,9 @@ const ArticleDetailPage: React.FC = () => {
                     <Space wrap size={[8, 8]}>
                       <Tag
                         style={{
-                          backgroundColor: '#E6F7FF',
-                          borderColor: '#91D5FF',
-                          color: '#1890FF',
+                          backgroundColor: 'var(--tag-time-bg)',
+                          borderColor: 'var(--tag-time-border)',
+                          color: 'var(--tag-time-text)',
                           borderRadius: 999,
                           paddingInline: 12,
                           fontWeight: 500,
@@ -525,9 +532,9 @@ const ArticleDetailPage: React.FC = () => {
                       </Tag>
                       <Tag
                         style={{
-                          backgroundColor: '#F6FFED',
-                          borderColor: '#B7EB8F',
-                          color: '#52C41A',
+                          backgroundColor: 'var(--tag-read-bg)',
+                          borderColor: 'var(--tag-read-border)',
+                          color: 'var(--tag-read-text)',
                           borderRadius: 999,
                           paddingInline: 12,
                           fontWeight: 500,
@@ -538,9 +545,9 @@ const ArticleDetailPage: React.FC = () => {
                       {readingTime > 0 && (
                         <Tag
                           style={{
-                            backgroundColor: '#F9F0FF',
-                            borderColor: '#D3ADF7',
-                            color: '#722ED1',
+                            backgroundColor: 'var(--tag-duration-bg)',
+                            borderColor: 'var(--tag-duration-border)',
+                            color: 'var(--tag-duration-text)',
                             borderRadius: 999,
                             paddingInline: 12,
                             fontWeight: 500,
@@ -552,9 +559,9 @@ const ArticleDetailPage: React.FC = () => {
                       {wordCount > 0 && (
                         <Tag
                           style={{
-                            backgroundColor: '#FFF0F6',
-                            borderColor: '#FFB3C1',
-                            color: '#EB2F96',
+                            backgroundColor: 'var(--tag-words-bg)',
+                            borderColor: 'var(--tag-words-border)',
+                            color: 'var(--tag-words-text)',
                             borderRadius: 999,
                             paddingInline: 12,
                             fontWeight: 500,
@@ -566,9 +573,9 @@ const ArticleDetailPage: React.FC = () => {
                       {article.categoryName ? (
                         <Tag
                           style={{
-                            backgroundColor: '#FFF7E6',
-                            borderColor: '#FFD666',
-                            color: '#FA8C16',
+                            backgroundColor: 'var(--tag-category-bg)',
+                            borderColor: 'var(--tag-category-border)',
+                            color: 'var(--tag-category-text)',
                             borderRadius: 999,
                             paddingInline: 12,
                             fontWeight: 500,
@@ -577,23 +584,13 @@ const ArticleDetailPage: React.FC = () => {
                           {article.categoryName}
                         </Tag>
                       ) : null}
-                      {article.tags?.map((tag, index) => {
-                        const tagColors = [
-                          { bg: '#FFF0F6', border: '#FFB3C1', text: '#EB2F96' },
-                          { bg: '#F9F0FF', border: '#D3ADF7', text: '#722ED1' },
-                          { bg: '#E6FFFB', border: '#87E8DE', text: '#13C2C2' },
-                          { bg: '#FFF7E6', border: '#FFD666', text: '#FA8C16' },
-                          { bg: '#F6FFED', border: '#B7EB8F', text: '#52C41A' },
-                          { bg: '#E6F7FF', border: '#91D5FF', text: '#1890FF' },
-                        ];
-                        const color = tagColors[index % tagColors.length];
-                        return (
+                      {article.tags?.map((tag) => (
                           <Tag
                             key={tag.id}
                             style={{
-                              backgroundColor: color.bg,
-                              borderColor: color.border,
-                              color: color.text,
+                              backgroundColor: 'var(--web-primary-soft)',
+                              borderColor: `color-mix(in srgb, var(--web-primary) 30%, transparent)`,
+                              color: 'var(--web-primary)',
                               borderRadius: 999,
                               paddingInline: 12,
                               fontWeight: 500,
@@ -601,8 +598,7 @@ const ArticleDetailPage: React.FC = () => {
                           >
                             {tag.name}
                           </Tag>
-                        );
-                      })}
+                        ))}
                     </Space>
                     <Card
                       style={{ ...cardStyle, boxShadow: 'none', borderRadius: token.borderRadiusLG }}
@@ -632,7 +628,7 @@ const ArticleDetailPage: React.FC = () => {
                         wrap
                       >
                         {articleData?.prevArticle ? (
-                          <Link to={`/article/${articleData.prevArticle.id}`}>
+                          <Link to={getArticleUrl(articleData.prevArticle)}>
                             <Button icon={<LeftOutlined />} style={{ minHeight: 44 }}>
                               上一篇: {articleData.prevArticle.title}
                             </Button>
@@ -643,7 +639,7 @@ const ArticleDetailPage: React.FC = () => {
                           </Typography.Text>
                         )}
                         {articleData?.nextArticle ? (
-                          <Link to={`/article/${articleData.nextArticle.id}`}>
+                          <Link to={getArticleUrl(articleData.nextArticle)}>
                             <Button icon={<RightOutlined />} style={{ minHeight: 44 }}>
                               下一篇: {articleData.nextArticle.title}
                             </Button>
@@ -669,7 +665,7 @@ const ArticleDetailPage: React.FC = () => {
                           {relatedArticles.map((item) => (
                             <Link
                               key={item.id}
-                              to={`/article/${item.id}`}
+                              to={getArticleUrl(item)}
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -794,7 +790,7 @@ const ArticleDetailPage: React.FC = () => {
                           onClick={() => {
                             fetchRandomArticle(article?.id).then(res => {
                               const randomArticle = res.data as ArticleItem;
-                              window.location.href = `/article/${randomArticle.id}`;
+                              window.location.href = getArticleUrl(randomArticle);
                             }).catch(() => {
                               antdMessage.error('获取随机文章失败');
                             });
@@ -854,6 +850,30 @@ const ArticleDetailPage: React.FC = () => {
           setLightboxImage(lightboxImages[newIndex]);
         }}
       />
+      {/* TOC 移动端抽屉入口 */}
+      {toc.length > 0 && (
+        <FloatButton
+          icon={<UnorderedListOutlined />}
+          tooltip="文章目录"
+          style={{
+            position: 'fixed',
+            bottom: 88,
+            right: 32,
+            zIndex: 999,
+          }}
+          className="toc-float-btn"
+          onClick={() => setTocDrawerVisible(true)}
+        />
+      )}
+      <Drawer
+        title="文章目录"
+        placement="right"
+        onClose={() => setTocDrawerVisible(false)}
+        open={tocDrawerVisible}
+        width={280}
+      >
+        <TableOfContents toc={toc} />
+      </Drawer>
     </>
   );
 };

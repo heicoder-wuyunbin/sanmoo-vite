@@ -120,7 +120,7 @@
   background: var(--pagination-item-active-bg);
   border-color: var(--pagination-item-active-bg);
   color: var(--pagination-item-active-color);
-  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
 }
 
 .ant-pagination .ant-pagination-item-active a {

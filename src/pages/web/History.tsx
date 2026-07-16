@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import React, { useMemo } from 'react';
 import WebShell from '@/pages/web/components/WebShell';
 import { getHistory, clearHistory, removeHistoryItem, type HistoryItem } from '@/services/local/localStorage';
+import { getArticleUrl } from '@/services/blog/api';
 
 const HistoryPage: React.FC = () => {
   const { token } = antTheme.useToken();
@@ -60,7 +61,7 @@ const HistoryPage: React.FC = () => {
             {history.map((item: HistoryItem) => (
               <Link
                 key={item.id}
-                to={`/article/${item.id}`}
+                to={getArticleUrl(item)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

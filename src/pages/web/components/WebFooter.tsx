@@ -107,7 +107,7 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
             href={filingInfo.filingUrl || 'https://beian.miit.gov.cn/'}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: token.colorTextTertiary, marginRight: 12 }}
+            style={{ color: token.colorTextSecondary, marginRight: 12 }}
           >
             {filingInfo.icpCode}
           </a>
@@ -116,13 +116,13 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
             href="https://beian.miit.gov.cn/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: token.colorTextTertiary, marginRight: 12 }}
+            style={{ color: token.colorTextSecondary, marginRight: 12 }}
           >
             闽ICP备2026004727号-1
           </a>
         )}
         {filingInfo?.recordType && (
-          <span style={{ color: token.colorTextTertiary, marginRight: 12 }}>
+          <span style={{ color: token.colorTextSecondary, marginRight: 12 }}>
             · {filingInfo.recordType}
           </span>
         )}
@@ -130,7 +130,7 @@ const WebFooter: React.FC<WebFooterProps> = ({ blogName, rssEnabled, contactEmai
           href="http://www.beian.gov.cn/portal/registerSystemInfo"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: token.colorTextTertiary }}
+          style={{ color: token.colorTextSecondary }}
         >
           闽公网安备35020302036974号
         </a>

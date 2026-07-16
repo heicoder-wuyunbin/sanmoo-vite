@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
-import { Card, Space, Typography, Avatar, Row, Col, Tag, theme as antTheme } from 'antd';
+import { Card, Space, Typography, Avatar, Row, Col, Tag, Statistic, theme as antTheme } from 'antd';
+import { CodeOutlined, BarChartOutlined, LinkOutlined } from '@ant-design/icons';
 import WebShell from './components/WebShell';
 import { useLayoutStore } from '@/store/useLayoutStore';
 
+const SKILLS = ['Go', 'Java', 'Spring Boot', 'MySQL', 'Redis', 'Docker', 'Kubernetes', 'React', 'TypeScript', 'Nginx', 'Linux', 'Git'];
+
 const AboutPage: React.FC = () => {
-  const { settings } = useLayoutStore();
+  const { settings, categories, tags, articleCount } = useLayoutStore();
   const { token } = antTheme.useToken();
 
   const author = settings?.coreConfig?.author || '作者';
@@ -64,29 +67,72 @@ const AboutPage: React.FC = () => {
           </Space>
         </Card>
 
+        {/* 技术栈 */}
+        <Card style={cardStyle} styles={{ body: { padding: 24 } }}>
+          <Typography.Title level={4} style={{ margin: '0 0 16px' }}>
+            <CodeOutlined style={{ marginRight: 8, color: token.colorPrimary }} />
+            技术栈
+          </Typography.Title>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {SKILLS.map((skill) => (
+              <Tag
+                key={skill}
+                style={{
+                  borderRadius: 999,
+                  padding: '4px 14px',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  background: `${token.colorPrimary}10`,
+                  borderColor: `${token.colorPrimary}30`,
+                  color: token.colorPrimary,
+                }}
+              >
+                {skill}
+              </Tag>
+            ))}
+          </div>
+        </Card>
+
+        {/* 社交链接 */}
         <Row gutter={[16, 16]}>
           {links.map((item) => (
             <Col xs={24} md={12} key={item.label}>
-              <Card style={cardStyle} styles={{ body: { padding: 22 } }}>
+              <Card style={cardStyle} hoverable styles={{ body: { padding: 22 } }}>
                 <Space direction="vertical" size={10} style={{ width: '100%' }}>
                   <Typography.Title level={4} style={{ margin: 0, color: token.colorText }}>
+                    <LinkOutlined style={{ marginRight: 8, color: token.colorPrimary }} />
                     {item.label}
                   </Typography.Title>
                   <Typography.Text style={{ color: token.colorTextSecondary }}>
                     {item.desc}
                   </Typography.Text>
-                  {item.value ? (
-                    <a href={item.value} target="_blank" rel="noopener noreferrer" style={{ color: token.colorPrimary }}>
-                      {item.value}
-                    </a>
-                  ) : (
-                    <Typography.Text type="secondary">未设置</Typography.Text>
-                  )}
+                  <a href={item.value} target="_blank" rel="noopener noreferrer" style={{ color: token.colorPrimary }}>
+                    {item.value}
+                  </a>
                 </Space>
               </Card>
             </Col>
           ))}
         </Row>
+
+        {/* 博客数据 */}
+        <Card style={cardStyle} styles={{ body: { padding: 24 } }}>
+          <Typography.Title level={4} style={{ margin: '0 0 16px' }}>
+            <BarChartOutlined style={{ marginRight: 8, color: token.colorPrimary }} />
+            博客数据
+          </Typography.Title>
+          <Row gutter={[16, 16]}>
+            <Col xs={8}>
+              <Statistic title="文章总数" value={articleCount || 0} />
+            </Col>
+            <Col xs={8}>
+              <Statistic title="分类数" value={categories?.length || 0} />
+            </Col>
+            <Col xs={8}>
+              <Statistic title="标签数" value={tags?.length || 0} />
+            </Col>
+          </Row>
+        </Card>
       </Space>
     </WebShell>
   );

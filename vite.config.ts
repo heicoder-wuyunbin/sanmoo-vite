@@ -29,6 +29,14 @@ export default defineConfig({
         target: 'http://127.0.0.1:28080',
         changeOrigin: true,
       },
+      '/sitemap.xml': {
+        target: 'http://127.0.0.1:28080',
+        changeOrigin: true,
+      },
+      '/rss.xml': {
+        target: 'http://127.0.0.1:28080',
+        changeOrigin: true,
+      },
     },
   },
   build: {

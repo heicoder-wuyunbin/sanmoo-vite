@@ -54,6 +54,8 @@ type WebHeaderProps = {
 const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
   const screens = useBreakpoint();
   const isDesktop = !!screens.lg;
+  const isTablet = !!screens.md && !screens.lg;
+  const isMobile = !screens.md;
   const location = useLocation();
   const { token } = antTheme.useToken();
   const { isDark, toggleTheme } = useTheme();
@@ -92,18 +94,23 @@ const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
         }}
       >
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-          <Avatar
-            size={36}
+          <div
             style={{
-              background: token.colorPrimary,
-              fontWeight: 700,
-              fontSize: 15,
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: `linear-gradient(135deg, ${token.colorPrimary} 0%, ${token.colorPrimaryHover || token.colorPrimary}CC 100%)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: `0 2px 8px ${token.colorPrimary}30`,
+              flexShrink: 0,
             }}
           >
-            {Array.from(blogName)[0]}
-          </Avatar>
+            <span style={{ color: '#fff', fontWeight: 800, fontSize: 16, lineHeight: 1 }}>{Array.from(blogName)[0]}</span>
+          </div>
           <div style={{ lineHeight: 1.2 }}>
-            <div style={{ fontWeight: 600, color: token.colorText, fontSize: 15 }}>
+            <div style={{ fontWeight: 700, color: token.colorText, fontSize: 16, letterSpacing: '-0.3px' }}>
               {blogName}
             </div>
             {isDesktop ? (
@@ -127,6 +134,20 @@ const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
           />
         ) : null}
 
+        {/* 平板端：仅显示图标导航 */}
+        {isTablet ? (
+          <Menu
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            items={navItems.map((item) => ({
+              key: item.key,
+              icon: item.icon,
+              label: <Link to={item.key}>{item.label}</Link>,
+            }))}
+            style={{ background: 'transparent', borderBottom: 'none', flex: 1 }}
+          />
+        ) : null}
+
         <Space size={12} align="center">
           {isDesktop ? (
             <Input
@@ -134,9 +155,9 @@ const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
               prefix={<SearchOutlined style={{ color: token.colorTextTertiary }} aria-hidden="true" />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              onClick={onSearchClick}
+              onFocus={onSearchClick}
               allowClear
-              style={{ width: 220, cursor: 'pointer' }}
+              style={{ width: 220 }}
             />
           ) : (
             <Button
@@ -167,7 +188,7 @@ const WebHeader: React.FC<WebHeaderProps> = ({ blogName, onSearchClick }) => {
             </Link>
           )}
 
-          {!isDesktop ? (
+          {!isDesktop && !isTablet ? (
             <Dropdown menu={{ items: mobileMenuItems }} placement="bottomRight">
               <Button type="text" icon={<AppstoreOutlined />} aria-label="导航菜单" />
             </Dropdown>

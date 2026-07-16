@@ -295,14 +295,41 @@ const Admin: React.FC = () => {
         }}
       >
         {/* Logo 区 */}
-        <div className="pro-sider-logo" style={{ background: '#002140' }}>
+        <div className="pro-sider-logo" style={{ background: 'linear-gradient(180deg, #002140 0%, #001529 100%)' }}>
           {collapsed ? (
-            <span style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>S</span>
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: 8,
+              background: `linear-gradient(135deg, ${token.colorPrimary} 0%, ${token.colorPrimaryHover || token.colorPrimary}CC 100%)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: `0 2px 6px ${token.colorPrimary}40`,
+              margin: '0 auto',
+            }}>
+              <span style={{ color: '#fff', fontWeight: 800, fontSize: 14 }}>S</span>
+            </div>
           ) : (
-            <>
-              <span style={{ color: '#fff' }}>Sanmoo Blog</span>
-              <span className="pro-sider-logo-sub">站长后台</span>
-            </>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                background: `linear-gradient(135deg, ${token.colorPrimary} 0%, ${token.colorPrimaryHover || token.colorPrimary}CC 100%)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: `0 2px 6px ${token.colorPrimary}40`,
+                flexShrink: 0,
+              }}>
+                <span style={{ color: '#fff', fontWeight: 800, fontSize: 14 }}>S</span>
+              </div>
+              <div>
+                <span style={{ color: '#fff' }}>Sanmoo Blog</span>
+                <span className="pro-sider-logo-sub">站长后台</span>
+              </div>
+            </div>
           )}
         </div>
 

@@ -22,6 +22,10 @@
  *   <img class="md-img" src="..." alt="..." />
  *   <hr class="md-hr" />
  *   <strong class="md-strong"> / <em class="md-em">
+ *   <table class="md-table">
+ *     <thead><tr class="md-tr"><th class="md-th">...</th></tr></thead>
+ *     <tbody><tr class="md-tr"><td class="md-td">...</td></tr></tbody>
+ *   </table>
  * ========================================================= */
 
 .md-body {
@@ -326,39 +330,72 @@
   );
 }
 
-/* ------------- 表格（如果 goldmark 扩展支持） ------------- */
-.md-body table {
+/* ------------- 表格（后端统一渲染 .md-table / .md-th / .md-td / .md-tr） ------------- */
+.md-body .md-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 18px 0;
   font-size: 14px;
   background: var(--md-table-bg, #ffffff);
+  border: 1px solid var(--md-table-border, #e5e7eb);
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
-.md-body th {
+/* 表头：深色底 */
+.md-body .md-th {
   padding: 12px 16px;
   text-align: left;
-  background: var(--md-table-head, #f8fafc);
-  color: var(--md-title, #0f172a);
+  background: var(--md-table-head, #1e293b);
+  color: var(--md-table-head-text, #f1f5f9);
   font-weight: 600;
-  border-bottom: 2px solid var(--md-border, #e5e7eb);
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid var(--md-table-border, #e5e7eb);
+  white-space: nowrap;
 }
 
-.md-body td {
+/* 表头首列左上圆角 */
+.md-body .md-tr:first-child .md-th:first-child {
+  border-top-left-radius: 10px;
+}
+
+/* 表头末列右上圆角 */
+.md-body .md-tr:first-child .md-th:last-child {
+  border-top-right-radius: 10px;
+}
+
+/* 普通单元格 */
+.md-body .md-td {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--md-border, #e5e7eb);
+  border-bottom: 1px solid var(--md-table-border, #e5e7eb);
   color: var(--md-text, #1f2937);
+  line-height: 1.6;
 }
 
-.md-body tr:last-child td {
+/* 交替行背景 */
+.md-body .md-tr:nth-child(even) .md-td {
+  background: var(--md-table-stripe, #f8fafc);
+}
+
+/* 最后一行单元格无底部边框，且保留左下/右下圆角 */
+.md-body .md-tr:last-child .md-td {
   border-bottom: none;
 }
 
-.md-body tr:hover td {
-  background: var(--md-table-row-hover, #f8fafc);
+.md-body .md-tr:last-child .md-td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+.md-body .md-tr:last-child .md-td:last-child {
+  border-bottom-right-radius: 10px;
+}
+
+/* 悬浮行高亮 */
+.md-body .md-tr:hover .md-td {
+  background: var(--md-table-row-hover, #eef2ff);
 }
 
 /* ------------- 目录导航组件 ------------- */
@@ -454,6 +491,16 @@
   .toc-sidebar {
     display: none;
   }
+
+  .toc-float-btn {
+    display: block;
+  }
+}
+
+@media (min-width: 1025px) {
+  .toc-float-btn {
+    display: none;
+  }
 }
 
 /* ------------- 阅读进度条 ------------- */
@@ -486,7 +533,10 @@
     --md-inline-code: #fda4af;
     --md-table-bg: #1e293b;
     --md-table-head: #0f172a;
-    --md-table-row-hover: #334155;
+    --md-table-head-text: #e2e8f0;
+    --md-table-border: #334155;
+    --md-table-stripe: #1a2332;
+    --md-table-row-hover: #1e3a5f;
   }
 
   .toc-container {
@@ -506,6 +556,47 @@
     --progress-color: #60a5fa;
     --progress-color-end: #93c5fd;
   }
+}
+
+/* ------------- 深色模式：html.dark 类名适配 ------------- */
+html.dark .md-body {
+  --md-text: #e2e8f0;
+  --md-text-secondary: #94a3b8;
+  --md-title: #f1f5f9;
+  --md-strong: #f8fafc;
+  --md-border: #334155;
+  --md-accent: #60a5fa;
+  --md-accent-hover: #93c5fd;
+  --md-code-bg: #0b1220;
+  --md-code-text: #e2e8f0;
+  --md-code-header: #94a3b8;
+  --md-line-num: #475569;
+  --md-inline-code-bg: #1e293b;
+  --md-inline-code: #fda4af;
+  --md-table-bg: #1e293b;
+  --md-table-head: #0f172a;
+  --md-table-head-text: #e2e8f0;
+  --md-table-border: #334155;
+  --md-table-stripe: #1a2332;
+  --md-table-row-hover: #1e3a5f;
+}
+
+html.dark .toc-container {
+  --toc-bg: #1e293b;
+  --toc-border: #334155;
+  --toc-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --toc-title: #f1f5f9;
+  --toc-text: #94a3b8;
+  --toc-hover: #334155;
+  --toc-hover-text: #e2e8f0;
+  --toc-active: #1e40af;
+  --toc-active-text: #93c5fd;
+  --toc-scrollbar: #475569;
+}
+
+html.dark .reading-progress {
+  --progress-color: #60a5fa;
+  --progress-color-end: #93c5fd;
 }
 
 @media (prefers-color-scheme: light) {

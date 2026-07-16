@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import React, { useMemo } from 'react';
 import WebShell from '@/pages/web/components/WebShell';
 import { getFavorites, removeFavorite, type FavoriteItem } from '@/services/local/localStorage';
+import { getArticleUrl } from '@/services/blog/api';
 
 const FavoritesPage: React.FC = () => {
   const { token } = antTheme.useToken();
@@ -45,7 +46,7 @@ const FavoritesPage: React.FC = () => {
             {favorites.map((item: FavoriteItem) => (
               <Link
                 key={item.id}
-                to={`/article/${item.id}`}
+                to={getArticleUrl(item)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

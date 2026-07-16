@@ -1,5 +1,5 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Space, Table, Tag } from 'antd';
+import { DeleteOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Popconfirm, Space, Table, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import type { ArticleItem } from '@/services/blog/api';
@@ -24,6 +24,7 @@ type ArticleListProps = {
   onSelectChange: (keys: React.Key[]) => void;
   onPublish: (id: number) => Promise<void>;
   onTop: (id: number) => Promise<void>;
+  onRefreshSlug: (id: number) => Promise<void>;
 };
 
 const ArticleList: React.FC<ArticleListProps> = ({
@@ -39,6 +40,7 @@ const ArticleList: React.FC<ArticleListProps> = ({
   onSelectChange,
   onPublish,
   onTop,
+  onRefreshSlug,
 }) => {
   return (
     <Table<ArticleItem>
@@ -63,6 +65,17 @@ const ArticleList: React.FC<ArticleListProps> = ({
       columns={[
         { title: 'ID', dataIndex: 'id', width: 100, fixed: 'left' },
         { title: '标题', dataIndex: 'title', ellipsis: true, width: 300 },
+        {
+          title: 'Slug',
+          dataIndex: 'slug',
+          width: 200,
+          ellipsis: true,
+          render: (v: string) => (
+            <Tooltip title={v}>
+              <span style={{ color: '#888', fontSize: '12px' }}>{v || '-'}</span>
+            </Tooltip>
+          ),
+        },
         {
           title: '分类',
           dataIndex: 'categoryName',
@@ -101,7 +114,7 @@ const ArticleList: React.FC<ArticleListProps> = ({
         },
         {
           title: '操作',
-          width: 280,
+          width: 340,
           fixed: 'right',
           render: (_, record) => (
             <Space size="small">
@@ -144,6 +157,16 @@ const ArticleList: React.FC<ArticleListProps> = ({
                   删除
                 </Button>
               </Popconfirm>
+              <Tooltip title="刷新Slug">
+                <Button
+                  size="small"
+                  icon={<ReloadOutlined />}
+                  onClick={async () => {
+                    await onRefreshSlug(record.id);
+                    onRefresh(page, size);
+                  }}
+                />
+              </Tooltip>
             </Space>
           ),
         },

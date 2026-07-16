@@ -104,10 +104,41 @@ const HomePage: React.FC = () => {
     <WebShell>
       <Space direction="vertical" size={20} style={{ width: '100%' }}>
         <Card
-          style={heroStyle}
-          styles={{ body: { padding: 32 } }}
+          style={{
+            ...heroStyle,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+          styles={{ body: { padding: 0, position: 'relative', zIndex: 1 } }}
         >
-          <div style={{ maxWidth: 720 }}>
+          {/* 装饰性背景元素 - 营造视觉层次 */}
+          <div
+            style={{
+              position: 'absolute',
+              top: -60,
+              right: -40,
+              width: 280,
+              height: 280,
+              borderRadius: '50%',
+              background: `${token.colorPrimary}10`,
+              filter: 'blur(60px)',
+              zIndex: 0,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              bottom: -40,
+              left: '40%',
+              width: 200,
+              height: 200,
+              borderRadius: '50%',
+              background: `${token.colorWarningBg}80`,
+              filter: 'blur(50px)',
+              zIndex: 0,
+            }}
+          />
+          <div style={{ padding: '40px 40px 36px', maxWidth: 720, position: 'relative', zIndex: 1 }}>
             <Space direction="vertical" size={20}>
               <div>
                 <Tag
@@ -132,9 +163,10 @@ const HomePage: React.FC = () => {
                   style={{
                     margin: 0,
                     color: token.colorTextHeading,
-                    fontSize: 40,
-                    lineHeight: 1.15,
-                    fontWeight: 700,
+                    fontSize: 44,
+                    lineHeight: 1.12,
+                    fontWeight: 800,
+                    letterSpacing: '-0.5px',
                     textWrap: 'balance',
                   }}
                 >
@@ -142,10 +174,11 @@ const HomePage: React.FC = () => {
                 </Typography.Title>
                 <Typography.Paragraph
                   style={{
-                    margin: '16px 0 0',
+                    margin: '18px 0 0',
                     color: token.colorTextSecondary,
-                    fontSize: 16,
-                    lineHeight: 1.7,
+                    fontSize: 17,
+                    lineHeight: 1.75,
+                    maxWidth: 560,
                   }}
                 >
                   {introduction}

@@ -1,4 +1,4 @@
-import { PlusOutlined, SearchOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { PlusOutlined, ReloadOutlined, SearchOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import {
   App,
@@ -9,8 +9,14 @@ import {
   Modal,
   Popconfirm,
   Space,
+  Table,
   theme as antTheme,
   Typography,
+  Upload,
+  Alert,
+  Checkbox,
+  Tag,
+  Progress,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import AdminCard from '@/components/admin/AdminCard';
@@ -19,17 +25,20 @@ import {
   type ArticleItem,
   type BlogSettings,
   batchDeleteArticles,
+  batchRefreshArticleSlugs,
   batchUpdateArticleStatus,
   type CategoryItem,
   createArticle,
   deleteArticle,
-  downloadArticlesCSV,
+  exportArticlesCSV,
   fetchAdminArticleDetail,
   fetchArticles,
   fetchCategories,
   fetchSettings,
   fetchTags,
   fetchTopics,
+  importArticles,
+  refreshArticleSlug,
   type TagItem,
   type TopicItem,
   unwrapList,
@@ -38,6 +47,8 @@ import {
 } from '@/services/blog/api';
 import ArticleList from './components/ArticleList';
 import ArticleEditorDrawer from './components/ArticleEditorDrawer';
+import ArticleImportProgress from './components/ArticleImportProgress';
+import type { ArticleImportItem } from '@/utils/articleImporter';
 
 type FormValues = {
   title: string;
@@ -65,6 +76,10 @@ const ArticlesPage: React.FC = () => {
   const [batchModalOpen, setBatchModalOpen] = useState(false);
   const [batchCategoryId, setBatchCategoryId] = useState<number | undefined>();
   const [batchTagIds, setBatchTagIds] = useState<number[]>([]);
+  // 批量导入 - 新版进度式导入
+  const [importUploadOpen, setImportUploadOpen] = useState(false);
+  const [importProgressOpen, setImportProgressOpen] = useState(false);
+  const [importItems, setImportItems] = useState<ArticleImportItem[]>([]);
 
   const [articleList, setArticleList] = useState<{ list: ArticleItem[]; page: number; size: number; total: number }>({
     list: [],
@@ -179,6 +194,24 @@ const ArticlesPage: React.FC = () => {
     }
   };
 
+  const handleRefreshSlug = async (id: number) => {
+    try {
+      await refreshArticleSlug(id);
+    } catch {
+      message.error('Slug 刷新失败');
+    }
+  };
+
+  const handleBatchRefreshSlugs = async () => {
+    try {
+      const res = await batchRefreshArticleSlugs();
+      message.success(`已刷新 ${res.data?.count ?? 0} 篇文章的 Slug`);
+      refreshArticles();
+    } catch {
+      message.error('批量刷新 Slug 失败');
+    }
+  };
+
   const handleBatchDelete = async () => {
     if (selectedRowKeys.length === 0) {
       message.warning('请先选择要删除的文章');
@@ -236,13 +269,16 @@ const ArticlesPage: React.FC = () => {
         const article = articleList.list.find((a) => a.id === id);
         if (!article) return;
 
-        const existingTagIds = (article.tags || []).map((t: { id: number }) => t.id);
-        const mergedTagIds = [...new Set([...existingTagIds, ...batchTagIds])];
+        const payload: { categoryId?: number; tagIds?: number[] } = {};
+        if (batchCategoryId !== undefined) {
+          payload.categoryId = batchCategoryId;
+        }
+        if (batchTagIds.length > 0) {
+          const existingTagIds = (article.tags || []).map((t: { id: number }) => t.id);
+          payload.tagIds = [...new Set([...existingTagIds, ...batchTagIds])];
+        }
 
-        await updateArticle(id, {
-          categoryId: batchCategoryId,
-          tagIds: mergedTagIds,
-        });
+        await updateArticle(id, payload);
       });
 
       await Promise.all(updatePromises);
@@ -331,6 +367,109 @@ const ArticlesPage: React.FC = () => {
     }
 
     return { title, description, content: body };
+  };
+
+  // 批量导入 CSV 解析
+  const parseCSV = (text: string): Array<{
+    title: string; description: string; content: string;
+    category?: string; tags?: string; isPublished?: number;
+  }> => {
+    const lines = text.split('\n').filter(line => line.trim());
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const titleIdx = headers.findIndex(h => h === '标题' || h === 'title');
+    const descIdx = headers.findIndex(h => h === '描述' || h === 'description');
+    const contentIdx = headers.findIndex(h => h === '内容' || h === 'content');
+    const catIdx = headers.findIndex(h => h === '分类' || h === 'category');
+    const tagsIdx = headers.findIndex(h => h === '标签' || h === 'tags');
+    const pubIdx = headers.findIndex(h => h === '发布状态' || h === 'ispublished');
+    if (titleIdx < 0 || contentIdx < 0) return [];
+
+    const result: Array<{
+      title: string; description: string; content: string;
+      category?: string; tags?: string; isPublished?: number;
+    }> = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const cols = parseCSVLine(lines[i]);
+      if (cols.length < Math.max(titleIdx, contentIdx) + 1) continue;
+      const pubVal = pubIdx >= 0 ? cols[pubIdx]?.trim() : '';
+      result.push({
+        title: cols[titleIdx]?.trim() || '',
+        description: descIdx >= 0 ? cols[descIdx]?.trim() || '' : '',
+        content: contentIdx >= 0 ? cols[contentIdx]?.trim() || '' : '',
+        category: catIdx >= 0 ? cols[catIdx]?.trim() : undefined,
+        tags: tagsIdx >= 0 ? cols[tagsIdx]?.trim() : undefined,
+        isPublished: pubVal === '已发布' || pubVal === '1' ? 1 : 0,
+      });
+    }
+    return result;
+  };
+
+  const parseCSVLine = (line: string): string[] => {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === ',' && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    result.push(current);
+    return result;
+  };
+
+  const handleBatchImport = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const parsedItems: ArticleImportItem[] = [];
+    let idCounter = 0;
+
+    for (const file of fileArray) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (ext === 'md' || ext === 'markdown') {
+        const text = await file.text();
+        const { title, description, content: body } = parseMarkdownContent(text);
+        parsedItems.push({
+          id: idCounter++,
+          title,
+          description,
+          content: body,
+          isTop: 0,
+          isPublished: 0,
+          status: 'pending',
+        });
+      } else if (ext === 'csv') {
+        const text = await file.text();
+        const parsed = parseCSV(text);
+        parsed.forEach((item) => {
+          parsedItems.push({
+            id: idCounter++,
+            title: item.title,
+            description: item.description,
+            content: item.content,
+            isTop: 0,
+            isPublished: item.isPublished ?? 0,
+            status: 'pending',
+          });
+        });
+      } else {
+        message.warning(`跳过不支持的文件类型: ${file.name}`);
+      }
+    }
+
+    if (parsedItems.length === 0) {
+      message.error('未解析到有效数据，请上传 CSV 或 Markdown 文件');
+      return;
+    }
+
+    setImportItems(parsedItems);
+    setImportProgressOpen(true);
   };
 
   const handleImportMarkdown = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -452,16 +591,40 @@ const ArticlesPage: React.FC = () => {
           </Button>
           <Button
             icon={<UploadOutlined />}
+            onClick={() => {
+              setImportUploadOpen(true);
+            }}
+          >
+            批量导入
+          </Button>
+          <Button
+            icon={<UploadOutlined />}
             onClick={() => document.getElementById('markdown-import')?.click()}
           >
             导入文章
           </Button>
           <Button
             icon={<DownloadOutlined />}
-            onClick={() => downloadArticlesCSV(searchKeyword)}
+            onClick={() => exportArticlesCSV()}
           >
-            导出CSV
+            导出全部
           </Button>
+          {selectedRowKeys.length > 0 && (
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => exportArticlesCSV(selectedRowKeys.map(Number))}
+            >
+              导出选中 ({selectedRowKeys.length})
+            </Button>
+          )}
+          <Popconfirm
+            title="确认刷新所有文章的 Slug？"
+            onConfirm={handleBatchRefreshSlugs}
+          >
+            <Button icon={<ReloadOutlined />}>
+              批量刷新Slug
+            </Button>
+          </Popconfirm>
           <input
             id="markdown-import"
             type="file"
@@ -527,6 +690,7 @@ const ArticlesPage: React.FC = () => {
           onSelectChange={setSelectedRowKeys}
           onPublish={handlePublishToggle}
           onTop={handleTop}
+          onRefreshSlug={handleRefreshSlug}
         />
       </AdminCard>
 
@@ -542,6 +706,11 @@ const ArticlesPage: React.FC = () => {
         onOpenChange={setDrawerOpen}
         onSubmit={submit}
         onReset={handleResetForm}
+        onRefreshSlug={async () => {
+          if (editing) {
+            await handleRefreshSlug(editing.id);
+          }
+        }}
       />
 
       <Modal
@@ -571,24 +740,66 @@ const ArticlesPage: React.FC = () => {
             </select>
           </Form.Item>
           <Form.Item label="添加标签（多选）">
-            <select
-              multiple
-              value={batchTagIds.map(String)}
-              onChange={(e) => setBatchTagIds(Array.from(e.target.selectedOptions).map((o) => Number(o.value)))}
-              style={{ width: '100%', padding: 8, borderRadius: 6, border: `1px solid ${token.colorBorderSecondary}`, height: 120 }}
-            >
-              {tags.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <Checkbox.Group
+              options={tags.map((item) => ({ label: item.name, value: item.id }))}
+              value={batchTagIds}
+              onChange={(checkedValues) => setBatchTagIds(checkedValues as number[])}
+            />
             <Typography.Text type="secondary" style={{ fontSize: 12 }}>
               注：标签将追加到现有标签中，不会覆盖
             </Typography.Text>
           </Form.Item>
         </Space>
       </Modal>
+
+      <Modal
+        title="批量导入文章"
+        open={importUploadOpen}
+        onCancel={() => setImportUploadOpen(false)}
+        footer={null}
+        width={600}
+        destroyOnClose
+      >
+        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+          <Alert
+            message="支持批量导入"
+            description={
+              <div>
+                <p>支持 <b>CSV</b> 和 <b>Markdown (.md)</b> 文件，可同时上传多个文件。</p>
+                <p>CSV 首行表头：<b>标题</b>（必填）、<b>内容</b>（必填）、描述、分类、标签、发布状态</p>
+                <p>Markdown 文件以 <Tag># 标题</Tag> 作为文章标题，<Tag>{'>'} 引用</Tag> 作为描述</p>
+                <p>发布状态填写 <Tag>已发布</Tag> 或 <Tag>1</Tag> 表示发布，其他值或不填则为未发布。</p>
+              </div>
+            }
+            type="info"
+            showIcon
+          />
+          <Upload.Dragger
+            accept=".csv,.md,.markdown"
+            multiple
+            beforeUpload={(file, fileList) => {
+              handleBatchImport(fileList);
+              setImportUploadOpen(false);
+              return false;
+            }}
+          >
+            <p className="ant-upload-drag-icon">
+              <UploadOutlined style={{ fontSize: 32, color: token.colorPrimary }} />
+            </p>
+            <p>点击或拖拽 CSV / Markdown 文件到此区域上传</p>
+            <p style={{ color: token.colorTextSecondary, fontSize: 12 }}>
+              支持多文件批量导入，每个 .md 文件解析为一篇文章
+            </p>
+          </Upload.Dragger>
+        </Space>
+      </Modal>
+
+      <ArticleImportProgress
+        open={importProgressOpen}
+        items={importItems}
+        onClose={() => setImportProgressOpen(false)}
+        onImportComplete={() => refreshArticles()}
+      />
     </div>
   );
 };
