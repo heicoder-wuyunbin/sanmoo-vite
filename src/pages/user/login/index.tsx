@@ -158,8 +158,8 @@ const Login: React.FC = () => {
         accessToken?: string;
         refreshToken?: string;
         username?: string;
-        roleName?: string;
-        user?: { username?: string; roleName?: string };
+        isAdmin?: boolean;
+        user?: { username?: string; isAdmin?: boolean };
       } = response.data as any;
 
       const accessToken = data.accessToken;
@@ -169,11 +169,10 @@ const Login: React.FC = () => {
         data.user?.username ??
         (data as { user?: { Username?: string } }).user?.Username ??
         values.username;
-      const roleName =
-        data.roleName ??
-        data.user?.roleName ??
-        (data as { user?: { RoleName?: string } }).user?.RoleName ??
-        '';
+      const isAdmin =
+        data.isAdmin ??
+        data.user?.isAdmin ??
+        false;
 
       if (!accessToken) {
         message.error('登录响应缺少有效的 Token，请稍后重试');
@@ -184,7 +183,7 @@ const Login: React.FC = () => {
 
       setExpression('success');
       fireConfetti();
-      setAuthInfo(accessToken, refreshToken || '', { username, roleName });
+      setAuthInfo(accessToken, refreshToken || '', { username, isAdmin });
       message.success('登录成功');
       setTimeout(() => {
         navigate(redirectPath, { replace: true });

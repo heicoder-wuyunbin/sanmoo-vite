@@ -1,4 +1,4 @@
-import { RadarChartOutlined, ReloadOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { ReloadOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Breadcrumb,
@@ -6,7 +6,6 @@ import {
   Input,
   Space,
   Table,
-  Tag,
   Typography,
 } from 'antd';
 import dayjs from 'dayjs';
@@ -18,7 +17,6 @@ import {
   type MPUserSummary,
 } from '@/services/blog/api';
 import { queryKeys } from '@/services/blog/queryKeys';
-import MPUserDetailDrawer from './components/MPUserDetailDrawer';
 import AdminCard from '@/components/admin/AdminCard';
 
 const MPUsersPage: React.FC = () => {
@@ -26,8 +24,6 @@ const MPUsersPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchText, setSearchText] = useState('');
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedOpenid, setSelectedOpenid] = useState<string | null>(null);
 
   const listQuery = useQuery({
     queryKey: queryKeys.mpUserList({ page, size: pageSize, keyword: searchText }),
@@ -43,11 +39,6 @@ const MPUsersPage: React.FC = () => {
 
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: queryKeys.mpUsers() });
-  };
-
-  const openDetail = (openid: string) => {
-    setSelectedOpenid(openid);
-    setDrawerOpen(true);
   };
 
   const handleSearch = (value: string) => {
@@ -68,8 +59,7 @@ const MPUsersPage: React.FC = () => {
       render: (text: string, record: MPUserSummary) => (
         <Space>
           <Avatar src={record.avatar} icon={<UserOutlined />} size="small" />
-          <Typography.Text style={{ color: 'var(--ant-color-primary)', cursor: 'pointer' }}
-            onClick={() => openDetail(record.openid)}>{text || '未知用户'}</Typography.Text>
+          <span>{text || '未知用户'}</span>
         </Space>
       ),
     },
@@ -79,18 +69,9 @@ const MPUsersPage: React.FC = () => {
         <Typography.Text copyable={{ text }} style={{ fontSize: 12 }}>{text}</Typography.Text>
       ),
     },
-    { title: '标签数', dataIndex: 'tagCount', width: 90, align: 'center' as const, render: (count: number) => <Tag color="blue">{count}</Tag> },
     { title: '浏览数', dataIndex: 'viewCount', width: 90, align: 'center' as const },
     { title: '收藏数', dataIndex: 'favoriteCount', width: 90, align: 'center' as const },
     { title: '最近登录', dataIndex: 'lastLoginTime', width: 170, render: (t: string) => dayjs(t).format('YYYY-MM-DD HH:mm') },
-    {
-      title: '操作', key: 'action', width: 100, fixed: 'right' as const,
-      render: (_: unknown, record: MPUserSummary) => (
-        <Button type="link" size="small" icon={<RadarChartOutlined />} onClick={() => openDetail(record.openid)}>
-          画像
-        </Button>
-      ),
-    },
   ];
 
   return (
@@ -110,14 +91,8 @@ const MPUsersPage: React.FC = () => {
             showTotal: (t) => `共 ${t} 条`,
             onChange: (p, s) => { setPage(p); setPageSize(s); },
           }}
-          scroll={{ x: 1100 }} />
+          scroll={{ x: 900 }} />
       </AdminCard>
-      <MPUserDetailDrawer
-        open={drawerOpen}
-        openid={selectedOpenid}
-        onClose={() => setDrawerOpen(false)}
-        onRefreshList={invalidate}
-      />
     </div>
   );
 };

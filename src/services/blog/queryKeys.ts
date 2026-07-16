@@ -12,18 +12,6 @@ export const queryKeys = {
   topics: () => [...queryKeys.all, 'topics'] as const,
   topicList: () => [...queryKeys.topics(), 'list'] as const,
 
-  users: () => [...queryKeys.all, 'users'] as const,
-  userList: (params: { page?: number; size?: number; keyword?: string }) =>
-    [...queryKeys.users(), 'list', params.page, params.size, params.keyword] as const,
-
-  roles: () => [...queryKeys.all, 'roles'] as const,
-  roleList: (params: { page?: number; size?: number; keyword?: string }) =>
-    [...queryKeys.roles(), 'list', params.page, params.size, params.keyword] as const,
-
-  permissions: () => [...queryKeys.all, 'permissions'] as const,
-  permissionList: (params: Record<string, unknown>) =>
-    [...queryKeys.permissions(), 'list', params] as const,
-
   mpUsers: () => [...queryKeys.all, 'mp-users'] as const,
   mpUserList: (params: { page?: number; size?: number; keyword?: string }) =>
     [...queryKeys.mpUsers(), 'list', params.page, params.size, params.keyword] as const,

@@ -91,8 +91,7 @@ export type UserItem = {
   username: string;
   email?: string;
   status?: string;
-  roleId?: number;
-  roleName?: string;
+  isAdmin?: boolean;
   createTime?: string;
   updateTime?: string;
 };
@@ -348,7 +347,7 @@ export type CacheStatsResult = {
   };
 };
 
-// ─── 小程序用户 ──────────────────────────────────────────────
+// ─── 小程序用户（轻运营：仅保留列表摘要）────────────────────
 
 export type MPUserSummary = {
   id: number;
@@ -358,62 +357,12 @@ export type MPUserSummary = {
   status: number;
   firstLoginTime: string;
   lastLoginTime: string;
-  tagCount: number;
   viewCount: number;
   favoriteCount: number;
   createTime: string;
 };
 
-export type MPUserTag = {
-  id: number;
-  tagName: string;
-  tagCategory: string;
-  score: number;
-  source: string;
-  createTime: string;
-};
-
-export type MPUserInterest = {
-  dimensionType: string;
-  dimensionId: number;
-  dimensionName: string;
-  score: number;
-};
-
-export type ProfileDimension = {
-  dimension: string;
-  score: number;
-};
-
-export type MPUserProfile = {
-  dimensions: ProfileDimension[];
-  updatedAt?: string;
-};
-
-export type RadarData = {
-  tags: MPUserTag[];
-  interests: MPUserInterest[];
-  profile: MPUserProfile | null;
-};
-
-export type MPUserDetail = {
-  id: number;
-  openid: string;
-  nickname: string;
-  avatar: string;
-  status: number;
-  firstLoginTime: string;
-  lastLoginTime: string;
-  viewCount: number;
-  favoriteCount: number;
-  totalStaySeconds: number;
-  tags: MPUserTag[];
-  interests: MPUserInterest[];
-  profile: MPUserProfile | null;
-  createTime: string;
-};
-
-// ─── 权限 & 角色 ─────────────────────────────────────────────
+// ─── 权限 & 角色（已废弃，保留类型定义以兼容） ─────────────────
 
 export type PermissionItem = {
   id: number;

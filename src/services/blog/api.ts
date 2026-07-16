@@ -24,9 +24,7 @@ export type {
   VisitorRecord, ErrorLogRecord, FileItem,
   ArchiveItem, ArchiveArticleItem,
   CacheClearResult, CacheWarmupResult, CacheStatsResult,
-  MPUserSummary, MPUserTag, MPUserInterest, ProfileDimension,
-  MPUserProfile, RadarData, MPUserDetail,
-  ListResponse,
+  MPUserSummary, ListResponse,
   ArticleReadStat, CategoryReadStat, TagReadStat, ContentTrendItem,
 } from './types';
 

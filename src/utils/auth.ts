@@ -29,7 +29,7 @@ export const getRefreshToken = (): string | null => {
 };
 
 // 获取当前用户信息
-export const getCurrentUser = (): { username: string; roleName: string } | undefined => {
+export const getCurrentUser = (): { username: string; isAdmin: boolean } | undefined => {
   const userStr = localStorage.getItem(USER_INFO_KEY);
   if (!userStr) return undefined;
   try {
@@ -63,7 +63,7 @@ export const getCurrentUserId = (): number | undefined => {
 export const setAuth = (
   accessToken: string,
   refreshToken: string,
-  userInfo: { username: string; roleName: string }
+  userInfo: { username: string; isAdmin: boolean }
 ): void => {
   localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);

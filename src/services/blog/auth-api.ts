@@ -5,7 +5,7 @@ export async function login(data: { username: string; password: string; code?: s
     accessToken: string;
     refreshToken: string;
     username?: string;
-    roleName?: string;
+    isAdmin?: boolean;
     user?: import('./types').UserItem;
   }>('/auth/login', { method: 'POST', data });
 }

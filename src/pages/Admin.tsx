@@ -237,8 +237,18 @@ const Admin: React.FC = () => {
     }));
   }, []);
 
-  // 所有菜单组默认展开
-  const openKeys = staticMenuGroups.map((g) => g.key);
+  // 默认只展开第一个菜单组
+  const [openKeys, setOpenKeys] = useState<string[]>([staticMenuGroups[0]?.key]);
+
+  const handleOpenChange = (keys: string[]) => {
+    // 手风琴模式：只保持最新点击的菜单组展开
+    const latestKey = keys.find((k) => !openKeys.includes(k));
+    if (latestKey) {
+      setOpenKeys([latestKey]);
+    } else {
+      setOpenKeys(keys);
+    }
+  };
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key.startsWith('/')) {
@@ -300,6 +310,7 @@ const Admin: React.FC = () => {
           mode="inline"
           selectedKeys={selectedKey}
           openKeys={openKeys}
+          onOpenChange={handleOpenChange}
           onClick={handleMenuClick}
           items={menuItems}
           style={{ borderInlineEnd: 'none', padding: '12px 8px' }}

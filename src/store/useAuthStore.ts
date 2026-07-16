@@ -2,11 +2,11 @@ import { create } from 'zustand';
 import { getCurrentUser, setAuth, clearAuth } from '@/utils/auth';
 
 interface AuthState {
-  user: { username: string; roleName: string } | undefined;
+  user: { username: string; isAdmin: boolean } | undefined;
   setAuthInfo: (
     accessToken: string,
     refreshToken: string,
-    userInfo: { username: string; roleName: string }
+    userInfo: { username: string; isAdmin: boolean }
   ) => void;
   clearAuthInfo: () => void;
 }
