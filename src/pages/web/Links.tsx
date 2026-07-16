@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Card, Space, Typography, Row, Col, theme as antTheme, Spin, Empty } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
 import WebShell from './components/WebShell';
-import { fetchActiveLinks, type LinkItem } from '@/services/blog/api';
+import { fetchActiveLinks, fetchSettings, type LinkItem } from '@/services/blog/api';
 import { useQuery } from '@tanstack/react-query';
 
 const LinksPage: React.FC = () => {
@@ -15,6 +15,16 @@ const LinksPage: React.FC = () => {
       return res.data || [];
     },
   });
+
+  const { data: settings } = useQuery({
+    queryKey: ['webSettings'],
+    queryFn: async () => {
+      const res = await fetchSettings(false);
+      return res.data;
+    },
+  });
+
+  const contactEmail = settings?.coreConfig?.contactEmail || '617772977@qq.com';
 
   const cardStyle = useMemo<React.CSSProperties>(
     () => ({
@@ -126,7 +136,7 @@ const LinksPage: React.FC = () => {
             <li>已添加本站链接</li>
           </ul>
           <Typography.Paragraph style={{ color: token.colorTextSecondary, marginTop: 12 }}>
-            如有合作意向，请通过邮箱联系：contact@example.com
+            如有合作意向，请通过邮箱联系：{contactEmail}
           </Typography.Paragraph>
         </Card>
       </Space>

@@ -43,6 +43,7 @@ import {
   SearchOutlined,
   MailOutlined,
   CloudServerOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { clearAuth, getCurrentUser, getCurrentUserId } from '@/utils/auth';
 import { updateUserPassword } from '@/services/blog/api';
@@ -204,7 +205,7 @@ const Admin: React.FC = () => {
         { key: '/admin/settings/email', icon: <MailOutlined />, label: '邮件配置' },
         { key: '/admin/settings/wechat', icon: <WechatOutlined />, label: '微信配置' },
         // 冻结能力：缓存管理（低频运维，见 frozen-capabilities.md §2.4）
-        // { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理', perm: 'setting:cache:read' },
+                { key: '/admin/settings/cache', icon: <ThunderboltOutlined />, label: '缓存管理' },
       ],
     },
   ];

@@ -1,6 +1,6 @@
-import { SearchOutlined, SyncOutlined, DatabaseOutlined, ReloadOutlined } from '@ant-design/icons';
+import { SyncOutlined, ReloadOutlined, DatabaseOutlined } from '@ant-design/icons';
 import {
-  App, Button, Card, Col, Form, Input, Popconfirm, Row, Select, Space, Statistic, Switch,
+  App, Button, Card, Col, Form, Input, Popconfirm, Row, Space, Statistic, Switch,
   Typography, theme as antTheme,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -107,113 +107,19 @@ const SearchSettings: React.FC = () => {
               搜索配置
             </Typography.Title>
             <Typography.Text type="secondary">
-              配置搜索服务、推荐策略与热门搜索，管理搜索引擎数据同步。
+              配置 MeiliSearch 全文搜索服务与数据同步。
             </Typography.Text>
           </Space>
         </div>
 
         <Form form={form} layout="vertical">
-          <Row gutter={[24, 24]}>
-            <Col xs={24} md={8}>
-              <Card
-                size="small"
-                title="推荐策略"
-                style={{
-                  border: `1px solid ${token.colorBorderSecondary}`,
-                  borderRadius: token.borderRadiusLG,
-                  animation: 'fadeInUp 0.4s ease-out 0.1s both',
-                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
-                }}
-              >
-                <Form.Item name="recommendStrategy" label="推荐算法">
-                  <Select
-                    options={[
-                      { label: '规则推荐', value: 'rule' },
-                      { label: '加权推荐', value: 'weighted' },
-                      { label: '协同过滤', value: 'cf' },
-                    ]}
-                    size="large"
-                    style={{
-                      borderRadius: token.borderRadiusLG,
-                      transition: 'all 0.3s ease',
-                    }}
-                  />
-                </Form.Item>
-                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                  选择文章推荐的算法策略，影响首页推荐内容的排序。
-                </Typography.Text>
-              </Card>
-            </Col>
-
-            <Col xs={24} md={8}>
-              <Card
-                size="small"
-                title="搜索引擎"
-                style={{
-                  border: `1px solid ${token.colorBorderSecondary}`,
-                  borderRadius: token.borderRadiusLG,
-                  animation: 'fadeInUp 0.4s ease-out 0.15s both',
-                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
-                }}
-              >
-                <Form.Item name="searchEngine" label="选择引擎">
-                  <Select
-                    options={[
-                      { label: '无', value: 'NONE' },
-                      { label: 'MeiliSearch', value: 'MEILISEARCH' },
-                    ]}
-                    size="large"
-                    style={{
-                      borderRadius: token.borderRadiusLG,
-                      transition: 'all 0.3s ease',
-                    }}
-                  />
-                </Form.Item>
-                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                  选择全文搜索引擎，建议使用 MeiliSearch 以获得更好的搜索体验。
-                </Typography.Text>
-              </Card>
-            </Col>
-
-            <Col xs={24} md={8}>
-              <Card
-                size="small"
-                title="热门搜索"
-                style={{
-                  border: `1px solid ${token.colorBorderSecondary}`,
-                  borderRadius: token.borderRadiusLG,
-                  animation: 'fadeInUp 0.4s ease-out 0.2s both',
-                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
-                }}
-              >
-                <Form.Item
-                  name="hotSearchMode"
-                  label="真实热门搜索"
-                  tooltip="开启后根据用户搜索历史统计热门关键词；关闭时使用配置的热门搜索词"
-                  valuePropName="checked"
-                >
-                  <Switch
-                    checkedChildren="开启"
-                    unCheckedChildren="关闭"
-                    style={{
-                      background: token.colorPrimary,
-                    }}
-                  />
-                </Form.Item>
-                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                  开启后自动根据搜索热度生成热门关键词，关闭时使用下方配置的备用热门词。
-                </Typography.Text>
-              </Card>
-            </Col>
-          </Row>
-
           <Card
             size="small"
             title="MeiliSearch 配置"
             style={{
               border: `1px solid ${token.colorBorderSecondary}`,
               borderRadius: token.borderRadiusLG,
-              animation: 'fadeInUp 0.4s ease-out 0.25s both',
+              animation: 'fadeInUp 0.4s ease-out 0.1s both',
               borderBottom: `1px solid ${token.colorBorderSecondary}`,
             }}
           >
@@ -222,7 +128,6 @@ const SearchSettings: React.FC = () => {
                 <Input
                   placeholder="http://localhost:7700"
                   size="large"
-                  prefix={<SearchOutlined />}
                   style={{
                     borderRadius: token.borderRadiusLG,
                     transition: 'all 0.3s ease',
@@ -255,29 +160,54 @@ const SearchSettings: React.FC = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item name="hotSearchWords" label="热门搜索词（备用）">
-                <Input.TextArea
-                  rows={3}
-                  placeholder='["java", "springboot", "mysql", "redis"]'
-                  style={{
-                    borderRadius: token.borderRadiusLG,
-                    transition: 'all 0.3s ease',
-                  }}
-                />
-              </Form.Item>
-              <Typography.Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-                仅在关闭 MeiliSearch 模式下生效，输入数组格式的热门搜索词。
-              </Typography.Text>
             </Space>
+          </Card>
+
+          <Card
+            size="small"
+            title="热门搜索"
+            style={{
+              marginTop: 24,
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              animation: 'fadeInUp 0.4s ease-out 0.15s both',
+              borderBottom: `1px solid ${token.colorBorderSecondary}`,
+            }}
+          >
+            <Form.Item
+              name="hotSearchMode"
+              label="真实热门搜索"
+              tooltip="开启后根据用户搜索历史统计热门关键词；关闭时使用配置的热门搜索词"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+              />
+            </Form.Item>
+            <Form.Item name="hotSearchWords" label="热门搜索词（备用）">
+              <Input.TextArea
+                rows={3}
+                placeholder='["java", "springboot", "mysql", "redis"]'
+                style={{
+                  borderRadius: token.borderRadiusLG,
+                  transition: 'all 0.3s ease',
+                }}
+              />
+            </Form.Item>
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              关闭真实热门搜索时使用此处配置的备用热门词，格式为 JSON 数组。
+            </Typography.Text>
           </Card>
 
           <Card
             size="small"
             title="数据同步"
             style={{
+              marginTop: 24,
               border: `1px solid ${token.colorBorderSecondary}`,
               borderRadius: token.borderRadiusLG,
-              animation: 'fadeInUp 0.4s ease-out 0.3s both',
+              animation: 'fadeInUp 0.4s ease-out 0.2s both',
               borderBottom: `1px solid ${token.colorBorderSecondary}`,
             }}
           >
@@ -363,7 +293,7 @@ const SearchSettings: React.FC = () => {
               borderTop: `1px solid ${token.colorBorderSecondary}`,
               display: 'flex',
               justifyContent: 'flex-end',
-              animation: 'fadeInUp 0.4s ease-out 0.4s both',
+              animation: 'fadeInUp 0.4s ease-out 0.3s both',
             }}
           >
             <Space>
@@ -409,4 +339,3 @@ const SearchSettings: React.FC = () => {
 };
 
 export default SearchSettings;
-

@@ -281,6 +281,21 @@ const CoreSettings: React.FC = () => {
                       </Typography.Text>
                     </Space>
                   </Form.Item>
+
+                  <Form.Item
+                    name="contactEmail"
+                    label="联系邮箱"
+                    rules={[{ type: 'email', message: '请输入有效的邮箱地址' }]}
+                  >
+                    <Input
+                      placeholder="例如：617772977@qq.com"
+                      size="large"
+                      style={{
+                        borderRadius: token.borderRadiusLG,
+                        transition: 'all 0.3s ease',
+                      }}
+                    />
+                  </Form.Item>
                 </Space>
               </Card>
             </Col>

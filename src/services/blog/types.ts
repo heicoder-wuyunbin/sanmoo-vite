@@ -106,6 +106,7 @@ export type CoreConfig = {
   poster: string;
   siteUrl?: string;
   rssEnabled?: boolean;
+  contactEmail?: string;
 };
 
 export type PrivacyConfig = {

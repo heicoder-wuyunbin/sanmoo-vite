@@ -39,6 +39,7 @@ const SearchSettings = lazy(() => import('@/pages/admin/settings/SearchSettings'
 const StorageSettings = lazy(() => import('@/pages/admin/settings/StorageSettings'));
 const EmailSettings = lazy(() => import('@/pages/admin/settings/EmailSettings'));
 const WechatSettings = lazy(() => import('@/pages/admin/settings/WechatSettings'));
+const CacheSettings = lazy(() => import('@/pages/admin/settings/CacheSettings'));
 const NotFound = lazy(() => import('@/pages/404'));
 const RouteTransition = lazy(() => import('@/components/RouteTransition'));
 
@@ -124,6 +125,7 @@ const AppRoutes: React.FC = () => {
                   <Route path="storage" element={<StorageSettings />} />
                   <Route path="email" element={<EmailSettings />} />
                   <Route path="wechat" element={<WechatSettings />} />
+                  <Route path="cache" element={<CacheSettings />} />
                 </Route>
                 {/* 冻结能力：角色管理、权限管理（平台化扩张） */}
                 {/* <Route path="roles" element={<Roles />} /> */}
